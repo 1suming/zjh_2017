@@ -1,0 +1,107 @@
+syntax = "proto2";
+package cardgame;
+
+import "struct.proto";
+option optimize_for = LITE_RUNTIME;
+option java_package = "com.zhili.cardgame.proto";  
+option java_outer_classname = "Reward";
+
+message QueryRewardsReq {
+    enum DEF {
+        ID = 2000;
+    }
+}
+
+message QueryRewardsResp {
+    enum DEF {
+        ID = 2001;
+    }
+	repeated Reward rewards = 1;
+}
+
+message ReceiveRewardReq {
+    enum DEF {
+        ID = 2002;
+    }
+	required int32 reward_id = 1;
+}
+
+
+message ReceiveRewardResp {
+    enum DEF {
+        ID = 2003;
+    }
+    optional Result result = 1;
+}
+
+message QuerySigninRewardReq {
+	enum DEF {
+		ID = 2004;
+	}
+}
+
+message QuerySigninRewardResp {
+	enum DEF {
+		ID = 2005;
+	}
+	repeated SigninReward rewards = 1;
+	optional int32 signin_days = 2;
+	optional int32 month_sigin_days = 3;
+}
+
+message SigninReq {
+	enum DEF {
+		ID = 2006;
+	}
+}
+
+message SigninResp {
+	enum DEF {
+		ID = 2007;
+	}
+	optional Result result = 1;
+	optional SigninReward next_signin_reward = 2;
+}
+
+message ResetPlayRewardReq {
+	enum DEF {
+		ID = 2008;
+	}
+}
+
+message ResetPlayRewardResp {
+	enum DEF {
+		ID = 2009;
+	}
+	optional int32 seconds = 1;// seconds = 0 意味着可以直接领取奖励
+}
+
+message ReceivePlayRewardReq {
+	enum DEF {
+		ID = 2010;
+	}
+}
+
+message ReceivePlayRewardResp {
+	enum DEF {
+		ID = 2011;
+	}
+	optional Result result = 1;
+	optional int32 seconds = 2;
+}
+
+
+message ReceiveCodeRewardReq {
+	enum DEF {
+		ID = 2012;
+	}
+	required string code = 1;
+}
+
+message ReceiveCodeRewardResp {
+	enum DEF {
+		ID = 2013;
+	}
+	
+	optional Result result = 1;
+}

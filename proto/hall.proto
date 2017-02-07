@@ -1,0 +1,102 @@
+syntax = "proto2";
+package cardgame;
+import "constant.proto";
+import "struct.proto";
+option optimize_for = LITE_RUNTIME;
+option java_package = "com.zhili.cardgame.proto";  
+option java_outer_classname = "Hall";
+
+message QueryHallReq {
+	enum DEF {
+		ID = 1000;
+	}
+	required int32 max_mail_id = 1;
+	required int32 max_announcement_id = 2;
+}
+
+
+message QueryHallResp {
+	enum DEF {
+		ID = 1001;
+	}
+	optional PlayerBrief brief = 1;
+	optional Notification notification = 2;
+	repeated Announcement announcements = 3;
+	optional bool is_signin = 4;
+}
+
+
+message QueryUserReq {
+    enum DEF{
+        ID = 1002;
+    }
+    required int32 uid = 1;
+}
+
+message QueryUserResp {
+    enum DEF{
+        ID = 1003;
+    }
+    optional Player player = 1;
+}
+
+message UpdateUserReq {
+    enum DEF {
+        ID = 1004;
+    }
+
+    optional string birthday = 1;
+    optional string sign = 2;
+    optional string contact = 3;
+    optional string address = 4;
+    optional string nick = 5;
+    optional string avatar = 6;
+    optional string sex = 7;
+}
+
+message UpdateUserResp {
+	enum DEF {
+		ID = 1005;
+	}
+	
+	required Result result = 1;
+}
+
+message QueryAnnouncementsReq {
+	enum DEF {
+        ID = 1006;
+    }
+}
+
+message QueryAnnouncementsResp{
+    enum DEF {
+        ID = 1007;
+    }
+	repeated Announcement announcements = 1;
+} 
+
+
+message SendGiftReq {
+	enum DEF {
+		ID = 1008;
+	}
+	required int32 gift_id = 1;
+	required int32 count = 2;
+	required int32 other = 3;
+}
+
+message SendGiftResp {
+	enum DEF {
+		ID = 1009;
+	}
+	optional Result result = 1;
+}
+
+message NotificationEvent {
+	enum DEF {
+		ID = 1100;
+	}
+	required NotificationType type = 1;
+	optional int32 param1 = 2;
+	optional string param2 = 3;
+}
