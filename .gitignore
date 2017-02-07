@@ -1,0 +1,5 @@
+.idea/
+__MACOSX/
+protoc-gen-lua/
+protoc/protoc-gen-go
+*.py[cod]
