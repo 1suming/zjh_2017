@@ -28,6 +28,7 @@ from proto.bank_pb2 import *
 from proto.mail_pb2 import *
 from proto.friend_pb2 import *
 from proto.struct_pb2 import *
+from proto.rank_pb2 import *
 from testbasecard import *
 
 
@@ -143,7 +144,7 @@ def update_user(client,mobile,password,device_id):
         req = create_client_message(UpdateUserReq)
         req.header.user = result.header.user
         req.body.sign = '222222签名喔~~~'
-        req.body.nick = '1111111张学友'
+        # req.body.nick = '1111111张学友'
         req.body.birthday = '1911-01-11'
         req.body.avatar = 'http://p2.gexing.com/touxiang/2012/3/17/201237180763704.jpg'
         print req.header.user,'=',req.header.result
@@ -1086,18 +1087,120 @@ def send_friends_message(client,mobile = '13412341777',password= '123456',device
     finally:
         pass
 
+def get_rank(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
+    try:
+        MessageMapping.init()
+        resp = client.normal_test_enter_server(mobile,password,device_id)
+
+        print '1111111111111111111'
+        print resp.header.user,'=',resp.header.result
+        print resp.body
+
+        client.setup_socket()
+        result = client.connect_game_server(resp.header.user, resp.body.session, 1)
+        print '2222222222222222222'
+        print result.header.user,'=',result.header.result
+        print result.body
+
+        print '3333333333333333333333333333333333'
+        req = create_client_message(QueryRankReq)
+        req.header.user = result.header.user
+        req.body.rank_type = 1
+        req.body.rank_time = 0
+        client.socket.send(req.encode())
+
+        # req = create_client_message(QueryUserReq)
+        # req.header.user = result.header.user
+        # req.body.uid = result.header.user
+        # client.socket.send(req.encode())
+
+      # client.socket.send(req.encode())
+
+    except Exception as e:
+        traceback.print_exc()
+    finally:
+        pass
+
+def receive_broke(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
+    try:
+        MessageMapping.init()
+        resp = client.normal_test_enter_server(mobile,password,device_id)
+
+        print '1111111111111111111'
+        print resp.header.user,'=',resp.header.result
+        print resp.body
+
+        client.setup_socket()
+        result = client.connect_game_server(resp.header.user, resp.body.session, 1)
+        print '2222222222222222222'
+        print result.header.user,'=',result.header.result
+        print result.body
+
+        print '3333333333333333333333333333333333'
+        req = create_client_message(ReceiveBankcruptRewardReq)
+        req.header.user = result.header.user
+        client.socket.send(req.encode())
+
+        # req = create_client_message(QueryUserReq)
+        # req.header.user = result.header.user
+        # req.body.uid = result.header.user
+        # client.socket.send(req.encode())
+
+      # client.socket.send(req.encode())
+
+    except Exception as e:
+        traceback.print_exc()
+    finally:
+        pass
+
+def get_broke(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
+    try:
+        MessageMapping.init()
+        resp = client.normal_test_enter_server(mobile,password,device_id)
+
+        print '1111111111111111111'
+        print resp.header.user,'=',resp.header.result
+        print resp.body
+
+        client.setup_socket()
+        result = client.connect_game_server(resp.header.user, resp.body.session, 1)
+        print '2222222222222222222'
+        print result.header.user,'=',result.header.result
+        print result.body
+
+        print '3333333333333333333333333333333333'
+        req = create_client_message(QueryBankcruptRewardReq)
+        req.header.user = result.header.user
+        client.socket.send(req.encode())
+
+        # req = create_client_message(QueryUserReq)
+        # req.header.user = result.header.user
+        # req.body.uid = result.header.user
+        # client.socket.send(req.encode())
+
+      # client.socket.send(req.encode())
+
+    except Exception as e:
+        traceback.print_exc()
+    finally:
+        pass
 
 def test_card(imei,imsi,token,need_idle,*args):
     resp = None
     try:
         MessageMapping.init()
         client = TestClient(str(999999),str(999998), 'token_123')
+        get_broke(client, '13412311111','123456', 'device_id_333')
+        # receive_broke(client, '13412311111','123456', 'device_id_333')
+        # upgrade_check(client, '13412311111','123456', 'device_id_333')
+        # get_rank(client, '13412311111','123456', 'device_id_333')
+
         # send_friends_message(client, '13412311111','123456', 'device_id_333')
         # make_friends_apply(client, '13412311111','123456', 'device_id_333')
         # remove_friends_apply(client, '13412311111','123456', 'device_id_333')
         # receive_mails(client, '13412311111','123456', 'device_id_333')
 
-        get_friends_apply(client, '13412311111','123456', 'device_id_333')
+        # get_friends_apply(client, '13412311111','123456', 'device_id_333')
         # get_friends(client, '13412311111','123456', 'device_id_333')
         # query_bank(client, '13412311111','123456', 'device_id_333')
 

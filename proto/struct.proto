@@ -51,18 +51,11 @@ message PlayerBrief {
 message Result {
 	optional int64 gold = 1;
 	optional int64 diamond = 2;
-	optional int32 vip = 3;
-	repeated Item items_added = 4;
-	repeated Gift gifts_added = 5;
-	repeated Item items_removed = 6;
-}
-
-message Item {
-	required int32 id = 1;
-	required string name = 2;
-	required string icon = 3;
-	required int32 count = 4;
-	optional string description = 5;
+	optional int32 vip_exp = 3;
+	optional int32 vip = 4;
+	repeated Item items_added = 5;
+	repeated Gift gifts_added = 6;
+	repeated Item items_removed = 7;
 }
 
 message Gift {
@@ -116,7 +109,13 @@ message SigninReward {
 	repeated Gift gifts = 6;
 }
 
-
+message Item {
+	required int32 id = 1;
+	required string name = 2;
+	required string icon = 3;
+	required int32 count = 4;
+	optional string description = 5;
+}
 
 
 message ShopItem {

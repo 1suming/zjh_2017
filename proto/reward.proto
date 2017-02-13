@@ -105,3 +105,34 @@ message ReceiveCodeRewardResp {
 	
 	optional Result result = 1;
 }
+
+// 破产补助
+
+message QueryBankcruptRewardReq {
+	enum DEF {
+		ID = 2014;
+	}
+}
+
+message QueryBankcruptRewardResp {
+	enum DEF {
+		ID = 2015;
+	}
+	optional int32 total = 1;
+	optional int32 remain = 2;
+	optional int32 gold = 3;
+}
+
+
+message ReceiveBankcruptRewardReq {
+	enum DEF {
+		ID = 2016;
+	}
+}
+
+message ReceiveBankcruptRewardResp {
+	enum DEF {
+		ID = 2017;
+	}
+	optional int32 gold = 1;
+}

@@ -19,7 +19,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='bag.proto',
   package='cardgame',
-  serialized_pb=_b('\n\tbag.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"\x1d\n\x0bQueryBagReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8 \"\\\n\x0cQueryBagResp\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x02 \x03(\x0b\x32\x0e.cardgame.Gift\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9 B!\n\x18\x63om.zhili.cardgame.protoB\x03\x42\x61gH\x03')
+  serialized_pb=_b('\n\tbag.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"\x1d\n\x0bQueryBagReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8 \"\\\n\x0cQueryBagResp\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x02 \x03(\x0b\x32\x0e.cardgame.Gift\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9 \"-\n\nUseItemReq\x12\x0f\n\x07item_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xea \"?\n\x0bUseItemResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xeb B!\n\x18\x63om.zhili.cardgame.protoB\x03\x42\x61gH\x03')
   ,
   dependencies=[struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -61,6 +61,42 @@ _QUERYBAGRESP_DEF = _descriptor.EnumDescriptor(
   serialized_end=160,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYBAGRESP_DEF)
+
+_USEITEMREQ_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.UseItemReq.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=4202,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=193,
+  serialized_end=207,
+)
+_sym_db.RegisterEnumDescriptor(_USEITEMREQ_DEF)
+
+_USEITEMRESP_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.UseItemResp.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=4203,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=258,
+  serialized_end=272,
+)
+_sym_db.RegisterEnumDescriptor(_USEITEMRESP_DEF)
 
 
 _QUERYBAGREQ = _descriptor.Descriptor(
@@ -124,12 +160,79 @@ _QUERYBAGRESP = _descriptor.Descriptor(
   serialized_end=160,
 )
 
+
+_USEITEMREQ = _descriptor.Descriptor(
+  name='UseItemReq',
+  full_name='cardgame.UseItemReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='item_id', full_name='cardgame.UseItemReq.item_id', index=0,
+      number=1, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _USEITEMREQ_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=162,
+  serialized_end=207,
+)
+
+
+_USEITEMRESP = _descriptor.Descriptor(
+  name='UseItemResp',
+  full_name='cardgame.UseItemResp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='result', full_name='cardgame.UseItemResp.result', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _USEITEMRESP_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=209,
+  serialized_end=272,
+)
+
 _QUERYBAGREQ_DEF.containing_type = _QUERYBAGREQ
 _QUERYBAGRESP.fields_by_name['items'].message_type = struct_pb2._ITEM
 _QUERYBAGRESP.fields_by_name['gifts'].message_type = struct_pb2._GIFT
 _QUERYBAGRESP_DEF.containing_type = _QUERYBAGRESP
+_USEITEMREQ_DEF.containing_type = _USEITEMREQ
+_USEITEMRESP.fields_by_name['result'].message_type = struct_pb2._RESULT
+_USEITEMRESP_DEF.containing_type = _USEITEMRESP
 DESCRIPTOR.message_types_by_name['QueryBagReq'] = _QUERYBAGREQ
 DESCRIPTOR.message_types_by_name['QueryBagResp'] = _QUERYBAGRESP
+DESCRIPTOR.message_types_by_name['UseItemReq'] = _USEITEMREQ
+DESCRIPTOR.message_types_by_name['UseItemResp'] = _USEITEMRESP
 
 QueryBagReq = _reflection.GeneratedProtocolMessageType('QueryBagReq', (_message.Message,), dict(
   DESCRIPTOR = _QUERYBAGREQ,
@@ -144,6 +247,20 @@ QueryBagResp = _reflection.GeneratedProtocolMessageType('QueryBagResp', (_messag
   # @@protoc_insertion_point(class_scope:cardgame.QueryBagResp)
   ))
 _sym_db.RegisterMessage(QueryBagResp)
+
+UseItemReq = _reflection.GeneratedProtocolMessageType('UseItemReq', (_message.Message,), dict(
+  DESCRIPTOR = _USEITEMREQ,
+  __module__ = 'bag_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.UseItemReq)
+  ))
+_sym_db.RegisterMessage(UseItemReq)
+
+UseItemResp = _reflection.GeneratedProtocolMessageType('UseItemResp', (_message.Message,), dict(
+  DESCRIPTOR = _USEITEMRESP,
+  __module__ = 'bag_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.UseItemResp)
+  ))
+_sym_db.RegisterMessage(UseItemResp)
 
 
 DESCRIPTOR.has_options = True

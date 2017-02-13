@@ -1,17 +1,23 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Administrator'
 from config.var import *
+from config.rank import *
+from message.resultdef import *
 from db.bag_item import *
 from db.bag_gift import *
 from db.mail import *
+from db.user import *
+from db.rank_gold_top import *
+from db.rank_charge_top import *
+from helper import protohelper
 from datetime import date,datetime
 from helper import cachehelper
 import time
 
 from proto import struct_pb2 as pb2
+from proto.constant_pb2 import *
 
-
-
+from sqlalchemy import desc
 
 class ShopObject:
     def __init__(self,dataaccess,session):
@@ -185,3 +191,111 @@ class Manager:
             return False
         self.service.send_client_event(access_id,user,event.header.command,event.encode())
         return True
+
+
+class RankObject:
+    # enum RankType {
+    # 	RANK_WEALTH = 1;
+    # 	RANK_CHARGE = 2;
+    # 	RANK_CHARM = 3;
+    # 	RANK_MAKE_MONEY = 4;
+    # }
+    def __init__(self, session):
+        self.session = session
+        self.rank_type_map = {
+            1: self.wealth_top,
+            2: self.charge_top,
+            4: self.make_money_top,
+        }
+
+    def get_lists(self, rank_type, rank_time = None):
+        func = self.rank_type_map[rank_type]
+        return func(rank_time)
+
+    def wealth_top(self, rank_time):
+        return self.session.query(TRankGoldTop).order_by(desc(TRankGoldTop.gold)).limit(RANK_WEALTH_TOP).all()
+
+    def charge_top(self,top, rank_time):
+        items = self.session.query(TRankChargeTop).order_by(desc(TRankChargeTop.gold)).limit(RANK_CHARGE_TOP).all()
+        self.merage_fake(items)
+        return self.items
+
+    def make_money_top(self,resp,items):
+        pass
+
+
+    def set_pb(self, resp, items):
+        for index in range(len(items)):
+            protohelper.set_top(resp.body.players.add(), items[index], index)
+
+
+    def merage_fake(self, data):
+        if len(data) <= 0:
+            data = RANK_CHARGE_FAKE
+        else:
+            for fake in RANK_CHARGE_FAKE:
+                if len(data) >= RANK_CHARGE_TOP:
+                    break;
+                data.append(fake)
+    @staticmethod
+    def add_charge_top(session,uid,nick,avatar,gold ):
+        result = session.execute("INSERT INTO rank_charge_top(uid,nick,avatar,gold,add_date) VALUES (:uid,:nick,:avatar,:gold,:add_date)"
+                        " ON DUPLICATE KEY UPDATE nick = :nick, avatar = :avatar, gold = gold + :gold", {
+            'uid':uid,
+            'nick':nick,
+            'avatar':avatar,
+            'gold':gold,
+            'add_date':time.strftime('%Y-%m-%d')
+        }).rowcount
+
+    @staticmethod
+    def add_make_money_top(session, uid, nick, avatar, gold):
+        result = session.execute("INSERT INTO rank_make_money_top(uid,nick,avatar,gold,add_year,week_of_year) VALUES (:uid,:nick,:avatar,:gold,:add_year,:week_of_year)"
+                        " ON DUPLICATE KEY UPDATE nick = :nick, avatar = :avatar, gold = gold + :gold", {
+            'uid':uid,
+            'nick':nick,
+            'avatar':avatar,
+            'gold':gold,
+            'add_year':time.strftime('%Y'),
+            'week_of_year':time.strftime('%W'),
+        }).rowcount
+
+class BrokeObject:
+
+    @staticmethod
+    def query_broke(uid, r):
+        # 根据用户vip体系，查询得到用户可领取的次数总数
+        total = 5
+        # conf文件读取每次领取金额数
+        good = 2000
+        key = 'broke:'+str(uid)
+        if r.exists(key):
+            remain = int(r.get(key))
+        else:
+            remain = total
+
+        return total,remain,good
+
+    @staticmethod
+    def receive_broke(uid, t, r):
+        # 根据用户vip体系，查询得到用户可领取的次数总数
+        total = 5
+        # conf文件读取每次领取金额数
+        good = 2000
+        key  = 'broke:'+str(uid)
+        if r.exists(key):
+            remain = int(r.get(key))
+            if remain == 0:
+                return RESULT_FAILED_BROKE_FULL,0
+            else:
+                # 给用户加金币操作 todo ...
+                print '222222222222222222222222'
+                remain = r.decr(key)
+                return 0,good
+        else:
+            # 给用户加金币操作 todo ...
+            r.set(key, total)
+            r.expire(key, int(( t - ( t % 86400 ) + time.timezone ) + 86400 - t) )
+            remain = int(r.decr(key))
+            print 'first plus gold'
+            return 0,good

@@ -98,7 +98,7 @@ class LoginServer:
             LogoutReq.DEF.Value("ID"): self.handle_logout,
             FastLoginReq.DEF.Value("ID"): self.handle_fast_login,
             GetVerifyCodeReq.DEF.Value("ID"): self.handle_get_verify_code,
-            # CheckUpgradeReq.DEF.Value("ID"):self.handle_check_upgrade,
+            CheckUpgradeReq.DEF.Value("ID"):self.handle_check_upgrade,
         }
         self.version_manager = VersionManager()
         self.av = AccountValidate()
@@ -156,11 +156,14 @@ class LoginServer:
         sock.async_close()
 
     def handle_check_upgrade(self,message,resp):
-        old_version = message.body.version
-        version_info = self.version_manager.get_upgrade_info(old_version)
-        resp.body.version = self.version_manager.version
-        if version_info != None: 
-            resp.body.upgrade_info = version_info
+        # old_version = message.body.version
+        # version_info = self.version_manager.get_upgrade_info(old_version)
+        # resp.body.version = self.version_manager.version
+        # if version_info != None:
+        #     resp.body.upgrade_info = version_info
+        # resp.header.result = 0
+        # return True
+        resp.body.upgrade_info = UPGRADE_URL
         resp.header.result = 0
         return True
 

@@ -22,5 +22,17 @@ message QueryBagResp {
 	repeated Gift gifts = 2;
 }
 
-	
+message UseItemReq {
+	enum DEF {
+		ID = 4202;
+	}
+	required int32 item_id = 1;
+}
+
+message UseItemResp {
+	enum DEF {
+		ID = 4203;
+	}
+	optional Result result = 1;
+}
 

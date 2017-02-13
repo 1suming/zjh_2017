@@ -50,6 +50,7 @@ from proto.bag_pb2 import *
 from proto.bank_pb2 import *
 from proto.mail_pb2 import *
 from proto.friend_pb2 import *
+from proto.rank_pb2 import *
 from util.handlerutil import *
 
 from config.var import *
@@ -89,6 +90,13 @@ class HallService(GameService):
         self.registe_command(QuerySigninRewardReq,QuerySigninRewardResp,self.handle_query_signin)
         self.registe_command(SigninReq,SigninResp,self.handle_signin)
 
+        # 破产补助
+        self.registe_command(QueryBankcruptRewardReq,QueryBankcruptRewardResp,self.handle_query_bankcrupt)
+        self.registe_command(ReceiveBankcruptRewardReq,ReceiveBankcruptRewardResp,self.handle_receive_bankcrupt)
+
+        # 排行
+        self.registe_command(QueryRankReq, QueryRankResp, self.handle_rank)
+
         # 商城、交易
         self.registe_command(QueryShopReq,QueryShopResp,self.handle_shop)
         self.registe_command(BuyItemReq,BuyItemResp,self.handle_shop_buy)
@@ -116,6 +124,26 @@ class HallService(GameService):
         self.registe_command(HandleFriendApplyReq,HandleFriendApplyResp,self.handle_friends_apply)
         self.registe_command(ReceiveFriendMessageReq,ReceiveFriendMessageResp,self.handle_receive_friends_message)
         self.registe_command(RemoveFriendMessageReq,RemoveFriendMessageResp,self.handle_remove_friends)
+
+
+    @USE_TRANSACTION
+    def handle_query_bankcrupt(self, session, req, resp, event):
+        resp.body.total,resp.body.remain,resp.body.gold = BrokeObject.query_broke(req.header.user,self.redis)
+        resp.header.result = 0
+    @USE_TRANSACTION
+    def handle_receive_bankcrupt(self, session, req, resp, event):
+        resp.header.result,resp.body.gold = BrokeObject.receive_broke(req.header.user,time.time(),self.redis)
+
+    @USE_TRANSACTION
+    def handle_rank(self, session, req, resp, event):
+        rank = RankObject(session)
+        rank.set_pb( resp, rank.get_lists(req.body.rank_type) )
+        resp.header.result = 0
+
+        # 日充值榜单，调用函数
+        # RankObject.add_charge_top(session, 10026,'nick','avatar',100)
+        # 周赚金榜单，调用函数
+        # RankObject.add_make_money_top(session, 10026,'nick','avatar',100)
 
     @USE_TRANSACTION
     def handle_get_friends(self,session,req,resp,event):
@@ -516,10 +544,11 @@ class HallService(GameService):
 
     @USE_TRANSACTION
     def handle_update_user(self,session,req,resp,event):
-        # user = session.query(TUser).filter(TUser.id == req.header.user).first()
+
         user_info = self.da.get_user(req.header.user)
         user_gf = session.query(TUserGoldFlower).filter(TUserGoldFlower.id == req.header.user).first()
-        if len(req.body.nick) >= 0:
+        if req.body.nick:
+
             if user_gf.change_nick == 0:
                 resp.header.result = -1
                 resp.body.result.gold = 0
@@ -534,12 +563,14 @@ class HallService(GameService):
 
             user_info.nick =  req.body.nick
             user_info.diamond =  user_info.diamond - PRM_CHANGE_NAME_MINUS_DIAMOND
+
             self.da.save_user(session,user_info)
             session.query(TUserGoldFlower).with_lockmode("update").filter(TUserGoldFlower.id == req.header.user).update({
                 TUserGoldFlower.change_nick : 0
             })
         else:
-            data = {}
+
+
             if len(req.body.birthday) > 0:
                 user_info.birthday = req.body.birthday
             if len(req.body.sign)  > 0:
@@ -548,14 +579,15 @@ class HallService(GameService):
                 user_info.avatar = req.body.avatar
             if len(req.body.sex) > 0:
                 user_info.sex = req.body.sex
-            session.query(TUser).with_lockmode("update").filter(TUser.id == req.header.user).update(data)
 
-            result = session.query(TRewardUserLog).filter(TRewardUserLog.uid == user.id).first()
+            self.da.save_user(session,user_info)
+
+            result = session.query(TRewardUserLog).filter(TRewardUserLog.uid == user_info.id).first()
 
             if result == None:
                 # 完成任务，加入奖励记录，记录状态用户待接收
                 reward_log = TRewardUserLog()
-                reward_log.uid = user.id
+                reward_log.uid = user_info.id
                 reward_log.task_id = 1
                 reward_log.state = STATE_NO_ACCEPT_REWARD
                 reward_log.finish_date = time.strftime('%Y-%m-%d')

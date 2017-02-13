@@ -19,7 +19,7 @@ import constant_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='struct.proto',
   package='cardgame',
-  serialized_pb=_b('\n\x0cstruct.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\"\xff\x02\n\x06Player\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0e\n\x06mobile\x18\x02 \x01(\t\x12\x0c\n\x04nick\x18\x03 \x02(\t\x12\x0e\n\x06\x61vatar\x18\x04 \x02(\t\x12\x0c\n\x04gold\x18\x05 \x02(\x03\x12\x0f\n\x07\x64iamond\x18\x06 \x02(\x03\x12\x0b\n\x03vip\x18\x07 \x02(\x05\x12\r\n\x05\x63harm\x18\x08 \x02(\x05\x12\x0b\n\x03\x65xp\x18\n \x02(\x05\x12\x13\n\x0btotal_games\x18\x0b \x02(\x05\x12\x11\n\twin_games\x18\x0c \x02(\x05\x12\x13\n\x0bwealth_rank\x18\r \x01(\x05\x12\x10\n\x08win_rank\x18\x0e \x01(\x05\x12\x12\n\ncharm_rank\x18\x0f \x01(\x05\x12\x13\n\x0b\x63harge_rank\x18\x10 \x01(\x05\x12\x0c\n\x04sign\x18\x11 \x01(\t\x12\x0b\n\x03sex\x18\x12 \x01(\x05\x12\x10\n\x08\x62irthday\x18\x13 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x14 \x01(\t\x12\x1d\n\x05gifts\x18\x15 \x03(\x0b\x32\x0e.cardgame.Gift\x12\x1d\n\x04\x62\x65st\x18\x16 \x03(\x0b\x32\x0f.cardgame.Poker\"r\n\x0bPlayerBrief\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0e\n\x06\x61vatar\x18\x02 \x02(\t\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x0c\n\x04seat\x18\x04 \x02(\x05\x12\x0c\n\x04nick\x18\x05 \x02(\t\x12\x0b\n\x03vip\x18\x06 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x07 \x01(\x03\"\xa5\x01\n\x06Result\x12\x0c\n\x04gold\x18\x01 \x01(\x03\x12\x0f\n\x07\x64iamond\x18\x02 \x01(\x03\x12\x0b\n\x03vip\x18\x03 \x01(\x05\x12#\n\x0bitems_added\x18\x04 \x03(\x0b\x32\x0e.cardgame.Item\x12#\n\x0bgifts_added\x18\x05 \x03(\x0b\x32\x0e.cardgame.Gift\x12%\n\ritems_removed\x18\x06 \x03(\x0b\x32\x0e.cardgame.Item\"R\n\x04Item\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x0c\n\x04icon\x18\x03 \x02(\t\x12\r\n\x05\x63ount\x18\x04 \x02(\x05\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\"=\n\x04Gift\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x0c\n\x04icon\x18\x03 \x02(\t\x12\r\n\x05\x63ount\x18\x04 \x02(\x05\"\x8d\x01\n\x0c\x41nnouncement\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x10\n\x08\x63\x61tegory\x18\x02 \x02(\t\x12\r\n\x05title\x18\x03 \x02(\t\x12\x0f\n\x07\x63ontent\x18\x04 \x02(\t\x12\x0c\n\x04sort\x18\x05 \x02(\x05\x12\x12\n\nhas_action\x18\x06 \x02(\x05\x12\x0e\n\x06\x61\x63tion\x18\x07 \x01(\t\x12\r\n\x05popup\x18\x08 \x02(\x05\"b\n\x0cNotification\x12\x18\n\x10has_announcement\x18\x01 \x01(\x05\x12\x10\n\x08has_mail\x18\x02 \x01(\x05\x12\x12\n\nhas_reward\x18\x03 \x01(\x05\x12\x12\n\nhas_friend\x18\x04 \x01(\x05\"\xd3\x01\n\x06Reward\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x10\n\x08\x63\x61tegory\x18\x02 \x02(\t\x12\x0c\n\x04name\x18\x03 \x02(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x02(\t\x12\x0c\n\x04gold\x18\x05 \x01(\x03\x12\x0f\n\x07\x64iamond\x18\x06 \x01(\x03\x12\x1d\n\x05items\x18\x07 \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x08 \x03(\x0b\x32\x0e.cardgame.Gift\x12\r\n\x05state\x18\t \x02(\x05\x12\x0e\n\x06\x61\x63tion\x18\n \x02(\t\x12\x0c\n\x04icon\x18\x0b \x01(\x05\"\x8d\x01\n\x0cSigninReward\x12\x0b\n\x03\x64\x61y\x18\x01 \x02(\x05\x12\x13\n\x0b\x64\x65scription\x18\x02 \x02(\t\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x0f\n\x07\x64iamond\x18\x04 \x02(\x03\x12\x1d\n\x05items\x18\x05 \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x06 \x03(\x0b\x32\x0e.cardgame.Gift\"\xca\x01\n\x08ShopItem\x12\n\n\x02id\x18\x01 \x02(\x05\x12)\n\titem_type\x18\x02 \x02(\x0e\x32\x16.cardgame.ShopItemType\x12\x1c\n\x04item\x18\x03 \x01(\x0b\x32\x0e.cardgame.Item\x12\x11\n\tshop_gold\x18\x04 \x01(\x03\x12\x0f\n\x07\x64iamond\x18\x05 \x02(\x03\x12\x0c\n\x04gold\x18\x06 \x02(\x03\x12\x12\n\nextra_gold\x18\x08 \x01(\x03\x12#\n\x0b\x65xtra_items\x18\t \x03(\x0b\x32\x0e.cardgame.Item\"e\n\x05Trade\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04type\x18\x02 \x02(\x05\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x0f\n\x07\x64iamond\x18\x04 \x02(\x03\x12\x0e\n\x06seller\x18\x05 \x02(\x05\x12\x13\n\x0bseller_name\x18\x06 \x02(\t\"&\n\x05Poker\x12\x0e\n\x06\x66lower\x18\x01 \x02(\x05\x12\r\n\x05value\x18\x02 \x02(\x05\"]\n\x0cPlayerAction\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12#\n\x06\x61\x63tion\x18\x02 \x02(\x0e\x32\x13.cardgame.BetAction\x12\r\n\x05other\x18\x03 \x01(\x05\x12\x0c\n\x04gold\x18\x04 \x02(\x03\"!\n\x04\x43hip\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04gold\x18\x02 \x02(\x03\"L\n\tGameRound\x12\r\n\x05round\x18\x01 \x02(\x05\x12\x17\n\x0f\x63urrent_gambler\x18\x02 \x02(\x05\x12\x17\n\x0fturn_start_time\x18\x03 \x02(\x05\"\xa4\x01\n\x07Gambler\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04gold\x18\x05 \x02(\x03\x12\x10\n\x08\x62\x65t_gold\x18\x06 \x02(\x03\x12\x11\n\tis_dealer\x18\x08 \x02(\x08\x12\x0f\n\x07is_seen\x18\t \x02(\x08\x12\x13\n\x0bis_given_up\x18\n \x02(\x08\x12\x0f\n\x07is_fail\x18\x0b \x02(\x08\x12\x14\n\x0cis_show_hand\x18\x0c \x02(\x08\x12\x0c\n\x04seat\x18\r \x02(\x05\"\x8e\x01\n\x05Table\x12\n\n\x02id\x18\x01 \x02(\x05\x12&\n\x07players\x18\x02 \x03(\x0b\x32\x15.cardgame.PlayerBrief\x12\'\n\ntable_type\x18\x03 \x02(\x0e\x32\x13.cardgame.TableType\x12(\n\ngoldflower\x18\x04 \x01(\x0b\x32\x14.cardgame.GoldFlower\"\xdc\x01\n\nGoldFlower\x12\x12\n\nstart_time\x18\x01 \x02(\x05\x12\"\n\x05round\x18\x02 \x02(\x0b\x32\x13.cardgame.GameRound\x12#\n\x08gamblers\x18\x03 \x03(\x0b\x32\x11.cardgame.Gambler\x12\x1d\n\x05\x63hips\x18\x04 \x03(\x0b\x32\x0e.cardgame.Chip\x12\x15\n\rrequired_gold\x18\x05 \x02(\x05\x12\x10\n\x08max_gold\x18\x06 \x02(\x05\x12\x16\n\x0erequired_round\x18\x07 \x02(\x05\x12\x11\n\tmax_round\x18\x08 \x02(\x05\"N\n\nPlayerGold\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x13\n\x0b\x61\x63tion_gold\x18\x02 \x02(\x03\x12\x10\n\x08\x62\x65t_gold\x18\x03 \x02(\x03\x12\x0c\n\x04gold\x18\x04 \x02(\x03\"<\n\x0cPlayerPokers\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x1f\n\x06pokers\x18\x02 \x03(\x0b\x32\x0f.cardgame.Poker\"2\n\nGameServer\x12\n\n\x02id\x18\x01 \x02(\x05\x12\n\n\x02ip\x18\x02 \x02(\t\x12\x0c\n\x04port\x18\x03 \x02(\x05\"Y\n\x0b\x43harmRecord\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04nick\x18\x02 \x02(\x05\x12\x12\n\nnick_color\x18\x03 \x02(\x05\x12\x0b\n\x03num\x18\x04 \x02(\x05\x12\x0e\n\x06\x61\x63tion\x18\x05 \x02(\x05\"t\n\rFriendsRecord\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04nick\x18\x02 \x02(\x05\x12\x12\n\nnick_color\x18\x03 \x02(\x05\x12\x0e\n\x06\x61\x63tion\x18\x04 \x02(\x05\x12\x10\n\x08stuff_id\x18\x05 \x01(\x05\x12\x12\n\ncharm_rank\x18\x06 \x01(\x05\"L\n\tBuyRecord\x12\x0c\n\x04gold\x18\x01 \x02(\x05\x12\x10\n\x08stuff_id\x18\x02 \x02(\x05\x12\x12\n\nstuff_name\x18\x03 \x02(\x05\x12\x0b\n\x03num\x18\x04 \x02(\x05\"\'\n\nSellRecord\x12\x0c\n\x04gold\x18\x01 \x02(\x05\x12\x0b\n\x03num\x18\x02 \x02(\x05\">\n\tToyRecord\x12\x10\n\x08stuff_id\x18\x01 \x02(\x05\x12\x12\n\nstuff_name\x18\x02 \x02(\x05\x12\x0b\n\x03num\x18\x03 \x02(\x05\"\xf7\x01\n\x04Mail\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x11\n\tfrom_user\x18\x02 \x02(\x05\x12\x0f\n\x07to_user\x18\x03 \x02(\x05\x12\x11\n\tsent_time\x18\x04 \x02(\x05\x12\r\n\x05title\x18\x05 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x06 \x01(\t\x12\x0c\n\x04type\x18\x07 \x01(\x05\x12\x0f\n\x07\x64iamond\x18\x08 \x01(\x03\x12\x0c\n\x04gold\x18\t \x01(\x03\x12\x1d\n\x05items\x18\n \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x0b \x03(\x0b\x32\x0e.cardgame.Gift\x12\x10\n\x08received\x18\x0c \x01(\x05\x12\x0f\n\x07is_read\x18\r \x01(\x05\"\x85\x01\n\x06\x46riend\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04type\x18\x02 \x02(\x05\x12\x0e\n\x06\x61vatar\x18\x03 \x02(\t\x12\x0c\n\x04gold\x18\x04 \x02(\x03\x12\x11\n\tis_online\x18\x05 \x02(\x08\x12\x0c\n\x04nick\x18\x06 \x02(\t\x12\x0f\n\x07room_id\x18\x07 \x01(\x05\x12\x10\n\x08table_id\x18\x08 \x01(\x05\"h\n\x05\x45nemy\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0e\n\x06\x61vatar\x18\x02 \x02(\t\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x11\n\tis_online\x18\x04 \x02(\x08\x12\x0f\n\x07room_id\x18\x05 \x01(\x05\x12\x10\n\x08table_id\x18\x06 \x01(\x05\"\xab\x01\n\x0b\x46riendApply\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x12\n\napply_from\x18\x02 \x02(\x05\x12\x17\n\x0f\x61pply_from_nick\x18\x03 \x02(\t\x12\x19\n\x11\x61pply_from_avatar\x18\x04 \x02(\t\x12\n\n\x02to\x18\x05 \x02(\x05\x12\x0c\n\x04time\x18\x06 \x02(\x05\x12\x0f\n\x07message\x18\x07 \x02(\t\x12\x1d\n\x05gifts\x18\x08 \x03(\x0b\x32\x0e.cardgame.Gift\"\x93\x01\n\rFriendMessage\x12\x12\n\nmessage_id\x18\x01 \x02(\x05\x12\x11\n\tfrom_user\x18\x02 \x02(\x05\x12\x16\n\x0e\x66rom_user_nick\x18\x03 \x02(\t\x12\x18\n\x10\x66rom_user_avatar\x18\x04 \x02(\t\x12\n\n\x02to\x18\x05 \x02(\x05\x12\x0c\n\x04time\x18\x06 \x02(\x05\x12\x0f\n\x07message\x18\x07 \x02(\t\"\x8c\x01\n\nRankPlayer\x12\x0c\n\x04rank\x18\x01 \x02(\x05\x12\x0b\n\x03uid\x18\x02 \x02(\x05\x12\x0c\n\x04nick\x18\x03 \x02(\t\x12\x0e\n\x06\x61vatar\x18\x04 \x02(\t\x12\x0c\n\x04gold\x18\x05 \x02(\x03\x12\r\n\x05\x63harm\x18\x06 \x02(\x05\x12\x13\n\x0brank_reward\x18\x07 \x01(\t\x12\x13\n\x0bmoney_maked\x18\x08 \x01(\x05\"\x89\x01\n\nChargeItem\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x02 \x02(\x03\x12\x13\n\x0b\x64\x65scription\x18\x03 \x02(\t\x12\r\n\x05money\x18\x04 \x02(\x05\x12\x15\n\rextra_diamond\x18\x05 \x01(\x05\x12#\n\x0b\x65xtra_items\x18\x06 \x01(\x0b\x32\x0e.cardgame.ItemB$\n\x18\x63om.zhili.cardgame.protoB\x06StructH\x03')
+  serialized_pb=_b('\n\x0cstruct.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\"\xff\x02\n\x06Player\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0e\n\x06mobile\x18\x02 \x01(\t\x12\x0c\n\x04nick\x18\x03 \x02(\t\x12\x0e\n\x06\x61vatar\x18\x04 \x02(\t\x12\x0c\n\x04gold\x18\x05 \x02(\x03\x12\x0f\n\x07\x64iamond\x18\x06 \x02(\x03\x12\x0b\n\x03vip\x18\x07 \x02(\x05\x12\r\n\x05\x63harm\x18\x08 \x02(\x05\x12\x0b\n\x03\x65xp\x18\n \x02(\x05\x12\x13\n\x0btotal_games\x18\x0b \x02(\x05\x12\x11\n\twin_games\x18\x0c \x02(\x05\x12\x13\n\x0bwealth_rank\x18\r \x01(\x05\x12\x10\n\x08win_rank\x18\x0e \x01(\x05\x12\x12\n\ncharm_rank\x18\x0f \x01(\x05\x12\x13\n\x0b\x63harge_rank\x18\x10 \x01(\x05\x12\x0c\n\x04sign\x18\x11 \x01(\t\x12\x0b\n\x03sex\x18\x12 \x01(\x05\x12\x10\n\x08\x62irthday\x18\x13 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x14 \x01(\t\x12\x1d\n\x05gifts\x18\x15 \x03(\x0b\x32\x0e.cardgame.Gift\x12\x1d\n\x04\x62\x65st\x18\x16 \x03(\x0b\x32\x0f.cardgame.Poker\"r\n\x0bPlayerBrief\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0e\n\x06\x61vatar\x18\x02 \x02(\t\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x0c\n\x04seat\x18\x04 \x02(\x05\x12\x0c\n\x04nick\x18\x05 \x02(\t\x12\x0b\n\x03vip\x18\x06 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x07 \x01(\x03\"\xb6\x01\n\x06Result\x12\x0c\n\x04gold\x18\x01 \x01(\x03\x12\x0f\n\x07\x64iamond\x18\x02 \x01(\x03\x12\x0f\n\x07vip_exp\x18\x03 \x01(\x05\x12\x0b\n\x03vip\x18\x04 \x01(\x05\x12#\n\x0bitems_added\x18\x05 \x03(\x0b\x32\x0e.cardgame.Item\x12#\n\x0bgifts_added\x18\x06 \x03(\x0b\x32\x0e.cardgame.Gift\x12%\n\ritems_removed\x18\x07 \x03(\x0b\x32\x0e.cardgame.Item\"=\n\x04Gift\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x0c\n\x04icon\x18\x03 \x02(\t\x12\r\n\x05\x63ount\x18\x04 \x02(\x05\"\x8d\x01\n\x0c\x41nnouncement\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x10\n\x08\x63\x61tegory\x18\x02 \x02(\t\x12\r\n\x05title\x18\x03 \x02(\t\x12\x0f\n\x07\x63ontent\x18\x04 \x02(\t\x12\x0c\n\x04sort\x18\x05 \x02(\x05\x12\x12\n\nhas_action\x18\x06 \x02(\x05\x12\x0e\n\x06\x61\x63tion\x18\x07 \x01(\t\x12\r\n\x05popup\x18\x08 \x02(\x05\"b\n\x0cNotification\x12\x18\n\x10has_announcement\x18\x01 \x01(\x05\x12\x10\n\x08has_mail\x18\x02 \x01(\x05\x12\x12\n\nhas_reward\x18\x03 \x01(\x05\x12\x12\n\nhas_friend\x18\x04 \x01(\x05\"\xd3\x01\n\x06Reward\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x10\n\x08\x63\x61tegory\x18\x02 \x02(\t\x12\x0c\n\x04name\x18\x03 \x02(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x02(\t\x12\x0c\n\x04gold\x18\x05 \x01(\x03\x12\x0f\n\x07\x64iamond\x18\x06 \x01(\x03\x12\x1d\n\x05items\x18\x07 \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x08 \x03(\x0b\x32\x0e.cardgame.Gift\x12\r\n\x05state\x18\t \x02(\x05\x12\x0e\n\x06\x61\x63tion\x18\n \x02(\t\x12\x0c\n\x04icon\x18\x0b \x01(\x05\"\x8d\x01\n\x0cSigninReward\x12\x0b\n\x03\x64\x61y\x18\x01 \x02(\x05\x12\x13\n\x0b\x64\x65scription\x18\x02 \x02(\t\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x0f\n\x07\x64iamond\x18\x04 \x02(\x03\x12\x1d\n\x05items\x18\x05 \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x06 \x03(\x0b\x32\x0e.cardgame.Gift\"R\n\x04Item\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04name\x18\x02 \x02(\t\x12\x0c\n\x04icon\x18\x03 \x02(\t\x12\r\n\x05\x63ount\x18\x04 \x02(\x05\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\"\xca\x01\n\x08ShopItem\x12\n\n\x02id\x18\x01 \x02(\x05\x12)\n\titem_type\x18\x02 \x02(\x0e\x32\x16.cardgame.ShopItemType\x12\x1c\n\x04item\x18\x03 \x01(\x0b\x32\x0e.cardgame.Item\x12\x11\n\tshop_gold\x18\x04 \x01(\x03\x12\x0f\n\x07\x64iamond\x18\x05 \x02(\x03\x12\x0c\n\x04gold\x18\x06 \x02(\x03\x12\x12\n\nextra_gold\x18\x08 \x01(\x03\x12#\n\x0b\x65xtra_items\x18\t \x03(\x0b\x32\x0e.cardgame.Item\"e\n\x05Trade\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0c\n\x04type\x18\x02 \x02(\x05\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x0f\n\x07\x64iamond\x18\x04 \x02(\x03\x12\x0e\n\x06seller\x18\x05 \x02(\x05\x12\x13\n\x0bseller_name\x18\x06 \x02(\t\"&\n\x05Poker\x12\x0e\n\x06\x66lower\x18\x01 \x02(\x05\x12\r\n\x05value\x18\x02 \x02(\x05\"]\n\x0cPlayerAction\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12#\n\x06\x61\x63tion\x18\x02 \x02(\x0e\x32\x13.cardgame.BetAction\x12\r\n\x05other\x18\x03 \x01(\x05\x12\x0c\n\x04gold\x18\x04 \x02(\x03\"!\n\x04\x43hip\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04gold\x18\x02 \x02(\x03\"L\n\tGameRound\x12\r\n\x05round\x18\x01 \x02(\x05\x12\x17\n\x0f\x63urrent_gambler\x18\x02 \x02(\x05\x12\x17\n\x0fturn_start_time\x18\x03 \x02(\x05\"\xa4\x01\n\x07Gambler\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04gold\x18\x05 \x02(\x03\x12\x10\n\x08\x62\x65t_gold\x18\x06 \x02(\x03\x12\x11\n\tis_dealer\x18\x08 \x02(\x08\x12\x0f\n\x07is_seen\x18\t \x02(\x08\x12\x13\n\x0bis_given_up\x18\n \x02(\x08\x12\x0f\n\x07is_fail\x18\x0b \x02(\x08\x12\x14\n\x0cis_show_hand\x18\x0c \x02(\x08\x12\x0c\n\x04seat\x18\r \x02(\x05\"\x8e\x01\n\x05Table\x12\n\n\x02id\x18\x01 \x02(\x05\x12&\n\x07players\x18\x02 \x03(\x0b\x32\x15.cardgame.PlayerBrief\x12\'\n\ntable_type\x18\x03 \x02(\x0e\x32\x13.cardgame.TableType\x12(\n\ngoldflower\x18\x04 \x01(\x0b\x32\x14.cardgame.GoldFlower\"\xdc\x01\n\nGoldFlower\x12\x12\n\nstart_time\x18\x01 \x02(\x05\x12\"\n\x05round\x18\x02 \x02(\x0b\x32\x13.cardgame.GameRound\x12#\n\x08gamblers\x18\x03 \x03(\x0b\x32\x11.cardgame.Gambler\x12\x1d\n\x05\x63hips\x18\x04 \x03(\x0b\x32\x0e.cardgame.Chip\x12\x15\n\rrequired_gold\x18\x05 \x02(\x05\x12\x10\n\x08max_gold\x18\x06 \x02(\x05\x12\x16\n\x0erequired_round\x18\x07 \x02(\x05\x12\x11\n\tmax_round\x18\x08 \x02(\x05\"N\n\nPlayerGold\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x13\n\x0b\x61\x63tion_gold\x18\x02 \x02(\x03\x12\x10\n\x08\x62\x65t_gold\x18\x03 \x02(\x03\x12\x0c\n\x04gold\x18\x04 \x02(\x03\"<\n\x0cPlayerPokers\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x1f\n\x06pokers\x18\x02 \x03(\x0b\x32\x0f.cardgame.Poker\"2\n\nGameServer\x12\n\n\x02id\x18\x01 \x02(\x05\x12\n\n\x02ip\x18\x02 \x02(\t\x12\x0c\n\x04port\x18\x03 \x02(\x05\"Y\n\x0b\x43harmRecord\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04nick\x18\x02 \x02(\x05\x12\x12\n\nnick_color\x18\x03 \x02(\x05\x12\x0b\n\x03num\x18\x04 \x02(\x05\x12\x0e\n\x06\x61\x63tion\x18\x05 \x02(\x05\"t\n\rFriendsRecord\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04nick\x18\x02 \x02(\x05\x12\x12\n\nnick_color\x18\x03 \x02(\x05\x12\x0e\n\x06\x61\x63tion\x18\x04 \x02(\x05\x12\x10\n\x08stuff_id\x18\x05 \x01(\x05\x12\x12\n\ncharm_rank\x18\x06 \x01(\x05\"L\n\tBuyRecord\x12\x0c\n\x04gold\x18\x01 \x02(\x05\x12\x10\n\x08stuff_id\x18\x02 \x02(\x05\x12\x12\n\nstuff_name\x18\x03 \x02(\x05\x12\x0b\n\x03num\x18\x04 \x02(\x05\"\'\n\nSellRecord\x12\x0c\n\x04gold\x18\x01 \x02(\x05\x12\x0b\n\x03num\x18\x02 \x02(\x05\">\n\tToyRecord\x12\x10\n\x08stuff_id\x18\x01 \x02(\x05\x12\x12\n\nstuff_name\x18\x02 \x02(\x05\x12\x0b\n\x03num\x18\x03 \x02(\x05\"\xf7\x01\n\x04Mail\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x11\n\tfrom_user\x18\x02 \x02(\x05\x12\x0f\n\x07to_user\x18\x03 \x02(\x05\x12\x11\n\tsent_time\x18\x04 \x02(\x05\x12\r\n\x05title\x18\x05 \x01(\t\x12\x0f\n\x07\x63ontent\x18\x06 \x01(\t\x12\x0c\n\x04type\x18\x07 \x01(\x05\x12\x0f\n\x07\x64iamond\x18\x08 \x01(\x03\x12\x0c\n\x04gold\x18\t \x01(\x03\x12\x1d\n\x05items\x18\n \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x0b \x03(\x0b\x32\x0e.cardgame.Gift\x12\x10\n\x08received\x18\x0c \x01(\x05\x12\x0f\n\x07is_read\x18\r \x01(\x05\"\x85\x01\n\x06\x46riend\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0c\n\x04type\x18\x02 \x02(\x05\x12\x0e\n\x06\x61vatar\x18\x03 \x02(\t\x12\x0c\n\x04gold\x18\x04 \x02(\x03\x12\x11\n\tis_online\x18\x05 \x02(\x08\x12\x0c\n\x04nick\x18\x06 \x02(\t\x12\x0f\n\x07room_id\x18\x07 \x01(\x05\x12\x10\n\x08table_id\x18\x08 \x01(\x05\"h\n\x05\x45nemy\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0e\n\x06\x61vatar\x18\x02 \x02(\t\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x11\n\tis_online\x18\x04 \x02(\x08\x12\x0f\n\x07room_id\x18\x05 \x01(\x05\x12\x10\n\x08table_id\x18\x06 \x01(\x05\"\xab\x01\n\x0b\x46riendApply\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x12\n\napply_from\x18\x02 \x02(\x05\x12\x17\n\x0f\x61pply_from_nick\x18\x03 \x02(\t\x12\x19\n\x11\x61pply_from_avatar\x18\x04 \x02(\t\x12\n\n\x02to\x18\x05 \x02(\x05\x12\x0c\n\x04time\x18\x06 \x02(\x05\x12\x0f\n\x07message\x18\x07 \x02(\t\x12\x1d\n\x05gifts\x18\x08 \x03(\x0b\x32\x0e.cardgame.Gift\"\x93\x01\n\rFriendMessage\x12\x12\n\nmessage_id\x18\x01 \x02(\x05\x12\x11\n\tfrom_user\x18\x02 \x02(\x05\x12\x16\n\x0e\x66rom_user_nick\x18\x03 \x02(\t\x12\x18\n\x10\x66rom_user_avatar\x18\x04 \x02(\t\x12\n\n\x02to\x18\x05 \x02(\x05\x12\x0c\n\x04time\x18\x06 \x02(\x05\x12\x0f\n\x07message\x18\x07 \x02(\t\"\x8c\x01\n\nRankPlayer\x12\x0c\n\x04rank\x18\x01 \x02(\x05\x12\x0b\n\x03uid\x18\x02 \x02(\x05\x12\x0c\n\x04nick\x18\x03 \x02(\t\x12\x0e\n\x06\x61vatar\x18\x04 \x02(\t\x12\x0c\n\x04gold\x18\x05 \x02(\x03\x12\r\n\x05\x63harm\x18\x06 \x02(\x05\x12\x13\n\x0brank_reward\x18\x07 \x01(\t\x12\x13\n\x0bmoney_maked\x18\x08 \x01(\x05\"\x89\x01\n\nChargeItem\x12\n\n\x02id\x18\x01 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x02 \x02(\x03\x12\x13\n\x0b\x64\x65scription\x18\x03 \x02(\t\x12\r\n\x05money\x18\x04 \x02(\x05\x12\x15\n\rextra_diamond\x18\x05 \x01(\x05\x12#\n\x0b\x65xtra_items\x18\x06 \x01(\x0b\x32\x0e.cardgame.ItemB$\n\x18\x63om.zhili.cardgame.protoB\x06StructH\x03')
   ,
   dependencies=[constant_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -291,29 +291,36 @@ _RESULT = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='vip', full_name='cardgame.Result.vip', index=2,
+      name='vip_exp', full_name='cardgame.Result.vip_exp', index=2,
       number=3, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='items_added', full_name='cardgame.Result.items_added', index=3,
-      number=4, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
+      name='vip', full_name='cardgame.Result.vip', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='gifts_added', full_name='cardgame.Result.gifts_added', index=4,
+      name='items_added', full_name='cardgame.Result.items_added', index=4,
       number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='items_removed', full_name='cardgame.Result.items_removed', index=5,
+      name='gifts_added', full_name='cardgame.Result.gifts_added', index=5,
       number=6, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='items_removed', full_name='cardgame.Result.items_removed', index=6,
+      number=7, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -330,65 +337,7 @@ _RESULT = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=545,
-  serialized_end=710,
-)
-
-
-_ITEM = _descriptor.Descriptor(
-  name='Item',
-  full_name='cardgame.Item',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='id', full_name='cardgame.Item.id', index=0,
-      number=1, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='name', full_name='cardgame.Item.name', index=1,
-      number=2, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='icon', full_name='cardgame.Item.icon', index=2,
-      number=3, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='count', full_name='cardgame.Item.count', index=3,
-      number=4, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='description', full_name='cardgame.Item.description', index=4,
-      number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=712,
-  serialized_end=794,
+  serialized_end=727,
 )
 
 
@@ -438,8 +387,8 @@ _GIFT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=796,
-  serialized_end=857,
+  serialized_start=729,
+  serialized_end=790,
 )
 
 
@@ -517,8 +466,8 @@ _ANNOUNCEMENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=860,
-  serialized_end=1001,
+  serialized_start=793,
+  serialized_end=934,
 )
 
 
@@ -568,8 +517,8 @@ _NOTIFICATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1003,
-  serialized_end=1101,
+  serialized_start=936,
+  serialized_end=1034,
 )
 
 
@@ -668,8 +617,8 @@ _REWARD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1104,
-  serialized_end=1315,
+  serialized_start=1037,
+  serialized_end=1248,
 )
 
 
@@ -733,8 +682,66 @@ _SIGNINREWARD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1318,
-  serialized_end=1459,
+  serialized_start=1251,
+  serialized_end=1392,
+)
+
+
+_ITEM = _descriptor.Descriptor(
+  name='Item',
+  full_name='cardgame.Item',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='id', full_name='cardgame.Item.id', index=0,
+      number=1, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='name', full_name='cardgame.Item.name', index=1,
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='icon', full_name='cardgame.Item.icon', index=2,
+      number=3, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='count', full_name='cardgame.Item.count', index=3,
+      number=4, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='description', full_name='cardgame.Item.description', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1394,
+  serialized_end=1476,
 )
 
 
@@ -812,8 +819,8 @@ _SHOPITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1462,
-  serialized_end=1664,
+  serialized_start=1479,
+  serialized_end=1681,
 )
 
 
@@ -877,8 +884,8 @@ _TRADE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1666,
-  serialized_end=1767,
+  serialized_start=1683,
+  serialized_end=1784,
 )
 
 
@@ -914,8 +921,8 @@ _POKER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1769,
-  serialized_end=1807,
+  serialized_start=1786,
+  serialized_end=1824,
 )
 
 
@@ -965,8 +972,8 @@ _PLAYERACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1809,
-  serialized_end=1902,
+  serialized_start=1826,
+  serialized_end=1919,
 )
 
 
@@ -1002,8 +1009,8 @@ _CHIP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1904,
-  serialized_end=1937,
+  serialized_start=1921,
+  serialized_end=1954,
 )
 
 
@@ -1046,8 +1053,8 @@ _GAMEROUND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1939,
-  serialized_end=2015,
+  serialized_start=1956,
+  serialized_end=2032,
 )
 
 
@@ -1132,8 +1139,8 @@ _GAMBLER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2018,
-  serialized_end=2182,
+  serialized_start=2035,
+  serialized_end=2199,
 )
 
 
@@ -1183,8 +1190,8 @@ _TABLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2185,
-  serialized_end=2327,
+  serialized_start=2202,
+  serialized_end=2344,
 )
 
 
@@ -1262,8 +1269,8 @@ _GOLDFLOWER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2330,
-  serialized_end=2550,
+  serialized_start=2347,
+  serialized_end=2567,
 )
 
 
@@ -1313,8 +1320,8 @@ _PLAYERGOLD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2552,
-  serialized_end=2630,
+  serialized_start=2569,
+  serialized_end=2647,
 )
 
 
@@ -1350,8 +1357,8 @@ _PLAYERPOKERS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2632,
-  serialized_end=2692,
+  serialized_start=2649,
+  serialized_end=2709,
 )
 
 
@@ -1394,8 +1401,8 @@ _GAMESERVER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2694,
-  serialized_end=2744,
+  serialized_start=2711,
+  serialized_end=2761,
 )
 
 
@@ -1452,8 +1459,8 @@ _CHARMRECORD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2746,
-  serialized_end=2835,
+  serialized_start=2763,
+  serialized_end=2852,
 )
 
 
@@ -1517,8 +1524,8 @@ _FRIENDSRECORD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2837,
-  serialized_end=2953,
+  serialized_start=2854,
+  serialized_end=2970,
 )
 
 
@@ -1568,8 +1575,8 @@ _BUYRECORD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2955,
-  serialized_end=3031,
+  serialized_start=2972,
+  serialized_end=3048,
 )
 
 
@@ -1605,8 +1612,8 @@ _SELLRECORD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3033,
-  serialized_end=3072,
+  serialized_start=3050,
+  serialized_end=3089,
 )
 
 
@@ -1649,8 +1656,8 @@ _TOYRECORD = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3074,
-  serialized_end=3136,
+  serialized_start=3091,
+  serialized_end=3153,
 )
 
 
@@ -1763,8 +1770,8 @@ _MAIL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3139,
-  serialized_end=3386,
+  serialized_start=3156,
+  serialized_end=3403,
 )
 
 
@@ -1842,8 +1849,8 @@ _FRIEND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3389,
-  serialized_end=3522,
+  serialized_start=3406,
+  serialized_end=3539,
 )
 
 
@@ -1907,8 +1914,8 @@ _ENEMY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3524,
-  serialized_end=3628,
+  serialized_start=3541,
+  serialized_end=3645,
 )
 
 
@@ -1986,8 +1993,8 @@ _FRIENDAPPLY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3631,
-  serialized_end=3802,
+  serialized_start=3648,
+  serialized_end=3819,
 )
 
 
@@ -2058,8 +2065,8 @@ _FRIENDMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3805,
-  serialized_end=3952,
+  serialized_start=3822,
+  serialized_end=3969,
 )
 
 
@@ -2137,8 +2144,8 @@ _RANKPLAYER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3955,
-  serialized_end=4095,
+  serialized_start=3972,
+  serialized_end=4112,
 )
 
 
@@ -2202,8 +2209,8 @@ _CHARGEITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4098,
-  serialized_end=4235,
+  serialized_start=4115,
+  serialized_end=4252,
 )
 
 _PLAYER.fields_by_name['gifts'].message_type = _GIFT
@@ -2233,12 +2240,12 @@ _CHARGEITEM.fields_by_name['extra_items'].message_type = _ITEM
 DESCRIPTOR.message_types_by_name['Player'] = _PLAYER
 DESCRIPTOR.message_types_by_name['PlayerBrief'] = _PLAYERBRIEF
 DESCRIPTOR.message_types_by_name['Result'] = _RESULT
-DESCRIPTOR.message_types_by_name['Item'] = _ITEM
 DESCRIPTOR.message_types_by_name['Gift'] = _GIFT
 DESCRIPTOR.message_types_by_name['Announcement'] = _ANNOUNCEMENT
 DESCRIPTOR.message_types_by_name['Notification'] = _NOTIFICATION
 DESCRIPTOR.message_types_by_name['Reward'] = _REWARD
 DESCRIPTOR.message_types_by_name['SigninReward'] = _SIGNINREWARD
+DESCRIPTOR.message_types_by_name['Item'] = _ITEM
 DESCRIPTOR.message_types_by_name['ShopItem'] = _SHOPITEM
 DESCRIPTOR.message_types_by_name['Trade'] = _TRADE
 DESCRIPTOR.message_types_by_name['Poker'] = _POKER
@@ -2285,13 +2292,6 @@ Result = _reflection.GeneratedProtocolMessageType('Result', (_message.Message,),
   ))
 _sym_db.RegisterMessage(Result)
 
-Item = _reflection.GeneratedProtocolMessageType('Item', (_message.Message,), dict(
-  DESCRIPTOR = _ITEM,
-  __module__ = 'struct_pb2'
-  # @@protoc_insertion_point(class_scope:cardgame.Item)
-  ))
-_sym_db.RegisterMessage(Item)
-
 Gift = _reflection.GeneratedProtocolMessageType('Gift', (_message.Message,), dict(
   DESCRIPTOR = _GIFT,
   __module__ = 'struct_pb2'
@@ -2326,6 +2326,13 @@ SigninReward = _reflection.GeneratedProtocolMessageType('SigninReward', (_messag
   # @@protoc_insertion_point(class_scope:cardgame.SigninReward)
   ))
 _sym_db.RegisterMessage(SigninReward)
+
+Item = _reflection.GeneratedProtocolMessageType('Item', (_message.Message,), dict(
+  DESCRIPTOR = _ITEM,
+  __module__ = 'struct_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.Item)
+  ))
+_sym_db.RegisterMessage(Item)
 
 ShopItem = _reflection.GeneratedProtocolMessageType('ShopItem', (_message.Message,), dict(
   DESCRIPTOR = _SHOPITEM,
