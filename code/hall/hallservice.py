@@ -73,7 +73,7 @@ class HallService(GameService):
 
     def say_hello(self):
         while True:
-            cachehelper.add_notification_queue(self.redis,self.redis.hkeys('online'), 5,{'message':'本游戏不提供任何形式的游戏外充值，请勿上当受骗！',"message_color":'red'})
+            cachehelper.add_notification_queue(self.redis,self.redis.hkeys('online'), 5,{'message':random.choice(['本游戏不提供任何形式的游戏外充值，请勿上当受骗！','查看一下进程\n[root@centos mysql]# ps aux |grep mysq*']),"message_color":'red'})
             gevent.sleep(20)
 
 
@@ -137,9 +137,8 @@ class HallService(GameService):
     @USE_TRANSACTION
     def handle_rank(self, session, req, resp, event):
         rank = RankObject(session)
-        rank.set_pb( resp, rank.get_lists(req.body.rank_type) )
+        rank.set_pb( resp, rank.get_lists(req.body.rank_type, req.body.rank_time) )
         resp.header.result = 0
-
         # 日充值榜单，调用函数
         # RankObject.add_charge_top(session, 10026,'nick','avatar',100)
         # 周赚金榜单，调用函数
@@ -299,9 +298,6 @@ class HallService(GameService):
     @USE_TRANSACTION
     def handle_send_mail(self,session,req,resp,event):
 
-        print '11111111111111111111111111111111111111'
-        print req.body
-
         try:
             MessageObject(self.da,session).send_mail((1),{
                 'to':req.body.to,
@@ -321,8 +317,31 @@ class HallService(GameService):
     def handle_fetch_mail(self,session,req,resp,event):
         mails = session.query(TMail).filter(and_(TMail.to_user == req.header.user, TMail.id > req.body.max_mail_id,TMail.type != 2)).all()
 
-        for item in mails:
-            protohelper.set_mail(resp.body.mails.add(), item)
+        item_ids = []
+
+        for mail in mails:
+            if mail.type == 1:
+                for s in mail.items.split(','):
+                    item_ids.append(s[0])
+            else:
+                protohelper.set_mail(resp.body.mails.add(), mail)
+
+        item_datas = ItemObject.get_items(session, item_ids)
+
+        for mail in mails:
+            if mail.type == 1:
+                pb_mail = resp.body.mails.add()
+                protohelper.set_mail(pb_mail, mail)
+                for item in mail.items.split(','):
+                    for item_data in item_datas:
+                        if int(item[0]) == int(item_data.id):
+                            pb_item = pb_mail.items.add()
+                            pb_item.id = item_data.id
+                            pb_item.icon = item_data.icon
+                            pb_item.name = item_data.name
+                            pb_item.description = item_data.description
+                            pb_item.count = int(item[2])
+                            break
 
         resp.header.user = 0
 

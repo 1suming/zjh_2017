@@ -16,7 +16,7 @@ from sqlalchemy import Table,Column,func
 from sqlalchemy.types import  *
 from sqlalchemy.orm import Mapper
 
-tab_mail = Table("Mail", metadata,
+tab_mail = Table("mail", metadata,
                  Column("id",Integer, primary_key=True),
                  Column("from_user",Integer,nullable =False),
                  Column("to_user",Integer,nullable =False),

@@ -118,11 +118,14 @@ def set_room_table(pb,uid,redis):
 
 def set_top(pb, rank_player, index):
     pb.rank = index + 1
-    pb.uid = rank_player.id
-    pb.nick = rank_player.nick
-    pb.avatar =rank_player.avatar if rank_player.avatar else ''
-    pb.gold = rank_player.gold if rank_player.gold else 0
-    pb.rank_reward = rank_player.rank_reward if rank_player.rank_reward else ''
-    pb.money_maked = rank_player.money_maked if rank_player.money_maked else 0
+    pb.uid = rank_player['uid']
+    pb.nick = rank_player['nick']
+    pb.avatar =rank_player['avatar'] if rank_player['avatar'] else ''
+    pb.gold = rank_player['gold'] if rank_player['gold'] else 0
+    pb.rank_reward = ''
+    pb.money_maked = 0
     pb.charm = 0
 
+
+def set_item(pb, item):
+    copy_simple_field(pb,item,not_fields = ["birthday","best"])

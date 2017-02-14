@@ -327,9 +327,10 @@ message RankPlayer {
 	required string avatar = 4;
 	required int64 gold = 5;
 	required int32 charm = 6;
-	
+
 	optional string rank_reward = 7; // 排名奖励信息
 	optional int32 money_maked = 8; //  赚取的钱
+	optional int32 vip = 9;
 }
 
 message ChargeItem {

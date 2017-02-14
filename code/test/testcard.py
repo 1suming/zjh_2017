@@ -1105,8 +1105,8 @@ def get_rank(client,mobile = '13412341777',password= '123456',device_id='d_9444'
         print '3333333333333333333333333333333333'
         req = create_client_message(QueryRankReq)
         req.header.user = result.header.user
-        req.body.rank_type = 1
-        req.body.rank_time = 0
+        req.body.rank_type = 4
+        req.body.rank_time = 2
         client.socket.send(req.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -1190,10 +1190,10 @@ def test_card(imei,imsi,token,need_idle,*args):
     try:
         MessageMapping.init()
         client = TestClient(str(999999),str(999998), 'token_123')
-        get_broke(client, '13412311111','123456', 'device_id_333')
+        # get_broke(client, '13412311111','123456', 'device_id_333')
         # receive_broke(client, '13412311111','123456', 'device_id_333')
         # upgrade_check(client, '13412311111','123456', 'device_id_333')
-        # get_rank(client, '13412311111','123456', 'device_id_333')
+        get_rank(client, '13488889999','123456', '865372020475361')
 
         # send_friends_message(client, '13412311111','123456', 'device_id_333')
         # make_friends_apply(client, '13412311111','123456', 'device_id_333')
@@ -1227,14 +1227,14 @@ def test_card(imei,imsi,token,need_idle,*args):
 
         # get_signs(client, 'wxy', '123456', '865647020556892')
         # today_sign(client, '13412311111', '123456', 'device_id_333')
-        # send_chat_world(client,'13412311111', '123456', 'device_id_333')
+        # send_chat_world(client,'13488889999', '123456', '865372020475361')
         # send_chat_room(client,'13412311111', '123456', 'device_id_333')
         # get_rewards(client, '13412311111','123456', 'device_id_333')
         # revice_rewards(client, '13412311111','123456', 'device_id_333')
         # get_shop_item(client, '13412311111','123456', 'device_id_333')
         # get_register_code(client,'13412311111', '123456', 'device_id_333')
 
-        # get_mails(client, '13412311111','123456', 'device_id_333')
+        get_mails(client, '13488889999','123456', '865372020475361')
 
         # send_mail(client, '13412311111','123456', 'device_id_333')
 

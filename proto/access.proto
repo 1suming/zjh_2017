@@ -183,8 +183,8 @@ message CheckUpgradeResp {
 	enum DEF {
 		ID = 151;
 	}
-	optional int32 new_version = 2;
-	optional string upgrade_info = 4;
+	optional int32 new_version = 1;
+	optional string upgrade_info = 2;
 }
 
 

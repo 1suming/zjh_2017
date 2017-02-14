@@ -17,14 +17,13 @@ from sqlalchemy.types import  *
 from sqlalchemy.ext.declarative import declarative_base
 
 tab_rank_gold_top = Table("rank_gold_top", metadata,
-                 Column("id", Integer, primary_key=True),
-                 Column("uid", Integer),
+                 Column("uid", Integer, primary_key=True),
                  Column("nick",String(40)),
                  Column("avatar", String(255)),
                  Column("gold",BigInteger),
-                 Column("rank_reward",  String(255)),
-                 Column("money_maked",Integer),
                  Column("create_time",DateTime),
+                 Column("vip",SMALLINT),
+
                  )
                  
 

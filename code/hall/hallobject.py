@@ -2,6 +2,7 @@
 __author__ = 'Administrator'
 from config.var import *
 from config.rank import *
+from config.vip import *
 from message.resultdef import *
 from db.bag_item import *
 from db.bag_gift import *
@@ -9,15 +10,17 @@ from db.mail import *
 from db.user import *
 from db.rank_gold_top import *
 from db.rank_charge_top import *
+from db.rank_make_money_top import *
 from helper import protohelper
+from helper import datehelper
 from datetime import date,datetime
 from helper import cachehelper
 import time
 
 from proto import struct_pb2 as pb2
-from proto.constant_pb2 import *
+from proto import constant_pb2
 
-from sqlalchemy import desc
+from sqlalchemy import desc,and_
 
 class ShopObject:
     def __init__(self,dataaccess,session):
@@ -215,41 +218,58 @@ class RankObject:
     def wealth_top(self, rank_time):
         return self.session.query(TRankGoldTop).order_by(desc(TRankGoldTop.gold)).limit(RANK_WEALTH_TOP).all()
 
-    def charge_top(self,top, rank_time):
-        items = self.session.query(TRankChargeTop).order_by(desc(TRankChargeTop.gold)).limit(RANK_CHARGE_TOP).all()
+    def charge_top(self,rank_time):
+        query = self.session.query(TRankChargeTop)
+        if constant_pb2.RANK_YESTERDAY == rank_time:
+            query = query.filter(TRankChargeTop.add_date == datehelper.get_yesterday())
+        else:
+            query = query.filter(TRankChargeTop.add_date == datehelper.get_datetime().strftime('%Y-%m-%d'))
+        items = query.order_by(desc(TRankChargeTop.gold)).limit(RANK_CHARGE_TOP).all()
         self.merage_fake(items)
-        return self.items
+        return items
 
-    def make_money_top(self,resp,items):
-        pass
+    def make_money_top(self,rank_time):
+        query = self.session.query(TRankMakeMoneyTop)
+        print constant_pb2.RANK_LAST_WEEK,rank_time
+        if constant_pb2.RANK_LAST_WEEK == rank_time:
+            query = query.filter(and_(TRankMakeMoneyTop.add_year == datehelper.get_last_week().strftime('%Y'),TRankMakeMoneyTop.week_of_year == datehelper.get_last_week().strftime('%W')) )
+        else:
+            query = query.filter(and_(TRankMakeMoneyTop.add_year == datehelper.get_datetime().strftime('%Y'),TRankMakeMoneyTop.week_of_year == datehelper.get_datetime().strftime('%W')) )
+        items = query.order_by(desc(TRankMakeMoneyTop.gold)).limit(RANK_CHARGE_TOP).all()
+        self.merage_fake(items)
+        return items
 
 
     def set_pb(self, resp, items):
+
         for index in range(len(items)):
             protohelper.set_top(resp.body.players.add(), items[index], index)
 
 
     def merage_fake(self, data):
         if len(data) <= 0:
-            data = RANK_CHARGE_FAKE
+            print '111111111111111111111111111111111111111111111111111'
+            print RANK_FAKE
+            data = RANK_FAKE
         else:
-            for fake in RANK_CHARGE_FAKE:
+            for fake in RANK_FAKE:
                 if len(data) >= RANK_CHARGE_TOP:
                     break;
                 data.append(fake)
     @staticmethod
-    def add_charge_top(session,uid,nick,avatar,gold ):
+    def add_charge_top(session,uid,nick,avatar,gold,vip):
         result = session.execute("INSERT INTO rank_charge_top(uid,nick,avatar,gold,add_date) VALUES (:uid,:nick,:avatar,:gold,:add_date)"
                         " ON DUPLICATE KEY UPDATE nick = :nick, avatar = :avatar, gold = gold + :gold", {
             'uid':uid,
             'nick':nick,
             'avatar':avatar,
             'gold':gold,
-            'add_date':time.strftime('%Y-%m-%d')
+            'add_date':time.strftime('%Y-%m-%d'),
+            'vip':vip,
         }).rowcount
 
     @staticmethod
-    def add_make_money_top(session, uid, nick, avatar, gold):
+    def add_make_money_top(session, uid, nick, avatar, gold, vip):
         result = session.execute("INSERT INTO rank_make_money_top(uid,nick,avatar,gold,add_year,week_of_year) VALUES (:uid,:nick,:avatar,:gold,:add_year,:week_of_year)"
                         " ON DUPLICATE KEY UPDATE nick = :nick, avatar = :avatar, gold = gold + :gold", {
             'uid':uid,
@@ -258,6 +278,7 @@ class RankObject:
             'gold':gold,
             'add_year':time.strftime('%Y'),
             'week_of_year':time.strftime('%W'),
+            'vip':vip,
         }).rowcount
 
 class BrokeObject:
@@ -299,3 +320,29 @@ class BrokeObject:
             remain = int(r.decr(key))
             print 'first plus gold'
             return 0,good
+
+
+class VIPObject:
+    def __init__(self, vip_level):
+        self.vip_level = vip_level
+        self.vip = {}
+        self.get_vip()
+
+    def get_vip(self):
+        self.vip = VIP_CONF[self.vip_level]
+        return self.conf
+
+    def do_func(self):
+        funcs = self.vip['func'].split(',')
+        for func in funcs:
+            getattr(self,func.strip())()
+
+    def vip_func_1(self):
+        self
+
+
+class ItemObject:
+
+    @staticmethod
+    def get_items(session, item_ids):
+        return session.execute('SELECT * FROM item WHERE id IN ('+ ','.join(item_ids) +')').fetchall()

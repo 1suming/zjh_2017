@@ -16,22 +16,23 @@ from sqlalchemy import Table,Column,func
 from sqlalchemy.types import  *
 from sqlalchemy.ext.declarative import declarative_base
 
-tab_rank_charge_top = Table("rank_charge_top", metadata,
+tab_rank_make_money_top = Table("rank_make_money_top", metadata,
                  Column("uid", Integer, primary_key=True),
                  Column("nick",String(40)),
                  Column("avatar", String(255)),
                  Column("gold",BigInteger),
-                 Column("add_date",Date, primary_key=True),
+                 Column("add_year",Integer, primary_key=True),
+                 Column("week_of_year",SMALLINT, primary_key=True),
                  Column("vip",SMALLINT),
                  )
                  
 
                  
-class TRankChargeTop(TableObject):
+class TRankMakeMoneyTop(TableObject):
     def __init__(self):
         TableObject.__init__(self)
         
-mapper_rank_charge_top = Mapper(TRankChargeTop,tab_rank_charge_top)
+mapper_rank_make_money_top = Mapper(TRankMakeMoneyTop,tab_rank_make_money_top)
 
 if __name__=="__main__":
     pass

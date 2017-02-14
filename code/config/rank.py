@@ -5,7 +5,7 @@ RANK_WEALTH_TOP = 10
 
 RANK_CHARGE_TOP = 10
 
-RANK_CHARGE_FAKE = [
+RANK_FAKE = [
     {'id':1,'uid':20120,'nick':'haha1','avatar':'http://192.168.2.75:5000/static/upload/10023_867356020226898_tmp_avatar.png','gold':100},
     {'id':2,'uid':20220,'nick':'haha2','avatar':'http://192.168.2.75:5000/static/upload/10023_867356020226898_tmp_avatar.png','gold':100},
     {'id':3,'uid':20320,'nick':'haha3','avatar':'http://192.168.2.75:5000/static/upload/10023_867356020226898_tmp_avatar.png','gold':100},
@@ -17,3 +17,4 @@ RANK_CHARGE_FAKE = [
     {'id':9,'uid':20920,'nick':'haha9','avatar':'http://192.168.2.75:5000/static/upload/10023_867356020226898_tmp_avatar.png','gold':100},
     {'id':10,'uid':21020,'nick':'haha10','avatar':'http://192.168.2.75:5000/static/upload/10023_867356020226898_tmp_avatar.png','gold':100},
 ]
+
