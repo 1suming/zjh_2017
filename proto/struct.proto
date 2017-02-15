@@ -120,8 +120,8 @@ message Item {
 
 message ShopItem {
 	required int32 id = 1;
-	required ShopItemType item_type = 2; // ？哪些类型，
-	optional Item item = 3;
+	required ShopItemType item_type = 2; //  1=gold,2=item
+	optional Item item = 3;              // item信息
 	optional int64 shop_gold = 4;       // ？购买价格
 	
 	required int64 diamond = 5;

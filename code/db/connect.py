@@ -49,7 +49,7 @@ class Database:
               self.setup_user_session("root","Wgc@db123","userdb")
         return self.user_session_maker()    
         
-    def setup_session(self,user,password,database,host = "127.0.0.1",port = None,pool_size = 15):
+    def setup_session(self,user,password,database,host = "121.201.29.89",port = 23306,pool_size = 15):
         url_pattern = "mysql+mysqlconnector://%s:%s@%s:%d/%s?charset=utf8"
         url_pattern_no_port = "mysql+mysqlconnector://%s:%s@%s/%s?charset=utf8"
         if port != None:
@@ -60,7 +60,7 @@ class Database:
         engine = create_engine(url, echo=False,pool_recycle=3600,pool_size = pool_size)
         self.session_maker = sessionmaker(bind=engine,autoflush=False,autocommit=True,expire_on_commit = False)
 
-    def setup_user_session(self,user,password,database,host = "127.0.0.1",port = None,pool_size = 5):
+    def setup_user_session(self,user,password,database,host = "121.201.29.89",port = 23306,pool_size = 5):
         url_pattern = "mysql+mysqlconnector://%s:%s@%s:%d/%s?charset=utf8"
         url_pattern_no_port = "mysql+mysqlconnector://%s:%s@%s/%s?charset=utf8"
         if port != None:

@@ -73,7 +73,6 @@ message ResetPlayRewardResp {
 	enum DEF {
 		ID = 2009;
 	}
-	optional int32 seconds = 1;// seconds = 0 意味着可以直接领取奖励
 }
 
 message ReceivePlayRewardReq {
@@ -87,7 +86,6 @@ message ReceivePlayRewardResp {
 		ID = 2011;
 	}
 	optional Result result = 1;
-	optional int32 seconds = 2;
 }
 
 
@@ -135,4 +133,19 @@ message ReceiveBankcruptRewardResp {
 		ID = 2017;
 	}
 	optional int32 gold = 1;
+}
+
+// 每轮游戏结束上报
+message RecordPlayRewardReq {
+	enum DEF {
+		ID = 2018;
+	}
+}
+
+message RecordPlayRewardResp {
+	enum DEF {
+		ID = 2019;
+	}
+	required int32 total = 1;//需要完成多少局才能领取
+	required int32 current = 2;//当前是第几轮
 }

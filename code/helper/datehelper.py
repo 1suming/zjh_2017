@@ -2,9 +2,13 @@
 __author__ = 'Administrator'
 
 import datetime
+import time
 
 def get_datetime():
     return datetime.datetime.now()
+
+def get_today_str():
+    return time.strftime('%Y-%m-%d %H:%M:%S')
 
 def get_yesterday():
 	today=datetime.date.today()
@@ -24,3 +28,7 @@ def get_last_week():
     # print date_from.strftime('%Y-%m-%d %H:%M:%S'),date_from.strftime('%W')
     # # print '---'.join([str(date_from), str(date_to)])
     # # return time.strftime('%W', str(date_from))
+
+def next_midnight_unix(delay_sec = 0):
+    t =time.time()
+    return t - ( t % 86400 ) + time.timezone + 86400 + delay_sec

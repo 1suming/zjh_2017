@@ -137,9 +137,10 @@ class Table:
 
     def kick_player(self,kicker,uid):
         if kicker < 0:
-            kicker_player = self.get_player(kicker)
+             kicker_player = None
         else:
-            kicker_player = None
+            kicker_player = self.get_player(kicker)
+
         player = self.get_player(uid)
 
         self.remove_player(uid,is_kicked = True)

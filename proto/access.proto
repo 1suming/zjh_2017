@@ -29,6 +29,21 @@ message LoginResp {
 	optional int32 session = 2;
 	optional GameServer server = 3;
 }
+// 重置密码
+message ResetReq {
+	enum DEF{
+		ID = 20;
+	}
+	required string mobile          = 1;
+	required string password        = 2;
+	required string verify_code     = 3;
+}
+
+message ResetResp {
+	enum DEF{
+		ID = 21;
+	}
+}
 
 message FastLoginReq {
 	enum DEF{
@@ -187,6 +202,20 @@ message CheckUpgradeResp {
 	optional string upgrade_info = 2;
 }
 
+message GameResUpgradeReq {
+    enum DEF {
+		ID = 13;
+	}
+    required float ver = 1;
+}
+
+message GameResUpgradeResp {
+    enum DEF {
+		ID = 14;
+	}
+    required bool is_upgrade = 1;
+    optional string upgrade_url = 2;
+}
 
 
 

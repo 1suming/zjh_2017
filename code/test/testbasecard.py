@@ -136,6 +136,16 @@ class TestClient:
         resp = self.get_message(self.login_socket)
         # self.user = resp.body.uid
         return resp
+
+    def reset_login(self, mobile, password, verify):
+        req = create_client_message(ResetReq)
+        req.header.user = 0
+        req.body.mobile = mobile
+        req.body.password = password
+        req.body.verify_code = str(verify)
+        self.login_socket.send(req.encode())
+        resp = self.get_message(self.login_socket)
+        return resp
     def normal_logout_server(self, mobile, password, device_id):
         self.setup_login_socket()
         req = create_client_message(LogoutReq)

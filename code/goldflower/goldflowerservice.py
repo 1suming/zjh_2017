@@ -13,6 +13,8 @@ from datetime import datetime
 from datetime import date as dt_date
 from datetime import time as dt_time
 
+from hall.hallobject import *
+from config.vip import *
 
 from services import GameService
 from message.base import *
@@ -38,6 +40,8 @@ class GoldFlowerService(GameService):
 
         self.registe_command(SetPlayerReadyReq,SetPlayerReadyResp,self.handle_set_player_ready)
         self.registe_command(BetActionReq,BetActionResp,self.handle_bet_action)
+
+        self.registe_command(KickOtherReq,KickOtherResp,self.handle_kick_other)
     
     def init(self):
         self.registe_handler(SitTableReq,SitTableResp,self.handle_sit_table)
@@ -144,4 +148,58 @@ class GoldFlowerService(GameService):
                 resp.header.result = result
         finally:
             table.lock.release()
-    
+
+
+    @USE_TRANSACTION
+    def handle_kick_other(self,session,req,resp,event):
+        bag = BagObject(session)
+
+        if bag.has_item(req.header.user, ITEM_MAP['kick'][0]) == False:
+            resp.header.result = RESULT_FAILED_INVALID_BAG
+            return
+
+        # 权限验证，vip3及以上等级可使用踢人卡权限
+        if VIPObject.check_vip_auth(user_info.vip, sys._getframe().f_code.co_name) == False:
+            resp.header.result = RESULT_FAILED_INVALID_AUTH
+            return
+
+        # 权限验证，被踢的人在vip6及以上等级有免踢权限
+        other_user = self.redis.get('u'+str(req.body.other))
+        if 'no_kick' in VIP_CONF[other_user.vip]['auth']:
+            resp.header.result = RESULT_FAILED_NO_KICK
+
+        item_ids = []
+        for v in ITEM_MAP.values():
+            item_ids.append(v[0])
+
+        # 使用道具功能
+        if ITEM_MAP['kick'][0] in item_ids:
+            result = bag.use_user_item(req.header.user, ITEM_MAP['kick'][0])
+            if result <= 0:
+                resp.header.result = RESULT_FAILED_INVALID_BAG
+                return
+            if bool(bag.use_item(self, req.header.user, 'kick')) != True:
+                resp.header.result = RESULT_FAILED_INVALID_BAG
+                return
+
+        if resp.header.result != RESULT_FAILED_NO_KICK:
+            # 踢走某人
+            table = self.get_table(req.header.user)
+            if table == None:
+                resp.header.result = RESULT_FAILED_INVALID_TABLE
+                return False
+
+            table.lock.acquire()
+            try :
+                table.kick_player(req.header.user, req.body.other)
+            finally:
+                table.lock.release()
+
+        item = ItemObject.get_item(session, ITEM_MAP['kick'][0])
+        pb = resp.body.result.items_removed.add()
+        pb.id = item.id
+        pb.name = item.name
+        pb.icon = item.icon
+        pb.description = item.description
+        pb.count = result
+        resp.header.result = 0

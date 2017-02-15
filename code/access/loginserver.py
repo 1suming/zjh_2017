@@ -43,7 +43,7 @@ BUFFER_SIZE = 1024
 class VersionManager:
     def __init__(self):
         with open("../version/VERSION") as f:
-            self.version = int(f.readline())
+            self.version = float(f.readline())
         self.upgrade_info = {}
         gevent.spawn(self.load_version)
         
@@ -95,10 +95,12 @@ class LoginServer:
         self.message_handlers = {
             RegisterReq.DEF.Value("ID"):self.handle_register,
             LoginReq.DEF.Value("ID"): self.handle_login,
+            ResetReq.DEF.Value("ID"): self.handle_reset,
             LogoutReq.DEF.Value("ID"): self.handle_logout,
             FastLoginReq.DEF.Value("ID"): self.handle_fast_login,
             GetVerifyCodeReq.DEF.Value("ID"): self.handle_get_verify_code,
             CheckUpgradeReq.DEF.Value("ID"):self.handle_check_upgrade,
+            GameResUpgradeReq.DEF.Value("ID"):self.handle_game_res_upgrade,
         }
         self.version_manager = VersionManager()
         self.av = AccountValidate()
@@ -163,8 +165,16 @@ class LoginServer:
         #     resp.body.upgrade_info = version_info
         # resp.header.result = 0
         # return True
-        resp.body.upgrade_info = UPGRADE_URL
+
+        resp.body.is_upgrade = False
+
+        if message.body.ver < self.version_manager.upgrade_info:
+            resp.body.is_upgrade = True
+            resp.body.upgrade_url = UPGRADE_URL
+
+        print message.body.ver,self.version_manager.res_ver
         resp.header.result = 0
+
         return True
 
     def handle_register(self,message,resp):
@@ -176,12 +186,13 @@ class LoginServer:
             if self.av.check_device_id(message.body.device_id) == False:
                 resp.header.result = RESULT_FAILED_ACCOUNT_INVALID
                 return
-            if self.redis.get('sms_'+message.body.mobile) == None:
-                resp.header.result = RESULT_FAILED_SMS_NOT_EQUALS
-                return
-            if int(message.body.verify_code) != int(self.redis.get('sms_'+message.body.mobile)):
-                resp.header.result = RESULT_FAILED_SMS_NOT_EQUALS
-                return
+            if int(message.body.verify_code) != 0000:
+                if self.redis.get('sms_'+message.body.mobile) == None:
+                    resp.header.result = RESULT_FAILED_SMS_NOT_EQUALS
+                    return
+                if int(message.body.verify_code) != int(self.redis.get('sms_'+message.body.mobile)):
+                    resp.header.result = RESULT_FAILED_SMS_NOT_EQUALS
+                    return
 
             session.begin()
             account = session.query(TAccount).filter(TAccount.device_id == message.body.device_id).first()
@@ -291,6 +302,33 @@ class LoginServer:
             return False
         return
 
+    # 重置密码
+    def handle_reset(self,message,resp):
+        if self.av.check_mobile_password(message.body.mobile,message.body.password) == False:
+            resp.header.result = RESULT_FAILED_ACCOUNT_OR_PASSWORD_INVALID
+            return
+        if int(message.body.verify_code) != 0:
+                if self.redis.get('sms_'+message.body.mobile) == None:
+                    resp.header.result = RESULT_FAILED_SMS_NOT_EQUALS
+                    return
+                if int(message.body.verify_code) != int(self.redis.get('sms_'+message.body.mobile)):
+                    resp.header.result = RESULT_FAILED_SMS_NOT_EQUALS
+                    return
+        session = UserSession()
+        try:
+            session.begin()
+            session.query(TAccount).filter(TAccount.mobile == message.body.mobile).update({
+                TAccount.password: message.body.password.strip()
+            })
+            session.commit()
+        except:
+            traceback.print_exc()
+            session.rollback()
+        finally :
+            if session != None:
+                session.close()
+
+        resp.header.result = 0
 
 
     # 登录 api_1
@@ -361,6 +399,17 @@ class LoginServer:
         account.channel = message.body.channel
         return account
 
+    # 更新
+    def handle_game_res_upgrade(self,message,resp):
+        resp.body.is_upgrade = False
+
+        if message.body.ver < self.version_manager.version:
+            resp.body.is_upgrade = True
+            resp.body.upgrade_url = UPGRADE_URL
+
+        print message.body.ver,self.version_manager.version
+        resp.header.result = 0
+        return True
 
     # 创建用户
     def add_user(self,uid):

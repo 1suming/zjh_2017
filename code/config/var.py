@@ -66,7 +66,7 @@ DEFAULT_USER_GLODFLOWER ={
     'max_bank':0,
     'max_items':0,
     'max_gifts':0,
-    'signin_days':0,
+    'signin_days':-1,
     'last_signin_day':dt_date(2000,1,1),
     'oneline_time':0,
     'login_times':0,
@@ -88,4 +88,4 @@ STATE_NEED_POPUP = 0
 STATE_DISABLED = -1
 STATE_ENABLE = 0
 
-UPGRADE_URL = 'http://www.baidu.com/ResList'
+UPGRADE_URL = 'http://192.168.2.75/upgrade/'

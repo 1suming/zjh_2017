@@ -19,7 +19,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='access.proto',
   package='cardgame',
-  serialized_pb=_b('\n\x0c\x61\x63\x63\x65ss.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"N\n\x08LoginReq\x12\x0e\n\x06mobile\x18\x01 \x01(\t\x12\x11\n\tdevice_id\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x01\"^\n\tLoginResp\x12\x0b\n\x03uid\x18\x01 \x01(\x05\x12\x0f\n\x07session\x18\x02 \x01(\x05\x12$\n\x06server\x18\x03 \x01(\x0b\x32\x14.cardgame.GameServer\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x02\"l\n\x0c\x46\x61stLoginReq\x12\x11\n\tdevice_id\x18\x01 \x02(\t\x12\r\n\x05token\x18\x02 \x02(\t\x12\x0f\n\x07\x63hannel\x18\x03 \x02(\t\x12\x0c\n\x04imei\x18\x04 \x01(\t\x12\x0c\n\x04imsi\x18\x05 \x01(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x03\"b\n\rFastLoginResp\x12\x0b\n\x03uid\x18\x01 \x01(\x05\x12\x0f\n\x07session\x18\x02 \x01(\x05\x12$\n\x06server\x18\x03 \x01(\x0b\x32\x14.cardgame.GameServer\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x04\"\x1a\n\tLogoutReq\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x05\"\x1b\n\nLogoutResp\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x06\"@\n\x10GetVerifyCodeReq\x12\x0e\n\x06mobile\x18\x01 \x02(\t\x12\r\n\x05token\x18\x02 \x02(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x07\"\"\n\x11GetVerifyCodeResp\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x08\"\x93\x01\n\x0bRegisterReq\x12\x0e\n\x06mobile\x18\x01 \x02(\t\x12\x10\n\x08password\x18\x02 \x02(\t\x12\x13\n\x0bverify_code\x18\x03 \x02(\t\x12\x11\n\tdevice_id\x18\x04 \x02(\t\x12\x0f\n\x07\x63hannel\x18\x05 \x01(\t\x12\x0c\n\x04imei\x18\x06 \x01(\t\x12\x0c\n\x04imsi\x18\x07 \x01(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\t\"a\n\x0cRegisterResp\x12\x0b\n\x03uid\x18\x01 \x01(\x05\x12\x0f\n\x07session\x18\x02 \x01(\x05\x12$\n\x06server\x18\x03 \x01(\x0b\x32\x14.cardgame.GameServer\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\n\"6\n\x14\x43onnectGameServerReq\x12\x0f\n\x07session\x18\x02 \x02(\x05\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10(\";\n\x15\x43onnectGameServerResp\x12\x13\n\x0bserver_time\x18\x01 \x01(\x03\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10)\"!\n\x10GetServerTimeReq\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10j\"7\n\x11GetServerTimeResp\x12\x13\n\x0bserver_time\x18\x01 \x01(\x03\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10k\"\"\n\x11QuitGameServerReq\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10n\"#\n\x12QuitGameServerResp\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10o\"B\n\tOnlineReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x19\n\x11\x61\x63\x63\x65ss_service_id\x18\x02 \x02(\x05\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10x\"\x1b\n\nOnlineResp\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10y\")\n\nOfflineReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x82\x01\"\x1d\n\x0bOfflineResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x83\x01\"2\n\x0f\x43heckUpgradeReq\x12\x0f\n\x07version\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x96\x01\"M\n\x10\x43heckUpgradeResp\x12\x13\n\x0bnew_version\x18\x01 \x01(\x05\x12\x14\n\x0cupgrade_info\x18\x02 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x97\x01\x42$\n\x18\x63om.zhili.cardgame.protoB\x06\x41\x63\x63\x65ssH\x03')
+  serialized_pb=_b('\n\x0c\x61\x63\x63\x65ss.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"N\n\x08LoginReq\x12\x0e\n\x06mobile\x18\x01 \x01(\t\x12\x11\n\tdevice_id\x18\x02 \x01(\t\x12\x10\n\x08password\x18\x03 \x01(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x01\"^\n\tLoginResp\x12\x0b\n\x03uid\x18\x01 \x01(\x05\x12\x0f\n\x07session\x18\x02 \x01(\x05\x12$\n\x06server\x18\x03 \x01(\x0b\x32\x14.cardgame.GameServer\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x02\"P\n\x08ResetReq\x12\x0e\n\x06mobile\x18\x01 \x02(\t\x12\x10\n\x08password\x18\x02 \x02(\t\x12\x13\n\x0bverify_code\x18\x03 \x02(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x14\"\x1a\n\tResetResp\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x15\"l\n\x0c\x46\x61stLoginReq\x12\x11\n\tdevice_id\x18\x01 \x02(\t\x12\r\n\x05token\x18\x02 \x02(\t\x12\x0f\n\x07\x63hannel\x18\x03 \x02(\t\x12\x0c\n\x04imei\x18\x04 \x01(\t\x12\x0c\n\x04imsi\x18\x05 \x01(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x03\"b\n\rFastLoginResp\x12\x0b\n\x03uid\x18\x01 \x01(\x05\x12\x0f\n\x07session\x18\x02 \x01(\x05\x12$\n\x06server\x18\x03 \x01(\x0b\x32\x14.cardgame.GameServer\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x04\"\x1a\n\tLogoutReq\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x05\"\x1b\n\nLogoutResp\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x06\"@\n\x10GetVerifyCodeReq\x12\x0e\n\x06mobile\x18\x01 \x02(\t\x12\r\n\x05token\x18\x02 \x02(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x07\"\"\n\x11GetVerifyCodeResp\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x08\"\x93\x01\n\x0bRegisterReq\x12\x0e\n\x06mobile\x18\x01 \x02(\t\x12\x10\n\x08password\x18\x02 \x02(\t\x12\x13\n\x0bverify_code\x18\x03 \x02(\t\x12\x11\n\tdevice_id\x18\x04 \x02(\t\x12\x0f\n\x07\x63hannel\x18\x05 \x01(\t\x12\x0c\n\x04imei\x18\x06 \x01(\t\x12\x0c\n\x04imsi\x18\x07 \x01(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\t\"a\n\x0cRegisterResp\x12\x0b\n\x03uid\x18\x01 \x01(\x05\x12\x0f\n\x07session\x18\x02 \x01(\x05\x12$\n\x06server\x18\x03 \x01(\x0b\x32\x14.cardgame.GameServer\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\n\"6\n\x14\x43onnectGameServerReq\x12\x0f\n\x07session\x18\x02 \x02(\x05\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10(\";\n\x15\x43onnectGameServerResp\x12\x13\n\x0bserver_time\x18\x01 \x01(\x03\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10)\"!\n\x10GetServerTimeReq\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10j\"7\n\x11GetServerTimeResp\x12\x13\n\x0bserver_time\x18\x01 \x01(\x03\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10k\"\"\n\x11QuitGameServerReq\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10n\"#\n\x12QuitGameServerResp\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10o\"B\n\tOnlineReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x19\n\x11\x61\x63\x63\x65ss_service_id\x18\x02 \x02(\x05\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10x\"\x1b\n\nOnlineResp\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10y\")\n\nOfflineReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x82\x01\"\x1d\n\x0bOfflineResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x83\x01\"2\n\x0f\x43heckUpgradeReq\x12\x0f\n\x07version\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x96\x01\"M\n\x10\x43heckUpgradeResp\x12\x13\n\x0bnew_version\x18\x01 \x01(\x05\x12\x14\n\x0cupgrade_info\x18\x02 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x97\x01\"/\n\x11GameResUpgradeReq\x12\x0b\n\x03ver\x18\x01 \x02(\x02\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\r\"L\n\x12GameResUpgradeResp\x12\x12\n\nis_upgrade\x18\x01 \x02(\x08\x12\x13\n\x0bupgrade_url\x18\x02 \x01(\t\"\r\n\x03\x44\x45\x46\x12\x06\n\x02ID\x10\x0e\x42$\n\x18\x63om.zhili.cardgame.protoB\x06\x41\x63\x63\x65ssH\x03')
   ,
   dependencies=[struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -62,6 +62,42 @@ _LOGINRESP_DEF = _descriptor.EnumDescriptor(
 )
 _sym_db.RegisterEnumDescriptor(_LOGINRESP_DEF)
 
+_RESETREQ_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.ResetReq.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=20,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=283,
+  serialized_end=296,
+)
+_sym_db.RegisterEnumDescriptor(_RESETREQ_DEF)
+
+_RESETRESP_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.ResetResp.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=21,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=311,
+  serialized_end=324,
+)
+_sym_db.RegisterEnumDescriptor(_RESETRESP_DEF)
+
 _FASTLOGINREQ_DEF = _descriptor.EnumDescriptor(
   name='DEF',
   full_name='cardgame.FastLoginReq.DEF',
@@ -75,8 +111,8 @@ _FASTLOGINREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=311,
-  serialized_end=324,
+  serialized_start=421,
+  serialized_end=434,
 )
 _sym_db.RegisterEnumDescriptor(_FASTLOGINREQ_DEF)
 
@@ -93,8 +129,8 @@ _FASTLOGINRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=411,
-  serialized_end=424,
+  serialized_start=521,
+  serialized_end=534,
 )
 _sym_db.RegisterEnumDescriptor(_FASTLOGINRESP_DEF)
 
@@ -111,8 +147,8 @@ _LOGOUTREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=439,
-  serialized_end=452,
+  serialized_start=549,
+  serialized_end=562,
 )
 _sym_db.RegisterEnumDescriptor(_LOGOUTREQ_DEF)
 
@@ -129,8 +165,8 @@ _LOGOUTRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=468,
-  serialized_end=481,
+  serialized_start=578,
+  serialized_end=591,
 )
 _sym_db.RegisterEnumDescriptor(_LOGOUTRESP_DEF)
 
@@ -147,8 +183,8 @@ _GETVERIFYCODEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=534,
-  serialized_end=547,
+  serialized_start=644,
+  serialized_end=657,
 )
 _sym_db.RegisterEnumDescriptor(_GETVERIFYCODEREQ_DEF)
 
@@ -165,8 +201,8 @@ _GETVERIFYCODERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=570,
-  serialized_end=583,
+  serialized_start=680,
+  serialized_end=693,
 )
 _sym_db.RegisterEnumDescriptor(_GETVERIFYCODERESP_DEF)
 
@@ -183,8 +219,8 @@ _REGISTERREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=720,
-  serialized_end=733,
+  serialized_start=830,
+  serialized_end=843,
 )
 _sym_db.RegisterEnumDescriptor(_REGISTERREQ_DEF)
 
@@ -201,8 +237,8 @@ _REGISTERRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=819,
-  serialized_end=832,
+  serialized_start=929,
+  serialized_end=942,
 )
 _sym_db.RegisterEnumDescriptor(_REGISTERRESP_DEF)
 
@@ -219,8 +255,8 @@ _CONNECTGAMESERVERREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=875,
-  serialized_end=888,
+  serialized_start=985,
+  serialized_end=998,
 )
 _sym_db.RegisterEnumDescriptor(_CONNECTGAMESERVERREQ_DEF)
 
@@ -237,8 +273,8 @@ _CONNECTGAMESERVERRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=936,
-  serialized_end=949,
+  serialized_start=1046,
+  serialized_end=1059,
 )
 _sym_db.RegisterEnumDescriptor(_CONNECTGAMESERVERRESP_DEF)
 
@@ -255,8 +291,8 @@ _GETSERVERTIMEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=971,
-  serialized_end=984,
+  serialized_start=1081,
+  serialized_end=1094,
 )
 _sym_db.RegisterEnumDescriptor(_GETSERVERTIMEREQ_DEF)
 
@@ -273,8 +309,8 @@ _GETSERVERTIMERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1028,
-  serialized_end=1041,
+  serialized_start=1138,
+  serialized_end=1151,
 )
 _sym_db.RegisterEnumDescriptor(_GETSERVERTIMERESP_DEF)
 
@@ -291,8 +327,8 @@ _QUITGAMESERVERREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1064,
-  serialized_end=1077,
+  serialized_start=1174,
+  serialized_end=1187,
 )
 _sym_db.RegisterEnumDescriptor(_QUITGAMESERVERREQ_DEF)
 
@@ -309,8 +345,8 @@ _QUITGAMESERVERRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1101,
-  serialized_end=1114,
+  serialized_start=1211,
+  serialized_end=1224,
 )
 _sym_db.RegisterEnumDescriptor(_QUITGAMESERVERRESP_DEF)
 
@@ -327,8 +363,8 @@ _ONLINEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1169,
-  serialized_end=1182,
+  serialized_start=1279,
+  serialized_end=1292,
 )
 _sym_db.RegisterEnumDescriptor(_ONLINEREQ_DEF)
 
@@ -345,8 +381,8 @@ _ONLINERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1198,
-  serialized_end=1211,
+  serialized_start=1308,
+  serialized_end=1321,
 )
 _sym_db.RegisterEnumDescriptor(_ONLINERESP_DEF)
 
@@ -363,8 +399,8 @@ _OFFLINEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1240,
-  serialized_end=1254,
+  serialized_start=1350,
+  serialized_end=1364,
 )
 _sym_db.RegisterEnumDescriptor(_OFFLINEREQ_DEF)
 
@@ -381,8 +417,8 @@ _OFFLINERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1271,
-  serialized_end=1285,
+  serialized_start=1381,
+  serialized_end=1395,
 )
 _sym_db.RegisterEnumDescriptor(_OFFLINERESP_DEF)
 
@@ -399,8 +435,8 @@ _CHECKUPGRADEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1323,
-  serialized_end=1337,
+  serialized_start=1433,
+  serialized_end=1447,
 )
 _sym_db.RegisterEnumDescriptor(_CHECKUPGRADEREQ_DEF)
 
@@ -417,10 +453,46 @@ _CHECKUPGRADERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1402,
-  serialized_end=1416,
+  serialized_start=1512,
+  serialized_end=1526,
 )
 _sym_db.RegisterEnumDescriptor(_CHECKUPGRADERESP_DEF)
+
+_GAMERESUPGRADEREQ_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.GameResUpgradeReq.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=13,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1562,
+  serialized_end=1575,
+)
+_sym_db.RegisterEnumDescriptor(_GAMERESUPGRADEREQ_DEF)
+
+_GAMERESUPGRADERESP_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.GameResUpgradeResp.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=14,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1640,
+  serialized_end=1653,
+)
+_sym_db.RegisterEnumDescriptor(_GAMERESUPGRADERESP_DEF)
 
 
 _LOGINREQ = _descriptor.Descriptor(
@@ -513,6 +585,75 @@ _LOGINRESP = _descriptor.Descriptor(
 )
 
 
+_RESETREQ = _descriptor.Descriptor(
+  name='ResetReq',
+  full_name='cardgame.ResetReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='mobile', full_name='cardgame.ResetReq.mobile', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='password', full_name='cardgame.ResetReq.password', index=1,
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='verify_code', full_name='cardgame.ResetReq.verify_code', index=2,
+      number=3, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _RESETREQ_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=216,
+  serialized_end=296,
+)
+
+
+_RESETRESP = _descriptor.Descriptor(
+  name='ResetResp',
+  full_name='cardgame.ResetResp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _RESETRESP_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=298,
+  serialized_end=324,
+)
+
+
 _FASTLOGINREQ = _descriptor.Descriptor(
   name='FastLoginReq',
   full_name='cardgame.FastLoginReq',
@@ -567,8 +708,8 @@ _FASTLOGINREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=216,
-  serialized_end=324,
+  serialized_start=326,
+  serialized_end=434,
 )
 
 
@@ -612,8 +753,8 @@ _FASTLOGINRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=326,
-  serialized_end=424,
+  serialized_start=436,
+  serialized_end=534,
 )
 
 
@@ -636,8 +777,8 @@ _LOGOUTREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=426,
-  serialized_end=452,
+  serialized_start=536,
+  serialized_end=562,
 )
 
 
@@ -660,8 +801,8 @@ _LOGOUTRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=454,
-  serialized_end=481,
+  serialized_start=564,
+  serialized_end=591,
 )
 
 
@@ -698,8 +839,8 @@ _GETVERIFYCODEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=483,
-  serialized_end=547,
+  serialized_start=593,
+  serialized_end=657,
 )
 
 
@@ -722,8 +863,8 @@ _GETVERIFYCODERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=549,
-  serialized_end=583,
+  serialized_start=659,
+  serialized_end=693,
 )
 
 
@@ -795,8 +936,8 @@ _REGISTERREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=586,
-  serialized_end=733,
+  serialized_start=696,
+  serialized_end=843,
 )
 
 
@@ -840,8 +981,8 @@ _REGISTERRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=735,
-  serialized_end=832,
+  serialized_start=845,
+  serialized_end=942,
 )
 
 
@@ -871,8 +1012,8 @@ _CONNECTGAMESERVERREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=834,
-  serialized_end=888,
+  serialized_start=944,
+  serialized_end=998,
 )
 
 
@@ -902,8 +1043,8 @@ _CONNECTGAMESERVERRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=890,
-  serialized_end=949,
+  serialized_start=1000,
+  serialized_end=1059,
 )
 
 
@@ -926,8 +1067,8 @@ _GETSERVERTIMEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=951,
-  serialized_end=984,
+  serialized_start=1061,
+  serialized_end=1094,
 )
 
 
@@ -957,8 +1098,8 @@ _GETSERVERTIMERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=986,
-  serialized_end=1041,
+  serialized_start=1096,
+  serialized_end=1151,
 )
 
 
@@ -981,8 +1122,8 @@ _QUITGAMESERVERREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1043,
-  serialized_end=1077,
+  serialized_start=1153,
+  serialized_end=1187,
 )
 
 
@@ -1005,8 +1146,8 @@ _QUITGAMESERVERRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1079,
-  serialized_end=1114,
+  serialized_start=1189,
+  serialized_end=1224,
 )
 
 
@@ -1043,8 +1184,8 @@ _ONLINEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1116,
-  serialized_end=1182,
+  serialized_start=1226,
+  serialized_end=1292,
 )
 
 
@@ -1067,8 +1208,8 @@ _ONLINERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1184,
-  serialized_end=1211,
+  serialized_start=1294,
+  serialized_end=1321,
 )
 
 
@@ -1098,8 +1239,8 @@ _OFFLINEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1213,
-  serialized_end=1254,
+  serialized_start=1323,
+  serialized_end=1364,
 )
 
 
@@ -1122,8 +1263,8 @@ _OFFLINERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1256,
-  serialized_end=1285,
+  serialized_start=1366,
+  serialized_end=1395,
 )
 
 
@@ -1153,8 +1294,8 @@ _CHECKUPGRADEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1287,
-  serialized_end=1337,
+  serialized_start=1397,
+  serialized_end=1447,
 )
 
 
@@ -1191,13 +1332,84 @@ _CHECKUPGRADERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1339,
-  serialized_end=1416,
+  serialized_start=1449,
+  serialized_end=1526,
+)
+
+
+_GAMERESUPGRADEREQ = _descriptor.Descriptor(
+  name='GameResUpgradeReq',
+  full_name='cardgame.GameResUpgradeReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='ver', full_name='cardgame.GameResUpgradeReq.ver', index=0,
+      number=1, type=2, cpp_type=6, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _GAMERESUPGRADEREQ_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1528,
+  serialized_end=1575,
+)
+
+
+_GAMERESUPGRADERESP = _descriptor.Descriptor(
+  name='GameResUpgradeResp',
+  full_name='cardgame.GameResUpgradeResp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='is_upgrade', full_name='cardgame.GameResUpgradeResp.is_upgrade', index=0,
+      number=1, type=8, cpp_type=7, label=2,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='upgrade_url', full_name='cardgame.GameResUpgradeResp.upgrade_url', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _GAMERESUPGRADERESP_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1577,
+  serialized_end=1653,
 )
 
 _LOGINREQ_DEF.containing_type = _LOGINREQ
 _LOGINRESP.fields_by_name['server'].message_type = struct_pb2._GAMESERVER
 _LOGINRESP_DEF.containing_type = _LOGINRESP
+_RESETREQ_DEF.containing_type = _RESETREQ
+_RESETRESP_DEF.containing_type = _RESETRESP
 _FASTLOGINREQ_DEF.containing_type = _FASTLOGINREQ
 _FASTLOGINRESP.fields_by_name['server'].message_type = struct_pb2._GAMESERVER
 _FASTLOGINRESP_DEF.containing_type = _FASTLOGINRESP
@@ -1220,8 +1432,12 @@ _OFFLINEREQ_DEF.containing_type = _OFFLINEREQ
 _OFFLINERESP_DEF.containing_type = _OFFLINERESP
 _CHECKUPGRADEREQ_DEF.containing_type = _CHECKUPGRADEREQ
 _CHECKUPGRADERESP_DEF.containing_type = _CHECKUPGRADERESP
+_GAMERESUPGRADEREQ_DEF.containing_type = _GAMERESUPGRADEREQ
+_GAMERESUPGRADERESP_DEF.containing_type = _GAMERESUPGRADERESP
 DESCRIPTOR.message_types_by_name['LoginReq'] = _LOGINREQ
 DESCRIPTOR.message_types_by_name['LoginResp'] = _LOGINRESP
+DESCRIPTOR.message_types_by_name['ResetReq'] = _RESETREQ
+DESCRIPTOR.message_types_by_name['ResetResp'] = _RESETRESP
 DESCRIPTOR.message_types_by_name['FastLoginReq'] = _FASTLOGINREQ
 DESCRIPTOR.message_types_by_name['FastLoginResp'] = _FASTLOGINRESP
 DESCRIPTOR.message_types_by_name['LogoutReq'] = _LOGOUTREQ
@@ -1242,6 +1458,8 @@ DESCRIPTOR.message_types_by_name['OfflineReq'] = _OFFLINEREQ
 DESCRIPTOR.message_types_by_name['OfflineResp'] = _OFFLINERESP
 DESCRIPTOR.message_types_by_name['CheckUpgradeReq'] = _CHECKUPGRADEREQ
 DESCRIPTOR.message_types_by_name['CheckUpgradeResp'] = _CHECKUPGRADERESP
+DESCRIPTOR.message_types_by_name['GameResUpgradeReq'] = _GAMERESUPGRADEREQ
+DESCRIPTOR.message_types_by_name['GameResUpgradeResp'] = _GAMERESUPGRADERESP
 
 LoginReq = _reflection.GeneratedProtocolMessageType('LoginReq', (_message.Message,), dict(
   DESCRIPTOR = _LOGINREQ,
@@ -1256,6 +1474,20 @@ LoginResp = _reflection.GeneratedProtocolMessageType('LoginResp', (_message.Mess
   # @@protoc_insertion_point(class_scope:cardgame.LoginResp)
   ))
 _sym_db.RegisterMessage(LoginResp)
+
+ResetReq = _reflection.GeneratedProtocolMessageType('ResetReq', (_message.Message,), dict(
+  DESCRIPTOR = _RESETREQ,
+  __module__ = 'access_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.ResetReq)
+  ))
+_sym_db.RegisterMessage(ResetReq)
+
+ResetResp = _reflection.GeneratedProtocolMessageType('ResetResp', (_message.Message,), dict(
+  DESCRIPTOR = _RESETRESP,
+  __module__ = 'access_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.ResetResp)
+  ))
+_sym_db.RegisterMessage(ResetResp)
 
 FastLoginReq = _reflection.GeneratedProtocolMessageType('FastLoginReq', (_message.Message,), dict(
   DESCRIPTOR = _FASTLOGINREQ,
@@ -1396,6 +1628,20 @@ CheckUpgradeResp = _reflection.GeneratedProtocolMessageType('CheckUpgradeResp', 
   # @@protoc_insertion_point(class_scope:cardgame.CheckUpgradeResp)
   ))
 _sym_db.RegisterMessage(CheckUpgradeResp)
+
+GameResUpgradeReq = _reflection.GeneratedProtocolMessageType('GameResUpgradeReq', (_message.Message,), dict(
+  DESCRIPTOR = _GAMERESUPGRADEREQ,
+  __module__ = 'access_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.GameResUpgradeReq)
+  ))
+_sym_db.RegisterMessage(GameResUpgradeReq)
+
+GameResUpgradeResp = _reflection.GeneratedProtocolMessageType('GameResUpgradeResp', (_message.Message,), dict(
+  DESCRIPTOR = _GAMERESUPGRADERESP,
+  __module__ = 'access_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.GameResUpgradeResp)
+  ))
+_sym_db.RegisterMessage(GameResUpgradeResp)
 
 
 DESCRIPTOR.has_options = True

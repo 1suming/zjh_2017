@@ -4,6 +4,7 @@ from config.var import *
 from config.rank import *
 from config.vip import *
 from config.item import *
+from config.reward import *
 from message.resultdef import *
 from db.bag_item import *
 from db.bag_gift import *
@@ -114,6 +115,12 @@ class BagObject:
     def __init__(self,session):
         self.session = session
 
+    def has_item(self, user, item_id):
+        item = self.session.query(TBagItem).filter(and_(TBagItem.uid == user, TBagItem.item_id == item_id)).first()
+        if item == None or item.countof <= 0:
+            return False
+        return True
+
     def save_user_gift(self, user,gift_id,countof):
         self.save_countof({'table_name':'bag_gift','stuff_id':gift_id,'uid':user,'countof':countof,'stuff_field':'gift_id'})
 
@@ -145,12 +152,13 @@ class BagObject:
 
     def use_item(self, service,user, item_name, **args):
         return getattr(self, ITEM_MAP[item_name][1])(service, user, args)
-    def use_kick(self, service, uid):
-        # 调用踢人函数
-        pass
+    def use_kick(self, service, uid,args):
+        return True
+
+    def use_tgold(self, service, uid, args):
+        return True
 
     def use_horn(self, service, uid, args):
-        # 调用广播函数
         cachehelper.add_notification_queue(service.redis,service.redis.hkeys('online'), 5,{'message':args['message'],"message_color":'red'})
 
     def use_exp_1(self, service, user,args):
@@ -326,9 +334,9 @@ class BrokeObject:
 
     @staticmethod
     def query_broke(uid, r, vip_conf):
-        # 根据用户vip体系，查询得到用户可领取的次数总数
+        # 可领取的次数总数
         total = vip_conf['relief_time']
-        # conf文件读取每次领取金额数
+        # 每次领取金额数
         good = vip_conf['relief_good']
         key = 'broke:'+str(uid)
         if r.exists(key):
@@ -359,9 +367,8 @@ class BrokeObject:
             user.modify_gold(session, good)
             service.redis.set(key, total)
             t = time.time()
-            service.redis.expire(key, int(( t - ( t % 86400 ) + time.timezone ) + 86400 - t) )
+            service.redis.expireat(key, datehelper.next_midnight_unix(delay_sec = 5) )
             remain = int(service.redis.decr(key))
-            print 'first plus gold'
             return 0,good
 
 
@@ -433,5 +440,33 @@ class ItemObject:
         return session.execute('SELECT * FROM item WHERE id IN ('+ ','.join(item_ids) +')').fetchall()
 
     @staticmethod
-    def get_user_item(self, user, item_id):
-        return self.session.query(TItem).filter(TItem.id == item_id).first()
+    def get_item(session, item_id):
+        return session.query(TItem).filter(TItem.id == item_id).first()
+
+class RewardObject:
+    @staticmethod
+    def is_done(round):
+        if round == REWARD_PLAY_ROUND[-1][0]:
+            return True
+
+    @staticmethod
+    def get_next_round(total):
+        if total > REWARD_PLAY_ROUND[-1][0]:
+            return REWARD_PLAY_ROUND[0]
+        if total == 0:
+        	return REWARD_PLAY_ROUND[0]
+     	if total == 1:
+     		return REWARD_PLAY_ROUND[1]
+        if total == REWARD_PLAY_ROUND[-1][0]:
+            return REWARD_PLAY_ROUND[-1]
+
+        for index in range(len(REWARD_PLAY_ROUND)):
+            if REWARD_PLAY_ROUND[index][0] <= total and total < REWARD_PLAY_ROUND[index+1][0]:
+                return REWARD_PLAY_ROUND[index+1]
+
+    @staticmethod
+    def get_conf(total):
+        for index in range(len(REWARD_PLAY_ROUND)):
+            if REWARD_PLAY_ROUND[index][0] == total:
+                return REWARD_PLAY_ROUND[index]
+        return None

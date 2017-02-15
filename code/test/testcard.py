@@ -1216,14 +1216,93 @@ def get_broke(client,mobile = '13412341777',password= '123456',device_id='d_9444
     finally:
         pass
 
+def upgrade_check(client,device_id,imei,imsi):
+    try:
+        MessageMapping.init()
+
+
+        client.setup_socket()
+        req = create_client_message(CheckUpgradeReq)
+        req.header.user = -1
+        req.body.version = 1
+
+        client.login_socket.send(req.encode())
+        resp = client.get_message(client.login_socket)
+        # self.user = resp.body.uid
+        return resp
+
+    except:
+        traceback.print_exc()
+    finally:
+        pass
+
+
+def receive_table(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
+    try:
+        MessageMapping.init()
+        resp = client.normal_test_enter_server(mobile,password,device_id)
+
+        print '1111111111111111111'
+        print resp.header.user,'=',resp.header.result
+        print resp.body
+
+        client.setup_socket()
+        result = client.connect_game_server(resp.header.user, resp.body.session, 1)
+        print '2222222222222222222'
+        print result.header.user,'=',result.header.result
+        print result.body
+
+        print '3333333333333333333333333333333333'
+        req = create_client_message(ReceivePlayRewardReq)
+        req.header.user = result.header.user
+        client.socket.send(req.encode())
+
+        # req = create_client_message(QueryUserReq)
+        # req.header.user = result.header.user
+        # req.body.uid = result.header.user
+        # client.socket.send(req.encode())
+
+      # client.socket.send(req.encode())
+
+    except Exception as e:
+        traceback.print_exc()
+    finally:
+        pass
+
+
+
+
+
+
+def reset_login(client,mobile,password,device_id):
+    try:
+        MessageMapping.init()
+
+        resp = client.reset_login(mobile,password,0000)
+
+        print '1111111111111111111'
+        print resp.header.user,'=',resp.header.result
+        print resp.body
+
+
+    except Exception as e:
+        traceback.print_exc()
+    finally:
+        pass
+
+
+
+
 def test_card(imei,imsi,token,need_idle,*args):
     resp = None
     try:
         MessageMapping.init()
         client = TestClient(str(999999),str(999998), 'token_123')
+        reset_login(client, '13488889999','123456', '865372020475361')
+
         # get_broke(client, '13488889999','123456', '865372020475361')
         # receive_broke(client, '13488889999','123456', '865372020475361')
-        # upgrade_check(client, '13412311111','123456', 'device_id_333')
+        # upgrade_check(client, '13488889999','123456', '865372020475361')
         # get_rank(client, '13488889999','123456', '865372020475361')
 
         # send_friends_message(client, '13412311111','123456', 'device_id_333')
@@ -1258,14 +1337,14 @@ def test_card(imei,imsi,token,need_idle,*args):
 
         # get_signs(client, '13488889999', '123456', '865372020475361')
         # today_sign(client, '13488889999', '123456', '865372020475361')
-        send_chat_world(client,'13488889999', '123456', '865372020475361')
+        # send_chat_world(client,'13488889999', '123456', '865372020475361')
         # send_chat_room(client,'13412311111', '123456', 'device_id_333')
         # get_rewards(client, '13412311111','123456', 'device_id_333')
         # revice_rewards(client, '13412311111','123456', 'device_id_333')
         # get_shop_item(client, '13412311111','123456', 'device_id_333')
         # get_register_code(client,'13412311111', '123456', 'device_id_333')
 
-        get_mails(client, '13488889999','123456', '865372020475361')
+        # get_mails(client, '13488889999','123456', '865372020475361')
 
         # send_mail(client, '13412311111','123456', 'device_id_333')
 
