@@ -743,6 +743,38 @@ def query_user_bag(client,mobile = '13412341777',password= '123456',device_id='d
         traceback.print_exc()
     finally:
         pass
+def use_user_bag(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
+    try:
+        MessageMapping.init()
+        resp = client.normal_test_enter_server(mobile,password,device_id)
+
+        print '1111111111111111111'
+        print resp.header.user,'=',resp.header.result
+        print resp.body
+
+        client.setup_socket()
+        result = client.connect_game_server(resp.header.user, resp.body.session, 1)
+        print '2222222222222222222'
+        print result.header.user,'=',result.header.result
+        print result.body
+
+        print '3333333333333333333333333333333333'
+        req = create_client_message(UseItemReq)
+        req.header.user = result.header.user
+        req.body.item_id = 1
+        client.socket.send(req.encode())
+
+        # req = create_client_message(QueryUserReq)
+        # req.header.user = result.header.user
+        # req.body.uid = result.header.user
+        # client.socket.send(req.encode())
+
+      # client.socket.send(req.encode())
+
+    except Exception as e:
+        traceback.print_exc()
+    finally:
+        pass
 
 def query_bank(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
     try:
@@ -776,7 +808,7 @@ def query_bank(client,mobile = '13412341777',password= '123456',device_id='d_944
     finally:
         pass
 
-def active_bank_gold(client,mobile = '13412341777',password= '123456',device_id='d_9444',act = ''):
+def active_bank_gold(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
     try:
         MessageMapping.init()
         resp = client.normal_test_enter_server(mobile,password,device_id)
@@ -794,8 +826,7 @@ def active_bank_gold(client,mobile = '13412341777',password= '123456',device_id=
         print '3333333333333333333333333333333333'
         req = create_client_message(SaveMoneyReq)
         req.header.user = result.header.user
-        req.body.gold = 10
-        req.body.type = act
+        req.body.gold = 500
         client.socket.send(req.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -1190,10 +1221,10 @@ def test_card(imei,imsi,token,need_idle,*args):
     try:
         MessageMapping.init()
         client = TestClient(str(999999),str(999998), 'token_123')
-        # get_broke(client, '13412311111','123456', 'device_id_333')
-        # receive_broke(client, '13412311111','123456', 'device_id_333')
+        # get_broke(client, '13488889999','123456', '865372020475361')
+        # receive_broke(client, '13488889999','123456', '865372020475361')
         # upgrade_check(client, '13412311111','123456', 'device_id_333')
-        get_rank(client, '13488889999','123456', '865372020475361')
+        # get_rank(client, '13488889999','123456', '865372020475361')
 
         # send_friends_message(client, '13412311111','123456', 'device_id_333')
         # make_friends_apply(client, '13412311111','123456', 'device_id_333')
@@ -1202,17 +1233,17 @@ def test_card(imei,imsi,token,need_idle,*args):
 
         # get_friends_apply(client, '13412311111','123456', 'device_id_333')
         # get_friends(client, '13412311111','123456', 'device_id_333')
-        # query_bank(client, '13412311111','123456', 'device_id_333')
+        # query_bank(client, '13488889999','123456', '865372020475361')
 
-       #  active_bank_gold(client, '13412311111','123456', 'device_id_333', BANK_ACT_SAVE)
+        # active_bank_gold(client, '13488889999','123456', '865372020475361')
 
         # buy_shop_item(client, '13412311111','123456', 'device_id_333')
         # normal_login_game_server_time(client, '13412341777','123456', '88899111121')
         # trade_page_list(client, '13412311111','123456', 'device_id_333')
         # trade_buy(client, '13412311111','123456', 'device_id_333')
         # trade_sell(client, '13412311111','123456', 'device_id_333')
-        # query_user_bag(client, '13412311111','123456', 'device_id_333')
-
+        # query_user_bag(client, '13488889999','123456', '865372020475361')
+        # use_user_bag(client, '13488889999','123456', '865372020475361')
         # query_player(client, '13412311111','123456', 'device_id_333')
        #  fast_login_game(client,'device_id_333','imei_1010','imsi_2020', 'token_2020')
         # register_game(client, '13412311111','123456','1234','imei_1111','imsi_2222','device_id_333','LT333')
@@ -1225,9 +1256,9 @@ def test_card(imei,imsi,token,need_idle,*args):
 
        #  use_code(client, '13412311111', '123456', 'device_id_333')
 
-        # get_signs(client, 'wxy', '123456', '865647020556892')
-        # today_sign(client, '13412311111', '123456', 'device_id_333')
-        # send_chat_world(client,'13488889999', '123456', '865372020475361')
+        # get_signs(client, '13488889999', '123456', '865372020475361')
+        # today_sign(client, '13488889999', '123456', '865372020475361')
+        send_chat_world(client,'13488889999', '123456', '865372020475361')
         # send_chat_room(client,'13412311111', '123456', 'device_id_333')
         # get_rewards(client, '13412311111','123456', 'device_id_333')
         # revice_rewards(client, '13412311111','123456', 'device_id_333')

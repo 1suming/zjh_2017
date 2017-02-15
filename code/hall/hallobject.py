@@ -3,11 +3,13 @@ __author__ = 'Administrator'
 from config.var import *
 from config.rank import *
 from config.vip import *
+from config.item import *
 from message.resultdef import *
 from db.bag_item import *
 from db.bag_gift import *
 from db.mail import *
 from db.user import *
+from db.item import *
 from db.rank_gold_top import *
 from db.rank_charge_top import *
 from db.rank_make_money_top import *
@@ -109,8 +111,7 @@ class MessageObject:
     #     self.session.save(mail)
 
 class BagObject:
-    def __init__(self,dataaccess,session):
-        self.da = dataaccess
+    def __init__(self,session):
         self.session = session
 
     def save_user_gift(self, user,gift_id,countof):
@@ -127,6 +128,48 @@ class BagObject:
             'col_3':fields['countof']
         })
         self.session.flush()
+
+    def use_user_item(self, user, item_id, countof = 1):
+        return self.del_countof({'table_name':'bag_item','stuff_id':item_id,'uid':user,'countof':countof,'stuff_field':'item_id'})
+
+    def del_countof(self,fields):
+        delete_stmt = "UPDATE "+fields['table_name']+" SET countof = countof - :col_1 WHERE uid = :col_2 AND item_id = :col_3 AND countof > 0"
+        return self.session.execute(delete_stmt,{
+            'col_1':fields['countof'],
+            'col_2':fields['uid'],
+            'col_3':fields['stuff_id']
+        }).rowcount
+
+    def get_user_item(self, user, item_id):
+        return self.session.query(TBagItem).filter(and_(TBagItem.item_id == item_id, TBagItem.uid == user)).first()
+
+    def use_item(self, service,user, item_name, **args):
+        return getattr(self, ITEM_MAP[item_name][1])(service, user, args)
+    def use_kick(self, service, uid):
+        # 调用踢人函数
+        pass
+
+    def use_horn(self, service, uid, args):
+        # 调用广播函数
+        cachehelper.add_notification_queue(service.redis,service.redis.hkeys('online'), 5,{'message':args['message'],"message_color":'red'})
+
+    def use_exp_1(self, service, user,args):
+        if type(user) == int:
+            user = service.da.get_user(user)
+        user.exp = user.exp + 1
+        vip = VIPObject.get_vip(user.exp)
+        if user.vip < vip:
+            user.vip = vip
+        return service.da.save_user(self.session, user)
+
+    def use_exp_10(self, service, user,args):
+        if type(user) == int:
+            user = service.da.get_user(user)
+        user.exp = user.exp + 10
+        vip = VIPObject.get_vip(user.exp)
+        if user.vip < vip:
+            user.vip = vip
+        return service.da.save_user(self.session, user)
 
 class ResultObject:
     def __init__(self,pb,gold = 0,diamond = 0):
@@ -197,12 +240,12 @@ class Manager:
 
 
 class RankObject:
-    # enum RankType {
-    # 	RANK_WEALTH = 1;
-    # 	RANK_CHARGE = 2;
-    # 	RANK_CHARM = 3;
-    # 	RANK_MAKE_MONEY = 4;
-    # }
+
+    # 日充值榜单，调用函数
+    # RankObject.add_charge_top(session, 10026,'nick','avatar',100)
+    # 周赚金榜单，调用函数
+    # RankObject.add_make_money_top(session, 10026,'nick','avatar',100)
+
     def __init__(self, session):
         self.session = session
         self.rank_type_map = {
@@ -248,8 +291,6 @@ class RankObject:
 
     def merage_fake(self, data):
         if len(data) <= 0:
-            print '111111111111111111111111111111111111111111111111111'
-            print RANK_FAKE
             data = RANK_FAKE
         else:
             for fake in RANK_FAKE:
@@ -284,11 +325,11 @@ class RankObject:
 class BrokeObject:
 
     @staticmethod
-    def query_broke(uid, r):
+    def query_broke(uid, r, vip_conf):
         # 根据用户vip体系，查询得到用户可领取的次数总数
-        total = 5
+        total = vip_conf['relief_time']
         # conf文件读取每次领取金额数
-        good = 2000
+        good = vip_conf['relief_good']
         key = 'broke:'+str(uid)
         if r.exists(key):
             remain = int(r.get(key))
@@ -298,47 +339,91 @@ class BrokeObject:
         return total,remain,good
 
     @staticmethod
-    def receive_broke(uid, t, r):
+    def receive_broke(service, session,user, vip_conf):
         # 根据用户vip体系，查询得到用户可领取的次数总数
-        total = 5
+        total = vip_conf['relief_time']
         # conf文件读取每次领取金额数
-        good = 2000
-        key  = 'broke:'+str(uid)
-        if r.exists(key):
-            remain = int(r.get(key))
+        good = vip_conf['relief_good']
+        key  = 'broke:'+str(user.id)
+        if service.redis.exists(key):
+            remain = int(service.redis.get(key))
             if remain == 0:
                 return RESULT_FAILED_BROKE_FULL,0
             else:
-                # 给用户加金币操作 todo ...
-                print '222222222222222222222222'
-                remain = r.decr(key)
+                # 给用户加金币操作
+                user.modify_gold(session, good)
+                remain = service.redis.decr(key)
                 return 0,good
         else:
-            # 给用户加金币操作 todo ...
-            r.set(key, total)
-            r.expire(key, int(( t - ( t % 86400 ) + time.timezone ) + 86400 - t) )
-            remain = int(r.decr(key))
+            # 给用户加金币操作
+            user.modify_gold(session, good)
+            service.redis.set(key, total)
+            t = time.time()
+            service.redis.expire(key, int(( t - ( t % 86400 ) + time.timezone ) + 86400 - t) )
+            remain = int(service.redis.decr(key))
             print 'first plus gold'
             return 0,good
 
 
 class VIPObject:
-    def __init__(self, vip_level):
-        self.vip_level = vip_level
-        self.vip = {}
-        self.get_vip()
 
-    def get_vip(self):
-        self.vip = VIP_CONF[self.vip_level]
-        return self.conf
+    @staticmethod
+    def get_vip(exp):
+       if charge > VIP_CHARGE_MAP[0][0] and charge < VIP_CHARGE_MAP[1][0]:
+           return 0
+       elif charge >= VIP_CHARGE_MAP[1][0] and charge < VIP_CHARGE_MAP[2][0]:
+           return 1
+       elif charge >= VIP_CHARGE_MAP[2][0] and charge < VIP_CHARGE_MAP[3][0]:
+           return 2
+       elif charge >= VIP_CHARGE_MAP[3][0] and charge < VIP_CHARGE_MAP[4][0]:
+           return 3
+       elif charge >= VIP_CHARGE_MAP[4][0] and charge < VIP_CHARGE_MAP[5][0]:
+           return 4
+       elif charge >= VIP_CHARGE_MAP[5][0] and charge < VIP_CHARGE_MAP[6][0]:
+           return 5
+       elif charge >= VIP_CHARGE_MAP[6][0] and charge < VIP_CHARGE_MAP[7][0]:
+           return 6
+       elif charge >= VIP_CHARGE_MAP[7][0] and charge < VIP_CHARGE_MAP[8][0]:
+           return 7
+       elif charge >= VIP_CHARGE_MAP[8][0] and charge < VIP_CHARGE_MAP[9][0]:
+           return 8
+       elif charge >= VIP_CHARGE_MAP[9][0] and charge < VIP_CHARGE_MAP[10][0]:
+           return 9
+       elif charge >= VIP_CHARGE_MAP[10][0] and charge < VIP_CHARGE_MAP[11][0]:
+           return 10
+       elif charge >= VIP_CHARGE_MAP[11][0]:
+           return 10
+       else:
+           return 0
 
-    def do_func(self):
-        funcs = self.vip['func'].split(',')
-        for func in funcs:
-            getattr(self,func.strip())()
+    @staticmethod
+    def set_vip(session, service, user, exp):
+        if vip >= len(VIP_CONF):
+            return
 
-    def vip_func_1(self):
-        self
+        vip = VIPObject.get_vip(exp)
+
+        if user.vip == vip:
+            return
+
+        user.vip = vip
+        user.exp = exp
+        service.da.save_user(session, user)
+
+        # 送物品
+        bag = BagObject(session)
+        if VIP_CONF[vip]['horn_card'] > 0:
+            bag.save_user_item(user.id, ITEM_MAP['horn'][0], VIP_CONF[vip]['horn_card'])
+        if VIP_CONF[vip]['kick_card'] > 0:
+            bag.save_user_item(user.id, ITEM_MAP['kick'][0], VIP_CONF[vip]['kick_card'])
+
+
+    @staticmethod
+    def check_vip_auth(vip, auth):
+        conf = VIP_CONF[vip]
+        if auth in conf:
+            return True
+        return False
 
 
 class ItemObject:
@@ -346,3 +431,7 @@ class ItemObject:
     @staticmethod
     def get_items(session, item_ids):
         return session.execute('SELECT * FROM item WHERE id IN ('+ ','.join(item_ids) +')').fetchall()
+
+    @staticmethod
+    def get_user_item(self, user, item_id):
+        return self.session.query(TItem).filter(TItem.id == item_id).first()

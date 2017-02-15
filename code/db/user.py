@@ -32,6 +32,7 @@ tab_user = Table("user", metadata,
                  Column("address",String(140)),
                  Column("channel",String(10),default="test"),
                  Column("create_time",DateTime,nullable =False),
+                 Column("exp",Integer),
                  )
                  
 

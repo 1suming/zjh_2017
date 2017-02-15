@@ -27,6 +27,9 @@ tab_bag_item = Table("bag_item", metadata,
 class TBagItem(TableObject):
     def __init__(self):
         TableObject.__init__(self)
+
+    def __repr__(self):
+        return 'uid=%d,item_id=%d,countof=%d' % (self.uid,self.item_id,self.countof)
     
 mapper_bag_item = Mapper(TBagItem,tab_bag_item)
 
