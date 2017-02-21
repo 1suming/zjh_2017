@@ -93,6 +93,8 @@ class AccessClientConnection(object):
                 request,idx = get_message(msg)
                 logging.info("send a message back: cmd=%d | user=%d | result=%d " %(request.header.command,request.header.user,request.header.result))
                 logging.info("message body:\n" + str(request.body))
+
+
             try :
                 self.sock.sendall(msg)
             except:
@@ -105,7 +107,7 @@ class AccessClientConnection(object):
         self.handle_message(_close_client)
         self.send(_close_client)    
         self._closed = True
-        
+        logging.info("=========== >>>: %d", self.user)
         req = create_client_message(QuitGameServerReq)
         req.header.user = self.user
         self.access_server.access_service.forward_message(req.header,req.encode())
@@ -252,9 +254,11 @@ class AccessServer:
                 buffer = buffer[header.length:]
                 conn.handle_message(msg)
         except:
-            #traceback.print_exc()
+            # logging.info('except******************************>')
+            # traceback.print_exc()
             pass
         finally:
+            # logging.info('finally******************************>')
             conn.close()          
         
 

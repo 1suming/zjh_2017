@@ -39,6 +39,10 @@ from db.user import *
 from db.mail import *
 from db.friend import *
 from db.friend_apply import *
+from db.feedback import *
+from db.order import *
+from db.charge_item import *
+from db.charge_record import *
 
 from proto.hall_pb2 import *
 from proto.access_pb2 import *
@@ -59,7 +63,6 @@ from config.reward import *
 from config.item import *
 from config.sign import *
 from helper import protohelper
-from helper import levelhelper
 from helper import cachehelper
 from helper import datehelper
 
@@ -74,6 +77,7 @@ class HallService(GameService):
         self.manager = Manager(self)
         self.sender = EventSender(self.manager)
         gevent.spawn(self.queue_notification)
+        gevent.spawn(self.queue_charge)
 	#gevent.spawn_later(10,self.say_hello)
 
     # 系统自定义广播，定时发送
@@ -82,6 +86,11 @@ class HallService(GameService):
             cachehelper.add_notification_queue(self.redis,self.redis.hkeys('online'), 5,{'message':random.choice(['本游戏不提供任何形式的游戏外充值，请勿上当受骗！','查看一下进程\n[root@centos mysql]# ps aux |grep mysq*']),"message_color":'red'})
             gevent.sleep(20)
 
+    def queue_charge(self):
+        while True:
+            _,uid = self.redis.brpop("charge_queue")
+            event = create_client_event(ChargeEvent)
+            self.sender.send_event([uid],event)
 
     def setup_route(self):
         self.registe_command(QueryHallReq,QueryHallResp,self.handle_query_hall)
@@ -115,6 +124,7 @@ class HallService(GameService):
         self.registe_command(QueryTradeReq,QueryTradeResp,self.handle_trade)
         self.registe_command(BuyTradeReq,BuyTradeResp,self.handle_trade_buy)
         self.registe_command(SellGoldReq,SellGoldResp,self.handle_sell_gold)
+        self.registe_command(OutGoldReq,OutGoldResp,self.handle_out_gold)
 
         # 背包
         self.registe_command(QueryBagReq,QueryBagResp,self.handle_bag)
@@ -140,6 +150,18 @@ class HallService(GameService):
         self.registe_command(ReceiveFriendMessageReq,ReceiveFriendMessageResp,self.handle_receive_friends_message)
         self.registe_command(RemoveFriendMessageReq,RemoveFriendMessageResp,self.handle_remove_friends)
 
+        # 意见反馈
+        self.registe_command(FeedBackReq,FeedBackResp,self.handle_feedback)
+
+        # 生成订单
+        self.registe_command(CreateOrderReq,CreateOrderResp,self.handle_create_order)
+
+        # 充值
+        self.registe_command(QueryChargeReq,QueryChargeResp,self.handle_charge)
+
+        # 退出
+        # self.registe_command(LogoutReq,LogoutResp,self.handle_logout)
+
     # 破产补助查询
     @USE_TRANSACTION
     def handle_query_bankcrupt(self, session, req, resp, event):
@@ -160,7 +182,7 @@ class HallService(GameService):
         rank.set_pb( resp, rank.get_lists(req.body.rank_type, req.body.rank_time) )
         resp.header.result = 0
 
-    # region 好友，暂时不使用
+    # region 好友模块
     @USE_TRANSACTION
     def handle_get_friends(self,session,req,resp,event):
         page = req.body.page
@@ -179,6 +201,7 @@ class HallService(GameService):
 
         countof_applies = session.query(TFriendApply).filter(and_(TFriendApply.uid2 == req.header.user, TFriendApply.state == 1)).count()
         resp.body.countof_applies = countof_applies
+        resp.body.countof_message = 0
         resp.header.result = 0
     @USE_TRANSACTION
     def handle_get_friends_applies(self,session,req,resp,event):
@@ -191,7 +214,7 @@ class HallService(GameService):
             apply_user = self.da.get_user(item.uid1)
             friend_apply_obj.pb.apply_from_avatar = apply_user.avatar
             friend_apply_obj.pb.apply_from_nick = apply_user.nick
-            protohelper.set_gifts_str(self.redis,friend_apply_obj.pb,item.gifts)
+            # protohelper.set_gifts_str(self.redis,friend_apply_obj.pb,item.gifts)
         resp.header.result = 0
     @USE_TRANSACTION
     def handle_send_friends_message(self,session,req,resp,event):
@@ -336,16 +359,17 @@ class HallService(GameService):
         item_ids = []
 
         for mail in mails:
-            if mail.type == 1:
+            if mail.type == 1 and mail.items != None and mail.items != '':
                 for s in mail.items.split(','):
                     item_ids.append(s[0])
             else:
                 protohelper.set_mail(resp.body.mails.add(), mail)
 
-        item_datas = ItemObject.get_items(session, item_ids)
+        if len(item_ids) > 0:
+            item_datas = ItemObject.get_items(session, item_ids)
 
         for mail in mails:
-            if mail.type == 1:
+            if mail.type == 1 and mail.items != None and mail.items != '':
                 pb_mail = resp.body.mails.add()
                 protohelper.set_mail(pb_mail, mail)
                 for item in mail.items.split(','):
@@ -363,12 +387,12 @@ class HallService(GameService):
     # 确认接收邮件
     @USE_TRANSACTION
     def handle_receive_mail(self,session,req,resp,event):
-        mail = session.query(TMail).filter(and_(TMail.to_user == req.header.user,TMail.type == 1,TMail.state == 1)).first()
-        user_info = self.da.get_user(req.header.user)
-        if mail == None:
+        mail = session.query(TMail).filter(TMail.id == req.body.mail_id).first()
+        if mail == None or mail.state != 1:
             resp.header.result = -2
             return
 
+        user_info = self.da.get_user(req.header.user)
         user_info.gold = user_info.gold + mail.gold
         user_info.diamond = user_info.diamond + mail.gold
         self.da.save_user(session,user_info)
@@ -389,8 +413,8 @@ class HallService(GameService):
                 _gift['count'] = int(gift[2])
                 result_obj.set_gift(_gift)
 
-        session.query(TMail).with_lockmode("update").filter(and_(TMail.to_user == req.header.user,TMail.type == 1,TMail.state == 1)).update({
-            TMail.state:0,
+        session.query(TMail).with_lockmode("update").filter(TMail.id == req.body.mail_id).update({
+            TMail.state:1,
             TMail.received_time:int(time.time())
         })
 
@@ -527,6 +551,7 @@ class HallService(GameService):
         resp.body.brief.seat = -1
         resp.body.brief.vip = user_info.vip
         resp.body.brief.diamond = user_info.diamond
+        resp.body.brief.vip_exp = 0 if user_info.vip_exp == None else user_info.vip_exp
 
         # 获取通知信息
         has_reward_count = session.query(TRewardUserLog).filter(and_(TRewardUserLog.state == STATE_NO_ACCEPT_REWARD, TRewardUserLog.uid == user_info.id)).count()
@@ -534,14 +559,7 @@ class HallService(GameService):
         resp.body.notification.has_announcement = has_announcement_count if has_announcement_count > 0 else 0
         resp.body.notification.has_reward = has_reward_count if has_reward_count > 0 else 0
 
-        # 好友暂时不用
-        # has_friend_count = self.redis.hget('friend_queue',req.header.user)
-        # has_friend_count = 0 if has_friend_count == None else has_friend_count
-        # if has_friend_count > 0:
-        #      self.redis.hincrby('friend_queue',req.header.user,has_friend_count)
-        #      resp.body.notification.has_friend = has_friend_count
-        #  else:
-        #      resp.body.notification.has_friend = 0
+
 
 
         # 获取公告信息
@@ -558,8 +576,15 @@ class HallService(GameService):
         else:
             resp.body.is_signin = True
 
+        # 好友
+        has_friend_count = self.redis.hget('friend_queue',req.header.user)
+        has_friend_count = 0 if has_friend_count == None else has_friend_count
+        if has_friend_count > 0:
+             self.redis.hincrby('friend_queue',req.header.user,has_friend_count)
+             resp.body.notification.has_friend = has_friend_count
+        else:
+             resp.body.notification.has_friend = 0
 
-        # 暂时不用
         # 发送好友消息事件
         # if has_friend_count > 0:
         #     messages = self.redis.hgetall('message_'+str(req.header.user))
@@ -778,6 +803,10 @@ class HallService(GameService):
                         TUser.diamond: TUser.diamond + reward_code.diamond
             })
 
+            user_info = self.da.get_user(req.header.user)
+            user_info.gold = user_info.gold +reward_code.gold
+            user_info.diamond = user_info.diamond +reward_code.diamond
+            self.da.save_user(session, user_info)
         except Exception as e:
             print e.message
             resp.header.result = -3
@@ -824,14 +853,21 @@ class HallService(GameService):
         page_size = req.body.page_size
         can_buy = req.body.can_buy
 
+        # metrades = session.query(TTrade).filter(and_(TTrade.status == 1,TTrade.seller == req.header.user)).order_by(TTrade.id)
+        # # myself data
+        # for me in metrades:
+        #     protohelper.set_trades(resp.body.trades.add(), me, self.da.get_user(me.seller))
+
         if can_buy:
             user_info = self.da.get_user(req.header.user)
-            trades_count = session.query(TTrade).filter(and_(TTrade.diamond <= user_info.diamond,TTrade.buyer == None)).count()
-            trades = session.query(TTrade).filter(and_(TTrade.diamond <= user_info.diamond,TTrade.buyer == None)).order_by(TTrade.id).offset((int(page) - 1) * page_size).limit(page_size)
+            trades_count = session.query(TTrade).filter(and_(TTrade.diamond <= user_info.diamond,TTrade.status == 0)).count()
+            trades = session.query(TTrade).filter(and_(TTrade.diamond <= user_info.diamond,TTrade.status == 0)).order_by(desc(TTrade.id)).offset((int(page) - 1) * page_size).limit(page_size)
         else:
-            trades_count = session.query(TTrade).filter(TTrade.buyer == None).count()
-            trades = session.query(TTrade).filter(TTrade.buyer == None).order_by(TTrade.id).offset((int(page) - 1) * page_size).limit(page_size)
+            trades_count = session.query(TTrade).filter(TTrade.status == 0).count()
+            trades = session.query(TTrade).filter(TTrade.status == 0).order_by(desc(TTrade.id)).offset((int(page) - 1) * page_size).limit(page_size)
 
+
+        # other data
         for item in trades:
             protohelper.set_trades(resp.body.trades.add(), item,self.da.get_user(item.seller))
         resp.body.total = trades_count
@@ -848,7 +884,7 @@ class HallService(GameService):
 
         try:
             result = session.query(TTrade).with_lockmode("update").filter(and_(TTrade.id == req.body.trade_id, \
-                                                                               TTrade.buyer == None)).update({
+                                                                               TTrade.status != 1, TTrade.diamond <= user_info.diamond)).update({
                 TTrade.buyer : user_info.id,
                 TTrade.buy_time : datetime.now(),
             })
@@ -872,19 +908,44 @@ class HallService(GameService):
             resp.header.result = RESULT_FAILED_INVALID_AUTH
             return
 
-        if user_info.gold < req.body.gold:
-            resp.header.result = -1
+        if user_info.gold <= req.body.gold:
+            resp.header.result = RESULT_FAILED_INVALID_GOLD
             return
+
 
         trade = TTrade()
         trade.seller = req.header.user
         trade.gold = req.body.gold
         trade.diamond = req.body.diamond
         trade.sell_time = datetime.now()
+        trade.status = 0
         session.add(trade)
+
+        user_info.gold = user_info.gold - int(req.body.gold)
+        self.da.save_user(session,user_info)
 
         self.get_result(user_info, resp)
         resp.header.result = 0
+    # 下架金币
+    @USE_TRANSACTION
+    def handle_out_gold(self,session,req,resp,event):
+        user_info = self.da.get_user(req.header.user)
+        trade = session.query(TTrade).filter(and_(TTrade.id == req.body.trade_id, TTrade.status == 0)).first()
+
+        if trade == None:
+            resp.header.result = -1
+            return
+        session.query(TTrade).with_lockmode('update').filter(TTrade.id == req.body.trade_id).update({
+            TTrade.status : -1
+        })
+        user_info.gold = user_info.gold + trade.gold
+        self.da.save_user(session, user_info)
+
+        resp.body.result.gold = user_info.gold
+        resp.header.result = 0
+
+
+
     # 查询背包
     @USE_TRANSACTION
     def handle_bag(self,session,req,resp,event):
@@ -1034,6 +1095,32 @@ class HallService(GameService):
         resp.body.result.gold = user_info.gold
         resp.header.result = 0
 
+    # 生成订单
+    @USE_TRANSACTION
+    def handle_create_order(self,session,req,resp,event):
+        order_sn = self.get_order_sn()
+        order =  session.query(TOrder).filter(TOrder.order_sn == order_sn).first()
+        if order != None:
+            order_sn = self.get_order_sn()
+            order =  session.query(TOrder).filter(TOrder.order_sn == order_sn).first()
+            if order != None:
+                resp.header.result = -1
+                return
+        order = TOrder()
+        order.order_sn = order_sn
+        order.uid = req.header.user
+        order.money = 1
+        order.shop_id = req.body.shop_id
+        order.status = -1
+        order.comment = req.body.comment
+        order.create_time = datehelper.get_today_str()
+        session.add(order)
+
+        resp.body.money = 1
+        resp.body.order_sn = str(order_sn)
+        resp.body.callback = PAY_RESULT_URL
+        resp.header.result=0
+
     # 记录牌桌次数
     @USE_TRANSACTION
     def handle_record_play_reward(self,session,req,resp,event):
@@ -1050,7 +1137,38 @@ class HallService(GameService):
         resp.body.current = current
         resp.header.result = 0
 
+    # 意见反馈
+    @USE_TRANSACTION
+    def handle_feedback(self,session,req,resp,event):
+        feedback = TFeedBack()
+        feedback.message = req.body.message
+        feedback.contact = req.body.contact
+        feedback.create_time = datehelper.get_today_str()
+        feedback.status = -1
+        session.add(feedback)
+        resp.header.result = 0
 
+
+    # 充值
+    @USE_TRANSACTION
+    def handle_charge(self,session,req,resp,event):
+        items = session.query(TChargeItem).all()
+        for item in items:
+            protohelper.set_charge(resp.body.items.add(), item)
+        resp.header.result = 0
+
+
+    # 退出
+    def handle_logout(self,session,req,resp,event):
+        try :
+            resp.header.result = 0
+            if req.header.user:
+                self.redis.hdel("sessions",req.header.user)
+                resp.header.result = 0
+            else:
+                resp.header.result = -1
+        except Exception as e:
+            logging.error('user session is lost: %d ' % req.header.user)
 
     # 获取通用result结果
     def get_result(self,user,resp):
@@ -1069,6 +1187,9 @@ class HallService(GameService):
             event.body.param2 = json.dumps(json_object['param2'])
 
             self.sender.send_event(users,event)
+
+    def get_order_sn(self):
+        return time.strftime('%Y%m%d')+str(random.randint(10000,99999))
 
 
 if __name__ == "__main__":

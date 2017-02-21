@@ -164,8 +164,8 @@ class BagObject:
     def use_exp_1(self, service, user,args):
         if type(user) == int:
             user = service.da.get_user(user)
-        user.exp = user.exp + 1
-        vip = VIPObject.get_vip(user.exp)
+        user.vip_exp = user.vip_exp + 1
+        vip = VIPObject.get_vip(user.vip_exp)
         if user.vip < vip:
             user.vip = vip
         return service.da.save_user(self.session, user)
@@ -173,8 +173,8 @@ class BagObject:
     def use_exp_10(self, service, user,args):
         if type(user) == int:
             user = service.da.get_user(user)
-        user.exp = user.exp + 10
-        vip = VIPObject.get_vip(user.exp)
+        user.vip_exp = user.vip_exp + 10
+        vip = VIPObject.get_vip(user.vip_exp)
         if user.vip < vip:
             user.vip = vip
         return service.da.save_user(self.session, user)
@@ -234,7 +234,7 @@ class Manager:
         self.service = service
 
     def offline(self, user):
-        access_service = self.redis.hget("online", user)
+        access_service = self.service.redis.hget("online", user)
         if access_service != None:
             return int(access_service)
         return 0
@@ -414,7 +414,7 @@ class VIPObject:
             return
 
         user.vip = vip
-        user.exp = exp
+        user.vip_exp = exp
         service.da.save_user(session, user)
 
         # 送物品
@@ -428,7 +428,7 @@ class VIPObject:
     @staticmethod
     def check_vip_auth(vip, auth):
         conf = VIP_CONF[vip]
-        if auth in conf:
+        if auth in conf['auth']:
             return True
         return False
 

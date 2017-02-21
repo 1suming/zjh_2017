@@ -89,3 +89,4 @@ enum NotificationType {
 	N_REWARD = 3;
 	N_GIFT_RECEIVED = 4;
 }
+

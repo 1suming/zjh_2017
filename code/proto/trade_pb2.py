@@ -20,7 +20,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='trade.proto',
   package='cardgame',
-  serialized_pb=_b('\n\x0btrade.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"\x1e\n\x0cQueryShopReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xb8\x17\"B\n\rQueryShopResp\x12!\n\x05items\x18\x01 \x03(\x0b\x32\x12.cardgame.ShopItem\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xb9\x17\"A\n\nBuyItemReq\x12\x14\n\x0cshop_item_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xba\x17\"?\n\x0b\x42uyItemResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbb\x17\"Q\n\rQueryTradeReq\x12\x0c\n\x04page\x18\x01 \x02(\x05\x12\x11\n\tpage_size\x18\x02 \x02(\x05\x12\x0f\n\x07\x63\x61n_buy\x18\x03 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbc\x17\"P\n\x0eQueryTradeResp\x12\x1f\n\x06trades\x18\x01 \x03(\x0b\x32\x0f.cardgame.Trade\x12\r\n\x05total\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbd\x17\"/\n\x0b\x42uyTradeReq\x12\x10\n\x08trade_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbe\x17\"@\n\x0c\x42uyTradeResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbf\x17\"<\n\x0bSellGoldReq\x12\x0c\n\x04gold\x18\x01 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc0\x17\"@\n\x0cSellGoldResp\x12 \n\x06result\x18\x01 \x02(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc1\x17\x42#\n\x18\x63om.zhili.cardgame.protoB\x05TradeH\x03')
+  serialized_pb=_b('\n\x0btrade.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"\x1e\n\x0cQueryShopReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xb8\x17\"B\n\rQueryShopResp\x12!\n\x05items\x18\x01 \x03(\x0b\x32\x12.cardgame.ShopItem\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xb9\x17\"A\n\nBuyItemReq\x12\x14\n\x0cshop_item_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xba\x17\"?\n\x0b\x42uyItemResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbb\x17\"Q\n\rQueryTradeReq\x12\x0c\n\x04page\x18\x01 \x02(\x05\x12\x11\n\tpage_size\x18\x02 \x02(\x05\x12\x0f\n\x07\x63\x61n_buy\x18\x03 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbc\x17\"P\n\x0eQueryTradeResp\x12\x1f\n\x06trades\x18\x01 \x03(\x0b\x32\x0f.cardgame.Trade\x12\r\n\x05total\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbd\x17\"/\n\x0b\x42uyTradeReq\x12\x10\n\x08trade_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbe\x17\"@\n\x0c\x42uyTradeResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbf\x17\"<\n\x0bSellGoldReq\x12\x0c\n\x04gold\x18\x01 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc0\x17\"@\n\x0cSellGoldResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc1\x17\".\n\nOutGoldReq\x12\x10\n\x08trade_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc2\x17\"?\n\x0bOutGoldResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc3\x17\x42#\n\x18\x63om.zhili.cardgame.protoB\x05TradeH\x03')
   ,
   dependencies=[constant_pb2.DESCRIPTOR,struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -206,6 +206,42 @@ _SELLGOLDRESP_DEF = _descriptor.EnumDescriptor(
   serialized_end=693,
 )
 _sym_db.RegisterEnumDescriptor(_SELLGOLDRESP_DEF)
+
+_OUTGOLDREQ_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.OutGoldReq.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=3010,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=727,
+  serialized_end=741,
+)
+_sym_db.RegisterEnumDescriptor(_OUTGOLDREQ_DEF)
+
+_OUTGOLDRESP_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.OutGoldResp.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=3011,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=792,
+  serialized_end=806,
+)
+_sym_db.RegisterEnumDescriptor(_OUTGOLDRESP_DEF)
 
 
 _QUERYSHOPREQ = _descriptor.Descriptor(
@@ -524,7 +560,7 @@ _SELLGOLDRESP = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='result', full_name='cardgame.SellGoldResp.result', index=0,
-      number=1, type=11, cpp_type=10, label=2,
+      number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -545,6 +581,68 @@ _SELLGOLDRESP = _descriptor.Descriptor(
   serialized_end=693,
 )
 
+
+_OUTGOLDREQ = _descriptor.Descriptor(
+  name='OutGoldReq',
+  full_name='cardgame.OutGoldReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='trade_id', full_name='cardgame.OutGoldReq.trade_id', index=0,
+      number=1, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _OUTGOLDREQ_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=695,
+  serialized_end=741,
+)
+
+
+_OUTGOLDRESP = _descriptor.Descriptor(
+  name='OutGoldResp',
+  full_name='cardgame.OutGoldResp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='result', full_name='cardgame.OutGoldResp.result', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _OUTGOLDRESP_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=743,
+  serialized_end=806,
+)
+
 _QUERYSHOPREQ_DEF.containing_type = _QUERYSHOPREQ
 _QUERYSHOPRESP.fields_by_name['items'].message_type = struct_pb2._SHOPITEM
 _QUERYSHOPRESP_DEF.containing_type = _QUERYSHOPRESP
@@ -560,6 +658,9 @@ _BUYTRADERESP_DEF.containing_type = _BUYTRADERESP
 _SELLGOLDREQ_DEF.containing_type = _SELLGOLDREQ
 _SELLGOLDRESP.fields_by_name['result'].message_type = struct_pb2._RESULT
 _SELLGOLDRESP_DEF.containing_type = _SELLGOLDRESP
+_OUTGOLDREQ_DEF.containing_type = _OUTGOLDREQ
+_OUTGOLDRESP.fields_by_name['result'].message_type = struct_pb2._RESULT
+_OUTGOLDRESP_DEF.containing_type = _OUTGOLDRESP
 DESCRIPTOR.message_types_by_name['QueryShopReq'] = _QUERYSHOPREQ
 DESCRIPTOR.message_types_by_name['QueryShopResp'] = _QUERYSHOPRESP
 DESCRIPTOR.message_types_by_name['BuyItemReq'] = _BUYITEMREQ
@@ -570,6 +671,8 @@ DESCRIPTOR.message_types_by_name['BuyTradeReq'] = _BUYTRADEREQ
 DESCRIPTOR.message_types_by_name['BuyTradeResp'] = _BUYTRADERESP
 DESCRIPTOR.message_types_by_name['SellGoldReq'] = _SELLGOLDREQ
 DESCRIPTOR.message_types_by_name['SellGoldResp'] = _SELLGOLDRESP
+DESCRIPTOR.message_types_by_name['OutGoldReq'] = _OUTGOLDREQ
+DESCRIPTOR.message_types_by_name['OutGoldResp'] = _OUTGOLDRESP
 
 QueryShopReq = _reflection.GeneratedProtocolMessageType('QueryShopReq', (_message.Message,), dict(
   DESCRIPTOR = _QUERYSHOPREQ,
@@ -640,6 +743,20 @@ SellGoldResp = _reflection.GeneratedProtocolMessageType('SellGoldResp', (_messag
   # @@protoc_insertion_point(class_scope:cardgame.SellGoldResp)
   ))
 _sym_db.RegisterMessage(SellGoldResp)
+
+OutGoldReq = _reflection.GeneratedProtocolMessageType('OutGoldReq', (_message.Message,), dict(
+  DESCRIPTOR = _OUTGOLDREQ,
+  __module__ = 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.OutGoldReq)
+  ))
+_sym_db.RegisterMessage(OutGoldReq)
+
+OutGoldResp = _reflection.GeneratedProtocolMessageType('OutGoldResp', (_message.Message,), dict(
+  DESCRIPTOR = _OUTGOLDRESP,
+  __module__ = 'trade_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.OutGoldResp)
+  ))
+_sym_db.RegisterMessage(OutGoldResp)
 
 
 DESCRIPTOR.has_options = True

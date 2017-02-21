@@ -80,6 +80,19 @@ message SellGoldResp {
     enum DEF {
         ID = 3009;
     }
-	required Result result = 1;
+	optional Result result = 1;
 }
 
+message OutGoldReq {
+    enum DEF {
+        ID = 3010;
+    }
+	required int32 trade_id = 1;
+}
+
+message OutGoldResp {
+    enum DEF {
+        ID = 3011;
+    }
+	optional Result result = 1;
+}

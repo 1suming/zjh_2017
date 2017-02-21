@@ -20,6 +20,7 @@ class EventSender:
             return self.manager.notify_one(event,user)
 
 
+
     def make_friend_apply(self,event,user):
         if self.manager:
             return self.manager.notify_one(event,user)

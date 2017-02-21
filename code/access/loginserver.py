@@ -96,7 +96,7 @@ class LoginServer:
             RegisterReq.DEF.Value("ID"):self.handle_register,
             LoginReq.DEF.Value("ID"): self.handle_login,
             ResetReq.DEF.Value("ID"): self.handle_reset,
-            LogoutReq.DEF.Value("ID"): self.handle_logout,
+            # LogoutReq.DEF.Value("ID"): self.handle_logout,
             FastLoginReq.DEF.Value("ID"): self.handle_fast_login,
             GetVerifyCodeReq.DEF.Value("ID"): self.handle_get_verify_code,
             CheckUpgradeReq.DEF.Value("ID"):self.handle_check_upgrade,
@@ -141,12 +141,17 @@ class LoginServer:
                 msg,start = request_data
                 buffer = buffer[start:]
                 handler = self.message_handlers.get(msg.header.command)
+
                 if handler == None:
                     logging.info("receive invalid message" + str(msg.header.command))
                     break
                 logging.info("receive a client message:" + str(msg.body))
                 resp = create_response(msg)
                 connect = handler(msg,resp)
+                if connect == True and handler == self.handle_logout:
+                    logging.info('logout a client '+str(msg.header.command))
+                    sock.async_close()
+
                 logging.info("send a message back to client: %d,%d " + str(resp.body),resp.header.result,resp.header.user)
                 sock.async_send(resp.encode())
                 #if connect == True:
@@ -382,7 +387,7 @@ class LoginServer:
     def handle_logout(self,message,resp):
         try :
             resp.header.result = 0
-            if message.header.user > 0 and message.body.session :
+            if message.header.user:
                 self.redis.hdel("sessions",message.header.user)
                 resp.header.result = 0
             else:

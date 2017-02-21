@@ -20,7 +20,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hall.proto',
   package='cardgame',
-  serialized_pb=_b('\n\nhall.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"P\n\x0cQueryHallReq\x12\x13\n\x0bmax_mail_id\x18\x01 \x02(\x05\x12\x1b\n\x13max_announcement_id\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8\x07\"\xb5\x01\n\rQueryHallResp\x12$\n\x05\x62rief\x18\x01 \x01(\x0b\x32\x15.cardgame.PlayerBrief\x12,\n\x0cnotification\x18\x02 \x01(\x0b\x32\x16.cardgame.Notification\x12-\n\rannouncements\x18\x03 \x03(\x0b\x32\x16.cardgame.Announcement\x12\x11\n\tis_signin\x18\x04 \x01(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9\x07\"+\n\x0cQueryUserReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xea\x07\"A\n\rQueryUserResp\x12 \n\x06player\x18\x01 \x01(\x0b\x32\x10.cardgame.Player\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xeb\x07\"\x8c\x01\n\rUpdateUserReq\x12\x10\n\x08\x62irthday\x18\x01 \x01(\t\x12\x0c\n\x04sign\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontact\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0c\n\x04nick\x18\x05 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x06 \x01(\t\x12\x0b\n\x03sex\x18\x07 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xec\x07\"B\n\x0eUpdateUserResp\x12 \n\x06result\x18\x01 \x02(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xed\x07\"\'\n\x15QueryAnnouncementsReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xee\x07\"W\n\x16QueryAnnouncementsResp\x12-\n\rannouncements\x18\x01 \x03(\x0b\x32\x16.cardgame.Announcement\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xef\x07\"L\n\x0bSendGiftReq\x12\x0f\n\x07gift_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\x12\r\n\x05other\x18\x03 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf0\x07\"@\n\x0cSendGiftResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf1\x07\"m\n\x11NotificationEvent\x12(\n\x04type\x18\x01 \x02(\x0e\x32\x1a.cardgame.NotificationType\x12\x0e\n\x06param1\x18\x02 \x01(\x05\x12\x0e\n\x06param2\x18\x03 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xcc\x08\x42\"\n\x18\x63om.zhili.cardgame.protoB\x04HallH\x03')
+  serialized_pb=_b('\n\nhall.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"P\n\x0cQueryHallReq\x12\x13\n\x0bmax_mail_id\x18\x01 \x02(\x05\x12\x1b\n\x13max_announcement_id\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8\x07\"\xb5\x01\n\rQueryHallResp\x12$\n\x05\x62rief\x18\x01 \x01(\x0b\x32\x15.cardgame.PlayerBrief\x12,\n\x0cnotification\x18\x02 \x01(\x0b\x32\x16.cardgame.Notification\x12-\n\rannouncements\x18\x03 \x03(\x0b\x32\x16.cardgame.Announcement\x12\x11\n\tis_signin\x18\x04 \x01(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9\x07\"+\n\x0cQueryUserReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xea\x07\"A\n\rQueryUserResp\x12 \n\x06player\x18\x01 \x01(\x0b\x32\x10.cardgame.Player\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xeb\x07\"\x8c\x01\n\rUpdateUserReq\x12\x10\n\x08\x62irthday\x18\x01 \x01(\t\x12\x0c\n\x04sign\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontact\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0c\n\x04nick\x18\x05 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x06 \x01(\t\x12\x0b\n\x03sex\x18\x07 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xec\x07\"B\n\x0eUpdateUserResp\x12 \n\x06result\x18\x01 \x02(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xed\x07\"\'\n\x15QueryAnnouncementsReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xee\x07\"W\n\x16QueryAnnouncementsResp\x12-\n\rannouncements\x18\x01 \x03(\x0b\x32\x16.cardgame.Announcement\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xef\x07\"L\n\x0bSendGiftReq\x12\x0f\n\x07gift_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\x12\r\n\x05other\x18\x03 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf0\x07\"@\n\x0cSendGiftResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf1\x07\"m\n\x11NotificationEvent\x12(\n\x04type\x18\x01 \x02(\x0e\x32\x1a.cardgame.NotificationType\x12\x0e\n\x06param1\x18\x02 \x01(\x05\x12\x0e\n\x06param2\x18\x03 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xcc\x08\"?\n\x0b\x46\x65\x65\x64\x42\x61\x63kReq\x12\x0f\n\x07message\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontact\x18\x02 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe0\x08\"\x1e\n\x0c\x46\x65\x65\x64\x42\x61\x63kResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe1\x08\"B\n\x0e\x43reateOrderReq\x12\x0f\n\x07shop_id\x18\x01 \x02(\x05\x12\x0f\n\x07\x63omment\x18\x02 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xfe\x08\"T\n\x0f\x43reateOrderResp\x12\x10\n\x08order_sn\x18\x01 \x02(\t\x12\r\n\x05money\x18\x02 \x02(\x05\x12\x10\n\x08\x63\x61llback\x18\x03 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xff\x08\" \n\x0eQueryChargeReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x80\t\"F\n\x0fQueryChargeResp\x12#\n\x05items\x18\x01 \x03(\x0b\x32\x14.cardgame.ChargeItem\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x81\t\"\x1d\n\x0b\x43hargeEvent\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x82\tB\"\n\x18\x63om.zhili.cardgame.protoB\x04HallH\x03')
   ,
   dependencies=[constant_pb2.DESCRIPTOR,struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -224,6 +224,132 @@ _NOTIFICATIONEVENT_DEF = _descriptor.EnumDescriptor(
   serialized_end=1026,
 )
 _sym_db.RegisterEnumDescriptor(_NOTIFICATIONEVENT_DEF)
+
+_FEEDBACKREQ_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.FeedBackReq.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1120,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1077,
+  serialized_end=1091,
+)
+_sym_db.RegisterEnumDescriptor(_FEEDBACKREQ_DEF)
+
+_FEEDBACKRESP_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.FeedBackResp.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1121,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1109,
+  serialized_end=1123,
+)
+_sym_db.RegisterEnumDescriptor(_FEEDBACKRESP_DEF)
+
+_CREATEORDERREQ_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.CreateOrderReq.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1150,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1177,
+  serialized_end=1191,
+)
+_sym_db.RegisterEnumDescriptor(_CREATEORDERREQ_DEF)
+
+_CREATEORDERRESP_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.CreateOrderResp.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1151,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1263,
+  serialized_end=1277,
+)
+_sym_db.RegisterEnumDescriptor(_CREATEORDERRESP_DEF)
+
+_QUERYCHARGEREQ_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.QueryChargeReq.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1152,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1297,
+  serialized_end=1311,
+)
+_sym_db.RegisterEnumDescriptor(_QUERYCHARGEREQ_DEF)
+
+_QUERYCHARGERESP_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.QueryChargeResp.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1153,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1369,
+  serialized_end=1383,
+)
+_sym_db.RegisterEnumDescriptor(_QUERYCHARGERESP_DEF)
+
+_CHARGEEVENT_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.ChargeEvent.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1154,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1400,
+  serialized_end=1414,
+)
+_sym_db.RegisterEnumDescriptor(_CHARGEEVENT_DEF)
 
 
 _QUERYHALLREQ = _descriptor.Descriptor(
@@ -657,6 +783,230 @@ _NOTIFICATIONEVENT = _descriptor.Descriptor(
   serialized_end=1026,
 )
 
+
+_FEEDBACKREQ = _descriptor.Descriptor(
+  name='FeedBackReq',
+  full_name='cardgame.FeedBackReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='message', full_name='cardgame.FeedBackReq.message', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='contact', full_name='cardgame.FeedBackReq.contact', index=1,
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _FEEDBACKREQ_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1028,
+  serialized_end=1091,
+)
+
+
+_FEEDBACKRESP = _descriptor.Descriptor(
+  name='FeedBackResp',
+  full_name='cardgame.FeedBackResp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _FEEDBACKRESP_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1093,
+  serialized_end=1123,
+)
+
+
+_CREATEORDERREQ = _descriptor.Descriptor(
+  name='CreateOrderReq',
+  full_name='cardgame.CreateOrderReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='shop_id', full_name='cardgame.CreateOrderReq.shop_id', index=0,
+      number=1, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='comment', full_name='cardgame.CreateOrderReq.comment', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _CREATEORDERREQ_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1125,
+  serialized_end=1191,
+)
+
+
+_CREATEORDERRESP = _descriptor.Descriptor(
+  name='CreateOrderResp',
+  full_name='cardgame.CreateOrderResp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='order_sn', full_name='cardgame.CreateOrderResp.order_sn', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='money', full_name='cardgame.CreateOrderResp.money', index=1,
+      number=2, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='callback', full_name='cardgame.CreateOrderResp.callback', index=2,
+      number=3, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _CREATEORDERRESP_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1193,
+  serialized_end=1277,
+)
+
+
+_QUERYCHARGEREQ = _descriptor.Descriptor(
+  name='QueryChargeReq',
+  full_name='cardgame.QueryChargeReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _QUERYCHARGEREQ_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1279,
+  serialized_end=1311,
+)
+
+
+_QUERYCHARGERESP = _descriptor.Descriptor(
+  name='QueryChargeResp',
+  full_name='cardgame.QueryChargeResp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='items', full_name='cardgame.QueryChargeResp.items', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _QUERYCHARGERESP_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1313,
+  serialized_end=1383,
+)
+
+
+_CHARGEEVENT = _descriptor.Descriptor(
+  name='ChargeEvent',
+  full_name='cardgame.ChargeEvent',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _CHARGEEVENT_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1385,
+  serialized_end=1414,
+)
+
 _QUERYHALLREQ_DEF.containing_type = _QUERYHALLREQ
 _QUERYHALLRESP.fields_by_name['brief'].message_type = struct_pb2._PLAYERBRIEF
 _QUERYHALLRESP.fields_by_name['notification'].message_type = struct_pb2._NOTIFICATION
@@ -676,6 +1026,14 @@ _SENDGIFTRESP.fields_by_name['result'].message_type = struct_pb2._RESULT
 _SENDGIFTRESP_DEF.containing_type = _SENDGIFTRESP
 _NOTIFICATIONEVENT.fields_by_name['type'].enum_type = constant_pb2._NOTIFICATIONTYPE
 _NOTIFICATIONEVENT_DEF.containing_type = _NOTIFICATIONEVENT
+_FEEDBACKREQ_DEF.containing_type = _FEEDBACKREQ
+_FEEDBACKRESP_DEF.containing_type = _FEEDBACKRESP
+_CREATEORDERREQ_DEF.containing_type = _CREATEORDERREQ
+_CREATEORDERRESP_DEF.containing_type = _CREATEORDERRESP
+_QUERYCHARGEREQ_DEF.containing_type = _QUERYCHARGEREQ
+_QUERYCHARGERESP.fields_by_name['items'].message_type = struct_pb2._CHARGEITEM
+_QUERYCHARGERESP_DEF.containing_type = _QUERYCHARGERESP
+_CHARGEEVENT_DEF.containing_type = _CHARGEEVENT
 DESCRIPTOR.message_types_by_name['QueryHallReq'] = _QUERYHALLREQ
 DESCRIPTOR.message_types_by_name['QueryHallResp'] = _QUERYHALLRESP
 DESCRIPTOR.message_types_by_name['QueryUserReq'] = _QUERYUSERREQ
@@ -687,6 +1045,13 @@ DESCRIPTOR.message_types_by_name['QueryAnnouncementsResp'] = _QUERYANNOUNCEMENTS
 DESCRIPTOR.message_types_by_name['SendGiftReq'] = _SENDGIFTREQ
 DESCRIPTOR.message_types_by_name['SendGiftResp'] = _SENDGIFTRESP
 DESCRIPTOR.message_types_by_name['NotificationEvent'] = _NOTIFICATIONEVENT
+DESCRIPTOR.message_types_by_name['FeedBackReq'] = _FEEDBACKREQ
+DESCRIPTOR.message_types_by_name['FeedBackResp'] = _FEEDBACKRESP
+DESCRIPTOR.message_types_by_name['CreateOrderReq'] = _CREATEORDERREQ
+DESCRIPTOR.message_types_by_name['CreateOrderResp'] = _CREATEORDERRESP
+DESCRIPTOR.message_types_by_name['QueryChargeReq'] = _QUERYCHARGEREQ
+DESCRIPTOR.message_types_by_name['QueryChargeResp'] = _QUERYCHARGERESP
+DESCRIPTOR.message_types_by_name['ChargeEvent'] = _CHARGEEVENT
 
 QueryHallReq = _reflection.GeneratedProtocolMessageType('QueryHallReq', (_message.Message,), dict(
   DESCRIPTOR = _QUERYHALLREQ,
@@ -764,6 +1129,55 @@ NotificationEvent = _reflection.GeneratedProtocolMessageType('NotificationEvent'
   # @@protoc_insertion_point(class_scope:cardgame.NotificationEvent)
   ))
 _sym_db.RegisterMessage(NotificationEvent)
+
+FeedBackReq = _reflection.GeneratedProtocolMessageType('FeedBackReq', (_message.Message,), dict(
+  DESCRIPTOR = _FEEDBACKREQ,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.FeedBackReq)
+  ))
+_sym_db.RegisterMessage(FeedBackReq)
+
+FeedBackResp = _reflection.GeneratedProtocolMessageType('FeedBackResp', (_message.Message,), dict(
+  DESCRIPTOR = _FEEDBACKRESP,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.FeedBackResp)
+  ))
+_sym_db.RegisterMessage(FeedBackResp)
+
+CreateOrderReq = _reflection.GeneratedProtocolMessageType('CreateOrderReq', (_message.Message,), dict(
+  DESCRIPTOR = _CREATEORDERREQ,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.CreateOrderReq)
+  ))
+_sym_db.RegisterMessage(CreateOrderReq)
+
+CreateOrderResp = _reflection.GeneratedProtocolMessageType('CreateOrderResp', (_message.Message,), dict(
+  DESCRIPTOR = _CREATEORDERRESP,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.CreateOrderResp)
+  ))
+_sym_db.RegisterMessage(CreateOrderResp)
+
+QueryChargeReq = _reflection.GeneratedProtocolMessageType('QueryChargeReq', (_message.Message,), dict(
+  DESCRIPTOR = _QUERYCHARGEREQ,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.QueryChargeReq)
+  ))
+_sym_db.RegisterMessage(QueryChargeReq)
+
+QueryChargeResp = _reflection.GeneratedProtocolMessageType('QueryChargeResp', (_message.Message,), dict(
+  DESCRIPTOR = _QUERYCHARGERESP,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.QueryChargeResp)
+  ))
+_sym_db.RegisterMessage(QueryChargeResp)
+
+ChargeEvent = _reflection.GeneratedProtocolMessageType('ChargeEvent', (_message.Message,), dict(
+  DESCRIPTOR = _CHARGEEVENT,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.ChargeEvent)
+  ))
+_sym_db.RegisterMessage(ChargeEvent)
 
 
 DESCRIPTOR.has_options = True

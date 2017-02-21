@@ -19,10 +19,11 @@ from sqlalchemy.orm import Mapper
 tab_charge_item = Table("charge_item", metadata,
                  Column("id",Integer, primary_key=True),
                  Column("diamond",Integer,default=0,nullable =False),
+                 Column("icon",String(20)),
                  Column("money",Integer,default=0,nullable =False),
                  Column("description",String(140),nullable =False),
                  Column("extra_diamond",Integer,default=0),
-                 Column("extra_items",String(100),default=""), # 赠送道具列表,格式如下:"(item_id,count),(item_id,count)....."
+                 Column("extra_items",String(100),default=""), # 赠送道具列表,格式如下:"item_id-count,item_id-count....."
                  Column("create_time", DateTime,nullable =False),
                  )
                  

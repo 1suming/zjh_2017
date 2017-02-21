@@ -80,6 +80,7 @@ def set_bag_gift(pb,user_gift, gifts):
 
 def set_mail(pb,mail):
     copy_simple_field(pb,mail)
+    pb.received = mail.state
 
 def set_gifts_str(redis,pb,gifts):
     if gifts != None:
@@ -129,3 +130,6 @@ def set_top(pb, rank_player, index):
 
 def set_item(pb, item):
     copy_simple_field(pb,item,not_fields = ["birthday","best"])
+
+def set_charge(pb, item):
+    copy_simple_field(pb,item, not_fields = ['extra_diamond'])

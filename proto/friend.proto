@@ -23,6 +23,7 @@ message GetFriendsResp {
 	}
 	repeated Friend friends  = 1;
 	required int32 countof_applies = 2;
+	required int32 countof_message = 3;
 }
 
 
@@ -123,3 +124,4 @@ message FriendApplyEvent {
 	}
 	required FriendApply apply = 1;
 }
+

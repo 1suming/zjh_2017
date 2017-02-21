@@ -27,6 +27,7 @@ logging.basicConfig(level=logging.DEBUG,
 HOST = "192.168.2.75"
 #HOST = "192.168.1.105"
 #HOST = "127.0.0.1"
+# HOST = "121.201.29.89"
 LOGIN_PORT = 20014
 ACCESS_PORT = 18004
 
@@ -146,10 +147,10 @@ class TestClient:
         self.login_socket.send(req.encode())
         resp = self.get_message(self.login_socket)
         return resp
-    def normal_logout_server(self, mobile, password, device_id):
+    def normal_logout_server(self, mobile, password, device_id, uid):
         self.setup_login_socket()
         req = create_client_message(LogoutReq)
-        req.header.user = 10025
+        req.header.user = uid
         self.login_socket.send(req.encode())
         return self.get_message(self.login_socket)
 

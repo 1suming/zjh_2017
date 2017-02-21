@@ -16,24 +16,22 @@ from sqlalchemy import Table,Column,func
 from sqlalchemy.types import  *
 from sqlalchemy.orm import Mapper
 
-tab_trade = Table("trade", metadata,
+tab_friend_message_log = Table("friend_message_log", metadata,
                  Column("id",Integer, primary_key=True),
-                 Column("seller",Integer),
-                 Column("gold",BigInteger),
-                 Column("diamond",BigInteger),
-                 Column("sell_time", DateTime),
-                 Column("buyer",Integer),
-                 Column("buy_time",DateTime),
+                 Column("user",Integer),
+                 Column("target_uid",Integer),
+                 Column("target_avatar",Integer),
                  Column("status",SMALLINT),
+                 Column("create_time",DateTime)
                  )
                  
 
                  
-class TTrade(TableObject):
+class TFriendMessageLog(TableObject):
     def __init__(self):
         TableObject.__init__(self)
     
-mapper_trade = Mapper(TTrade,tab_trade)
+mapper_friend_message_log = Mapper(TFriendMessageLog,tab_friend_message_log)
 
 if __name__=="__main__":
     pass

@@ -18,3 +18,6 @@ RANK_FAKE = [
     {'id':10,'uid':21020,'nick':'haha10','avatar':'http://192.168.2.75:5000/static/upload/10023_867356020226898_tmp_avatar.png','gold':100},
 ]
 
+RANK_TOP = [
+
+]

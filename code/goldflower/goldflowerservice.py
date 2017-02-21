@@ -158,10 +158,6 @@ class GoldFlowerService(GameService):
             resp.header.result = RESULT_FAILED_INVALID_BAG
             return
 
-        # 权限验证，vip3及以上等级可使用踢人卡权限
-        if VIPObject.check_vip_auth(user_info.vip, sys._getframe().f_code.co_name) == False:
-            resp.header.result = RESULT_FAILED_INVALID_AUTH
-            return
 
         # 权限验证，被踢的人在vip6及以上等级有免踢权限
         other_user = self.redis.get('u'+str(req.body.other))

@@ -100,3 +100,54 @@ message NotificationEvent {
 	optional int32 param1 = 2;
 	optional string param2 = 3;
 }
+
+message FeedBackReq {
+    enum DEF {
+        ID = 1120;
+    }
+    required string message = 1;
+    required string contact = 2;
+}
+
+message FeedBackResp {
+    enum DEF {
+        ID = 1121;
+    }
+}
+
+message CreateOrderReq {
+    enum DEF {
+        ID = 1150;
+    }
+    required int32 shop_id = 1;
+    optional string comment = 2;
+}
+
+message CreateOrderResp {
+    enum DEF {
+        ID = 1151;
+    }
+    required string order_sn = 1;
+    required int32 money = 2;
+    required string callback = 3;
+}
+
+message QueryChargeReq {
+    enum DEF {
+        ID = 1152;
+    }
+}
+
+message QueryChargeResp {
+    enum DEF {
+        ID = 1153;
+    }
+    repeated ChargeItem items = 1;
+}
+
+
+message ChargeEvent {
+	enum DEF {
+		ID = 1154;
+	}
+}

@@ -19,7 +19,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='friend.proto',
   package='cardgame',
-  serialized_pb=_b('\n\x0c\x66riend.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"@\n\rGetFriendsReq\x12\x0c\n\x04page\x18\x01 \x01(\x05\x12\x11\n\tpage_size\x18\x02 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa0\x1f\"\\\n\x0eGetFriendsResp\x12!\n\x07\x66riends\x18\x01 \x03(\x0b\x32\x10.cardgame.Friend\x12\x17\n\x0f\x63ountof_applies\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa1\x1f\"F\n\x13GetFriendAppliesReq\x12\x0c\n\x04page\x18\x01 \x01(\x05\x12\x11\n\tpage_size\x18\x02 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa2\x1f\"N\n\x14GetFriendAppliesResp\x12&\n\x07\x61pplies\x18\x02 \x03(\x0b\x32\x15.cardgame.FriendApply\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa3\x1f\"J\n\x14SendFriendMessageReq\x12\x11\n\tfriend_id\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa6\x1f\"(\n\x16SendFriendMessagetResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa7\x1f\"_\n\rMakeFriendReq\x12\x0e\n\x06target\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x1d\n\x05gifts\x18\x03 \x03(\x0b\x32\x0e.cardgame.Gift\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa8\x1f\" \n\x0eMakeFriendResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa9\x1f\"H\n\x14HandleFriendApplyReq\x12\x10\n\x08\x61pply_id\x18\x01 \x02(\x05\x12\x0e\n\x06\x61\x63\x63\x65pt\x18\x02 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xaa\x1f\"\'\n\x15HandleFriendApplyResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xab\x1f\"=\n\x17ReceiveFriendMessageReq\x12\x12\n\nmessage_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xac\x1f\"*\n\x18ReceiveFriendMessageResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xad\x1f\";\n\x16RemoveFriendMessageReq\x12\x11\n\tfriend_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xae\x1f\")\n\x17RemoveFriendMessageResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xaf\x1f\"N\n\x12\x46riendMessageEvent\x12(\n\x07message\x18\x01 \x02(\x0b\x32\x17.cardgame.FriendMessage\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd2\x1f\"H\n\x10\x46riendApplyEvent\x12$\n\x05\x61pply\x18\x01 \x02(\x0b\x32\x15.cardgame.FriendApply\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd3\x1f\x42$\n\x18\x63om.zhili.cardgame.protoB\x06\x46riendH\x03')
+  serialized_pb=_b('\n\x0c\x66riend.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"@\n\rGetFriendsReq\x12\x0c\n\x04page\x18\x01 \x01(\x05\x12\x11\n\tpage_size\x18\x02 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa0\x1f\"u\n\x0eGetFriendsResp\x12!\n\x07\x66riends\x18\x01 \x03(\x0b\x32\x10.cardgame.Friend\x12\x17\n\x0f\x63ountof_applies\x18\x02 \x02(\x05\x12\x17\n\x0f\x63ountof_message\x18\x03 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa1\x1f\"F\n\x13GetFriendAppliesReq\x12\x0c\n\x04page\x18\x01 \x01(\x05\x12\x11\n\tpage_size\x18\x02 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa2\x1f\"N\n\x14GetFriendAppliesResp\x12&\n\x07\x61pplies\x18\x02 \x03(\x0b\x32\x15.cardgame.FriendApply\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa3\x1f\"J\n\x14SendFriendMessageReq\x12\x11\n\tfriend_id\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa6\x1f\"(\n\x16SendFriendMessagetResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa7\x1f\"_\n\rMakeFriendReq\x12\x0e\n\x06target\x18\x01 \x02(\x05\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x1d\n\x05gifts\x18\x03 \x03(\x0b\x32\x0e.cardgame.Gift\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa8\x1f\" \n\x0eMakeFriendResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa9\x1f\"H\n\x14HandleFriendApplyReq\x12\x10\n\x08\x61pply_id\x18\x01 \x02(\x05\x12\x0e\n\x06\x61\x63\x63\x65pt\x18\x02 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xaa\x1f\"\'\n\x15HandleFriendApplyResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xab\x1f\"=\n\x17ReceiveFriendMessageReq\x12\x12\n\nmessage_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xac\x1f\"*\n\x18ReceiveFriendMessageResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xad\x1f\";\n\x16RemoveFriendMessageReq\x12\x11\n\tfriend_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xae\x1f\")\n\x17RemoveFriendMessageResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xaf\x1f\"N\n\x12\x46riendMessageEvent\x12(\n\x07message\x18\x01 \x02(\x0b\x32\x17.cardgame.FriendMessage\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd2\x1f\"H\n\x10\x46riendApplyEvent\x12$\n\x05\x61pply\x18\x01 \x02(\x0b\x32\x15.cardgame.FriendApply\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd3\x1f\x42$\n\x18\x63om.zhili.cardgame.protoB\x06\x46riendH\x03')
   ,
   dependencies=[struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -57,8 +57,8 @@ _GETFRIENDSRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=184,
-  serialized_end=198,
+  serialized_start=209,
+  serialized_end=223,
 )
 _sym_db.RegisterEnumDescriptor(_GETFRIENDSRESP_DEF)
 
@@ -75,8 +75,8 @@ _GETFRIENDAPPLIESREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=256,
-  serialized_end=270,
+  serialized_start=281,
+  serialized_end=295,
 )
 _sym_db.RegisterEnumDescriptor(_GETFRIENDAPPLIESREQ_DEF)
 
@@ -93,8 +93,8 @@ _GETFRIENDAPPLIESRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=336,
-  serialized_end=350,
+  serialized_start=361,
+  serialized_end=375,
 )
 _sym_db.RegisterEnumDescriptor(_GETFRIENDAPPLIESRESP_DEF)
 
@@ -111,8 +111,8 @@ _SENDFRIENDMESSAGEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=412,
-  serialized_end=426,
+  serialized_start=437,
+  serialized_end=451,
 )
 _sym_db.RegisterEnumDescriptor(_SENDFRIENDMESSAGEREQ_DEF)
 
@@ -129,8 +129,8 @@ _SENDFRIENDMESSAGETRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=454,
-  serialized_end=468,
+  serialized_start=479,
+  serialized_end=493,
 )
 _sym_db.RegisterEnumDescriptor(_SENDFRIENDMESSAGETRESP_DEF)
 
@@ -147,8 +147,8 @@ _MAKEFRIENDREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=551,
-  serialized_end=565,
+  serialized_start=576,
+  serialized_end=590,
 )
 _sym_db.RegisterEnumDescriptor(_MAKEFRIENDREQ_DEF)
 
@@ -165,8 +165,8 @@ _MAKEFRIENDRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=585,
-  serialized_end=599,
+  serialized_start=610,
+  serialized_end=624,
 )
 _sym_db.RegisterEnumDescriptor(_MAKEFRIENDRESP_DEF)
 
@@ -183,8 +183,8 @@ _HANDLEFRIENDAPPLYREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=659,
-  serialized_end=673,
+  serialized_start=684,
+  serialized_end=698,
 )
 _sym_db.RegisterEnumDescriptor(_HANDLEFRIENDAPPLYREQ_DEF)
 
@@ -201,8 +201,8 @@ _HANDLEFRIENDAPPLYRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=700,
-  serialized_end=714,
+  serialized_start=725,
+  serialized_end=739,
 )
 _sym_db.RegisterEnumDescriptor(_HANDLEFRIENDAPPLYRESP_DEF)
 
@@ -219,8 +219,8 @@ _RECEIVEFRIENDMESSAGEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=763,
-  serialized_end=777,
+  serialized_start=788,
+  serialized_end=802,
 )
 _sym_db.RegisterEnumDescriptor(_RECEIVEFRIENDMESSAGEREQ_DEF)
 
@@ -237,8 +237,8 @@ _RECEIVEFRIENDMESSAGERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=807,
-  serialized_end=821,
+  serialized_start=832,
+  serialized_end=846,
 )
 _sym_db.RegisterEnumDescriptor(_RECEIVEFRIENDMESSAGERESP_DEF)
 
@@ -255,8 +255,8 @@ _REMOVEFRIENDMESSAGEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=868,
-  serialized_end=882,
+  serialized_start=893,
+  serialized_end=907,
 )
 _sym_db.RegisterEnumDescriptor(_REMOVEFRIENDMESSAGEREQ_DEF)
 
@@ -273,8 +273,8 @@ _REMOVEFRIENDMESSAGERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=911,
-  serialized_end=925,
+  serialized_start=936,
+  serialized_end=950,
 )
 _sym_db.RegisterEnumDescriptor(_REMOVEFRIENDMESSAGERESP_DEF)
 
@@ -291,8 +291,8 @@ _FRIENDMESSAGEEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=991,
-  serialized_end=1005,
+  serialized_start=1016,
+  serialized_end=1030,
 )
 _sym_db.RegisterEnumDescriptor(_FRIENDMESSAGEEVENT_DEF)
 
@@ -309,8 +309,8 @@ _FRIENDAPPLYEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1065,
-  serialized_end=1079,
+  serialized_start=1090,
+  serialized_end=1104,
 )
 _sym_db.RegisterEnumDescriptor(_FRIENDAPPLYEVENT_DEF)
 
@@ -374,6 +374,13 @@ _GETFRIENDSRESP = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='countof_message', full_name='cardgame.GetFriendsResp.countof_message', index=2,
+      number=3, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -387,7 +394,7 @@ _GETFRIENDSRESP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=106,
-  serialized_end=198,
+  serialized_end=223,
 )
 
 
@@ -424,8 +431,8 @@ _GETFRIENDAPPLIESREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=200,
-  serialized_end=270,
+  serialized_start=225,
+  serialized_end=295,
 )
 
 
@@ -455,8 +462,8 @@ _GETFRIENDAPPLIESRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=272,
-  serialized_end=350,
+  serialized_start=297,
+  serialized_end=375,
 )
 
 
@@ -493,8 +500,8 @@ _SENDFRIENDMESSAGEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=352,
-  serialized_end=426,
+  serialized_start=377,
+  serialized_end=451,
 )
 
 
@@ -517,8 +524,8 @@ _SENDFRIENDMESSAGETRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=428,
-  serialized_end=468,
+  serialized_start=453,
+  serialized_end=493,
 )
 
 
@@ -562,8 +569,8 @@ _MAKEFRIENDREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=470,
-  serialized_end=565,
+  serialized_start=495,
+  serialized_end=590,
 )
 
 
@@ -586,8 +593,8 @@ _MAKEFRIENDRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=567,
-  serialized_end=599,
+  serialized_start=592,
+  serialized_end=624,
 )
 
 
@@ -624,8 +631,8 @@ _HANDLEFRIENDAPPLYREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=601,
-  serialized_end=673,
+  serialized_start=626,
+  serialized_end=698,
 )
 
 
@@ -648,8 +655,8 @@ _HANDLEFRIENDAPPLYRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=675,
-  serialized_end=714,
+  serialized_start=700,
+  serialized_end=739,
 )
 
 
@@ -679,8 +686,8 @@ _RECEIVEFRIENDMESSAGEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=716,
-  serialized_end=777,
+  serialized_start=741,
+  serialized_end=802,
 )
 
 
@@ -703,8 +710,8 @@ _RECEIVEFRIENDMESSAGERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=779,
-  serialized_end=821,
+  serialized_start=804,
+  serialized_end=846,
 )
 
 
@@ -734,8 +741,8 @@ _REMOVEFRIENDMESSAGEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=823,
-  serialized_end=882,
+  serialized_start=848,
+  serialized_end=907,
 )
 
 
@@ -758,8 +765,8 @@ _REMOVEFRIENDMESSAGERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=884,
-  serialized_end=925,
+  serialized_start=909,
+  serialized_end=950,
 )
 
 
@@ -789,8 +796,8 @@ _FRIENDMESSAGEEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=927,
-  serialized_end=1005,
+  serialized_start=952,
+  serialized_end=1030,
 )
 
 
@@ -820,8 +827,8 @@ _FRIENDAPPLYEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1007,
-  serialized_end=1079,
+  serialized_start=1032,
+  serialized_end=1104,
 )
 
 _GETFRIENDSREQ_DEF.containing_type = _GETFRIENDSREQ

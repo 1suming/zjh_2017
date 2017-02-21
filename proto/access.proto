@@ -66,18 +66,7 @@ message FastLoginResp {
 }
 
 
-message LogoutReq {
-	enum DEF {
-		ID = 5;
-	}
-}
 
-
-message LogoutResp {
-	enum DEF {
-		ID = 6;
-	}
-}
 
 
 message GetVerifyCodeReq {
@@ -224,3 +213,15 @@ message GameResUpgradeResp {
 
 
 
+message LogoutReq {
+	enum DEF {
+		ID = 5;
+	}
+}
+
+
+message LogoutResp {
+	enum DEF {
+		ID = 6;
+	}
+}

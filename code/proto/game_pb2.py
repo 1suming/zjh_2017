@@ -20,7 +20,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='game.proto',
   package='cardgame',
-  serialized_pb=_b('\n\ngame.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"W\n\x0bSitTableReq\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x12\n\ntable_type\x18\x02 \x02(\x05\x12\x12\n\nnot_tables\x18\x03 \x03(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x88\'\"O\n\x0cSitTableResp\x12\x1e\n\x05table\x18\x01 \x01(\x0b\x32\x0f.cardgame.Table\x12\x0f\n\x07room_id\x18\x02 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x89\'\"1\n\rLeaveTableReq\x12\x10\n\x08table_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8a\'\" \n\x0eLeaveTableResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8b\'\"\'\n\x15LeaveTableInternalReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8c\'\"(\n\x16LeaveTableInternalResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8d\'\"-\n\x0cKickOtherReq\x12\r\n\x05other\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8e\'\"A\n\rKickOtherResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8f\'\"G\n\x11SetPlayerReadyReq\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x10\n\x08is_ready\x18\x02 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa2\'\"$\n\x12SetPlayerReadyResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa3\'\"r\n\x0c\x42\x65tActionReq\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12#\n\x06\x61\x63tion\x18\x02 \x02(\x0e\x32\x13.cardgame.BetAction\x12\x0c\n\x04gold\x18\x03 \x01(\x05\x12\r\n\x05other\x18\x04 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa4\'\"G\n\rBetActionResp\x12&\n\x06pokers\x18\x01 \x01(\x0b\x32\x16.cardgame.PlayerPokers\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa5\'\"\xb7\x01\n\nTableEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12,\n\nevent_type\x18\x02 \x02(\x0e\x32\x18.cardgame.TableEventType\x12\x0e\n\x06player\x18\x03 \x02(\x05\x12+\n\x0cplayer_brief\x18\x04 \x01(\x0b\x32\x15.cardgame.PlayerBrief\x12\x0c\n\x04seat\x18\x05 \x01(\x05\x12\x0e\n\x06kicker\x18\x06 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xec\'\"Z\n\x14GamePlayerReadyEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0e\n\x06player\x18\x02 \x02(\x05\x12\x10\n\x08is_ready\x18\x03 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xed\'\"C\n\x0eGameReadyEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0f\n\x07seconds\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xee\'\"3\n\x0fGameCancelEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xef\'\"n\n\x0eGameStartEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0e\n\x06\x64\x65\x61ler\x18\x02 \x02(\x05\x12*\n\x0cplayer_golds\x18\x04 \x03(\x0b\x32\x14.cardgame.PlayerGold\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf0\'\"Q\n\rGameTurnEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\r\n\x05round\x18\x02 \x02(\x05\x12\x0f\n\x07\x63urrent\x18\x03 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf1\'\"\xb0\x01\n\rGameOverEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0e\n\x06winner\x18\x02 \x02(\x05\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x0b\n\x03\x66\x65\x65\x18\x04 \x02(\x03\x12&\n\x06pokers\x18\x05 \x03(\x0b\x32\x16.cardgame.PlayerPokers\x12*\n\x0cplayer_golds\x18\x06 \x03(\x0b\x32\x14.cardgame.PlayerGold\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf2\'\"\xc3\x01\n\x0e\x42\x65tActionEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0e\n\x06player\x18\x02 \x02(\x05\x12#\n\x06\x61\x63tion\x18\x03 \x02(\x0e\x32\x13.cardgame.BetAction\x12\x13\n\x0b\x61\x63tion_gold\x18\x04 \x01(\x03\x12\x10\n\x08\x62\x65t_gold\x18\x05 \x01(\x03\x12\x0c\n\x04gold\x18\x06 \x01(\x03\x12\r\n\x05other\x18\x07 \x01(\x05\x12\x16\n\x0e\x63ompare_winner\x18\x08 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf3\'B\"\n\x18\x63om.zhili.cardgame.protoB\x04GameH\x03')
+  serialized_pb=_b('\n\ngame.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"W\n\x0bSitTableReq\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x12\n\ntable_type\x18\x02 \x02(\x05\x12\x12\n\nnot_tables\x18\x03 \x03(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x88\'\"O\n\x0cSitTableResp\x12\x1e\n\x05table\x18\x01 \x01(\x0b\x32\x0f.cardgame.Table\x12\x0f\n\x07room_id\x18\x02 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x89\'\"1\n\rLeaveTableReq\x12\x10\n\x08table_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8a\'\" \n\x0eLeaveTableResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8b\'\"\'\n\x15LeaveTableInternalReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8c\'\"(\n\x16LeaveTableInternalResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8d\'\"-\n\x0cKickOtherReq\x12\r\n\x05other\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8e\'\"B\n\rKickOtherResp\x12!\n\x07results\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x8f\'\"G\n\x11SetPlayerReadyReq\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x10\n\x08is_ready\x18\x02 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa2\'\"$\n\x12SetPlayerReadyResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa3\'\"r\n\x0c\x42\x65tActionReq\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12#\n\x06\x61\x63tion\x18\x02 \x02(\x0e\x32\x13.cardgame.BetAction\x12\x0c\n\x04gold\x18\x03 \x01(\x05\x12\r\n\x05other\x18\x04 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa4\'\"G\n\rBetActionResp\x12&\n\x06pokers\x18\x01 \x01(\x0b\x32\x16.cardgame.PlayerPokers\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xa5\'\"\xb7\x01\n\nTableEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12,\n\nevent_type\x18\x02 \x02(\x0e\x32\x18.cardgame.TableEventType\x12\x0e\n\x06player\x18\x03 \x02(\x05\x12+\n\x0cplayer_brief\x18\x04 \x01(\x0b\x32\x15.cardgame.PlayerBrief\x12\x0c\n\x04seat\x18\x05 \x01(\x05\x12\x0e\n\x06kicker\x18\x06 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xec\'\"Z\n\x14GamePlayerReadyEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0e\n\x06player\x18\x02 \x02(\x05\x12\x10\n\x08is_ready\x18\x03 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xed\'\"C\n\x0eGameReadyEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0f\n\x07seconds\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xee\'\"3\n\x0fGameCancelEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xef\'\"n\n\x0eGameStartEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0e\n\x06\x64\x65\x61ler\x18\x02 \x02(\x05\x12*\n\x0cplayer_golds\x18\x04 \x03(\x0b\x32\x14.cardgame.PlayerGold\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf0\'\"Q\n\rGameTurnEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\r\n\x05round\x18\x02 \x02(\x05\x12\x0f\n\x07\x63urrent\x18\x03 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf1\'\"\xb0\x01\n\rGameOverEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0e\n\x06winner\x18\x02 \x02(\x05\x12\x0c\n\x04gold\x18\x03 \x02(\x03\x12\x0b\n\x03\x66\x65\x65\x18\x04 \x02(\x03\x12&\n\x06pokers\x18\x05 \x03(\x0b\x32\x16.cardgame.PlayerPokers\x12*\n\x0cplayer_golds\x18\x06 \x03(\x0b\x32\x14.cardgame.PlayerGold\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf2\'\"\xc3\x01\n\x0e\x42\x65tActionEvent\x12\x10\n\x08table_id\x18\x01 \x02(\x05\x12\x0e\n\x06player\x18\x02 \x02(\x05\x12#\n\x06\x61\x63tion\x18\x03 \x02(\x0e\x32\x13.cardgame.BetAction\x12\x13\n\x0b\x61\x63tion_gold\x18\x04 \x01(\x03\x12\x10\n\x08\x62\x65t_gold\x18\x05 \x01(\x03\x12\x0c\n\x04gold\x18\x06 \x01(\x03\x12\r\n\x05other\x18\x07 \x01(\x05\x12\x16\n\x0e\x63ompare_winner\x18\x08 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf3\'B\"\n\x18\x63om.zhili.cardgame.protoB\x04GameH\x03')
   ,
   dependencies=[constant_pb2.DESCRIPTOR,struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -166,8 +166,8 @@ _KICKOTHERRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=490,
-  serialized_end=504,
+  serialized_start=491,
+  serialized_end=505,
 )
 _sym_db.RegisterEnumDescriptor(_KICKOTHERRESP_DEF)
 
@@ -184,8 +184,8 @@ _SETPLAYERREADYREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=563,
-  serialized_end=577,
+  serialized_start=564,
+  serialized_end=578,
 )
 _sym_db.RegisterEnumDescriptor(_SETPLAYERREADYREQ_DEF)
 
@@ -202,8 +202,8 @@ _SETPLAYERREADYRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=601,
-  serialized_end=615,
+  serialized_start=602,
+  serialized_end=616,
 )
 _sym_db.RegisterEnumDescriptor(_SETPLAYERREADYRESP_DEF)
 
@@ -220,8 +220,8 @@ _BETACTIONREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=717,
-  serialized_end=731,
+  serialized_start=718,
+  serialized_end=732,
 )
 _sym_db.RegisterEnumDescriptor(_BETACTIONREQ_DEF)
 
@@ -238,8 +238,8 @@ _BETACTIONRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=790,
-  serialized_end=804,
+  serialized_start=791,
+  serialized_end=805,
 )
 _sym_db.RegisterEnumDescriptor(_BETACTIONRESP_DEF)
 
@@ -256,8 +256,8 @@ _TABLEEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=976,
-  serialized_end=990,
+  serialized_start=977,
+  serialized_end=991,
 )
 _sym_db.RegisterEnumDescriptor(_TABLEEVENT_DEF)
 
@@ -274,8 +274,8 @@ _GAMEPLAYERREADYEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1068,
-  serialized_end=1082,
+  serialized_start=1069,
+  serialized_end=1083,
 )
 _sym_db.RegisterEnumDescriptor(_GAMEPLAYERREADYEVENT_DEF)
 
@@ -292,8 +292,8 @@ _GAMEREADYEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1137,
-  serialized_end=1151,
+  serialized_start=1138,
+  serialized_end=1152,
 )
 _sym_db.RegisterEnumDescriptor(_GAMEREADYEVENT_DEF)
 
@@ -310,8 +310,8 @@ _GAMECANCELEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1190,
-  serialized_end=1204,
+  serialized_start=1191,
+  serialized_end=1205,
 )
 _sym_db.RegisterEnumDescriptor(_GAMECANCELEVENT_DEF)
 
@@ -328,8 +328,8 @@ _GAMESTARTEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1302,
-  serialized_end=1316,
+  serialized_start=1303,
+  serialized_end=1317,
 )
 _sym_db.RegisterEnumDescriptor(_GAMESTARTEVENT_DEF)
 
@@ -346,8 +346,8 @@ _GAMETURNEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1385,
-  serialized_end=1399,
+  serialized_start=1386,
+  serialized_end=1400,
 )
 _sym_db.RegisterEnumDescriptor(_GAMETURNEVENT_DEF)
 
@@ -364,8 +364,8 @@ _GAMEOVEREVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1564,
-  serialized_end=1578,
+  serialized_start=1565,
+  serialized_end=1579,
 )
 _sym_db.RegisterEnumDescriptor(_GAMEOVEREVENT_DEF)
 
@@ -382,8 +382,8 @@ _BETACTIONEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1762,
-  serialized_end=1776,
+  serialized_start=1763,
+  serialized_end=1777,
 )
 _sym_db.RegisterEnumDescriptor(_BETACTIONEVENT_DEF)
 
@@ -613,7 +613,7 @@ _KICKOTHERRESP = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='result', full_name='cardgame.KickOtherResp.result', index=0,
+      name='results', full_name='cardgame.KickOtherResp.results', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -632,7 +632,7 @@ _KICKOTHERRESP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=439,
-  serialized_end=504,
+  serialized_end=505,
 )
 
 
@@ -669,8 +669,8 @@ _SETPLAYERREADYREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=506,
-  serialized_end=577,
+  serialized_start=507,
+  serialized_end=578,
 )
 
 
@@ -693,8 +693,8 @@ _SETPLAYERREADYRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=579,
-  serialized_end=615,
+  serialized_start=580,
+  serialized_end=616,
 )
 
 
@@ -745,8 +745,8 @@ _BETACTIONREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=617,
-  serialized_end=731,
+  serialized_start=618,
+  serialized_end=732,
 )
 
 
@@ -776,8 +776,8 @@ _BETACTIONRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=733,
-  serialized_end=804,
+  serialized_start=734,
+  serialized_end=805,
 )
 
 
@@ -842,8 +842,8 @@ _TABLEEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=807,
-  serialized_end=990,
+  serialized_start=808,
+  serialized_end=991,
 )
 
 
@@ -887,8 +887,8 @@ _GAMEPLAYERREADYEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=992,
-  serialized_end=1082,
+  serialized_start=993,
+  serialized_end=1083,
 )
 
 
@@ -925,8 +925,8 @@ _GAMEREADYEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1084,
-  serialized_end=1151,
+  serialized_start=1085,
+  serialized_end=1152,
 )
 
 
@@ -956,8 +956,8 @@ _GAMECANCELEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1153,
-  serialized_end=1204,
+  serialized_start=1154,
+  serialized_end=1205,
 )
 
 
@@ -1001,8 +1001,8 @@ _GAMESTARTEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1206,
-  serialized_end=1316,
+  serialized_start=1207,
+  serialized_end=1317,
 )
 
 
@@ -1046,8 +1046,8 @@ _GAMETURNEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1318,
-  serialized_end=1399,
+  serialized_start=1319,
+  serialized_end=1400,
 )
 
 
@@ -1112,8 +1112,8 @@ _GAMEOVEREVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1402,
-  serialized_end=1578,
+  serialized_start=1403,
+  serialized_end=1579,
 )
 
 
@@ -1192,8 +1192,8 @@ _BETACTIONEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1581,
-  serialized_end=1776,
+  serialized_start=1582,
+  serialized_end=1777,
 )
 
 _SITTABLEREQ_DEF.containing_type = _SITTABLEREQ
@@ -1204,7 +1204,7 @@ _LEAVETABLERESP_DEF.containing_type = _LEAVETABLERESP
 _LEAVETABLEINTERNALREQ_DEF.containing_type = _LEAVETABLEINTERNALREQ
 _LEAVETABLEINTERNALRESP_DEF.containing_type = _LEAVETABLEINTERNALRESP
 _KICKOTHERREQ_DEF.containing_type = _KICKOTHERREQ
-_KICKOTHERRESP.fields_by_name['result'].message_type = struct_pb2._RESULT
+_KICKOTHERRESP.fields_by_name['results'].message_type = struct_pb2._RESULT
 _KICKOTHERRESP_DEF.containing_type = _KICKOTHERRESP
 _SETPLAYERREADYREQ_DEF.containing_type = _SETPLAYERREADYREQ
 _SETPLAYERREADYRESP_DEF.containing_type = _SETPLAYERREADYRESP
