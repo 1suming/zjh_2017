@@ -3,7 +3,8 @@ __author__ = 'Administrator'
 
 # import Flask Script object
 from flask_script import Manager, Server
-
+import sys,os
+sys.path.append(os.path.dirname(__file__) + os.sep + '..//')
 import main
 
 
@@ -13,7 +14,7 @@ manager = Manager(main.app)
 # Create a new commands: server
 # This command will be run the Flask development_env server
 
-manager.add_command("server", Server(host=main.config.DevConfig.HOST,port=main.config.DevConfig.PORT,use_debugger=main.config.DevConfig.DEBUG))
+manager.add_command("server", Server(host=main.DevConfig.HOST,port=main.DevConfig.PORT,use_debugger=main.DevConfig.DEBUG))
 
 @manager.shell
 def make_shell_context():

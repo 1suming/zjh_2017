@@ -152,8 +152,14 @@ class GoldFlowerService(GameService):
 
     @USE_TRANSACTION
     def handle_kick_other(self,session,req,resp,event):
-        bag = BagObject(session)
 
+        # 踢走某人，游戏中不可以踢人
+        table = self.get_table(req.header.user)
+        if table.game == None or table.game <= 0:
+            resp.header.result = RESULT_FAILED_NO_KICK
+            return
+
+        bag = BagObject(session)
         if bag.has_item(req.header.user, ITEM_MAP['kick'][0]) == False:
             resp.header.result = RESULT_FAILED_INVALID_BAG
             return
@@ -179,8 +185,7 @@ class GoldFlowerService(GameService):
                 return
 
         if resp.header.result != RESULT_FAILED_NO_KICK:
-            # 踢走某人
-            table = self.get_table(req.header.user)
+
             if table == None:
                 resp.header.result = RESULT_FAILED_INVALID_TABLE
                 return False

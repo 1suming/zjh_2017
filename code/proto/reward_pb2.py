@@ -19,7 +19,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='reward.proto',
   package='cardgame',
-  serialized_pb=_b('\n\x0creward.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"!\n\x0fQueryRewardsReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd0\x0f\"E\n\x10QueryRewardsResp\x12!\n\x07rewards\x18\x01 \x03(\x0b\x32\x10.cardgame.Reward\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd1\x0f\"5\n\x10ReceiveRewardReq\x12\x11\n\treward_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd2\x0f\"E\n\x11ReceiveRewardResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd3\x0f\"&\n\x14QuerySigninRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd4\x0f\"\x7f\n\x15QuerySigninRewardResp\x12\'\n\x07rewards\x18\x01 \x03(\x0b\x32\x16.cardgame.SigninReward\x12\x13\n\x0bsignin_days\x18\x02 \x01(\x05\x12\x18\n\x10month_sigin_days\x18\x03 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd5\x0f\"\x1b\n\tSigninReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd6\x0f\"r\n\nSigninResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\x12\x32\n\x12next_signin_reward\x18\x02 \x01(\x0b\x32\x16.cardgame.SigninReward\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd7\x0f\"$\n\x12ResetPlayRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd8\x0f\"%\n\x13ResetPlayRewardResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd9\x0f\"&\n\x14ReceivePlayRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xda\x0f\"I\n\x15ReceivePlayRewardResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xdb\x0f\"4\n\x14ReceiveCodeRewardReq\x12\x0c\n\x04\x63ode\x18\x01 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xdc\x0f\"I\n\x15ReceiveCodeRewardResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xdd\x0f\")\n\x17QueryBankcruptRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xde\x0f\"W\n\x18QueryBankcruptRewardResp\x12\r\n\x05total\x18\x01 \x01(\x05\x12\x0e\n\x06remain\x18\x02 \x01(\x05\x12\x0c\n\x04gold\x18\x03 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xdf\x0f\"+\n\x19ReceiveBankcruptRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe0\x0f\":\n\x1aReceiveBankcruptRewardResp\x12\x0c\n\x04gold\x18\x01 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe1\x0f\"%\n\x13RecordPlayRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe2\x0f\"F\n\x14RecordPlayRewardResp\x12\r\n\x05total\x18\x01 \x02(\x05\x12\x0f\n\x07\x63urrent\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe3\x0f\x42$\n\x18\x63om.zhili.cardgame.protoB\x06RewardH\x03')
+  serialized_pb=_b('\n\x0creward.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"!\n\x0fQueryRewardsReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd0\x0f\"E\n\x10QueryRewardsResp\x12!\n\x07rewards\x18\x01 \x03(\x0b\x32\x10.cardgame.Reward\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd1\x0f\"5\n\x10ReceiveRewardReq\x12\x11\n\treward_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd2\x0f\"E\n\x11ReceiveRewardResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd3\x0f\"&\n\x14QuerySigninRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd4\x0f\"\x7f\n\x15QuerySigninRewardResp\x12\'\n\x07rewards\x18\x01 \x03(\x0b\x32\x16.cardgame.SigninReward\x12\x13\n\x0bsignin_days\x18\x02 \x01(\x05\x12\x18\n\x10month_sigin_days\x18\x03 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd5\x0f\"\x1b\n\tSigninReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd6\x0f\"r\n\nSigninResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\x12\x32\n\x12next_signin_reward\x18\x02 \x01(\x0b\x32\x16.cardgame.SigninReward\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd7\x0f\"$\n\x12ResetPlayRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd8\x0f\"%\n\x13ResetPlayRewardResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xd9\x0f\"&\n\x14ReceivePlayRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xda\x0f\"]\n\x15ReceivePlayRewardResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\x12\x12\n\nnext_round\x18\x02 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xdb\x0f\"4\n\x14ReceiveCodeRewardReq\x12\x0c\n\x04\x63ode\x18\x01 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xdc\x0f\"I\n\x15ReceiveCodeRewardResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xdd\x0f\")\n\x17QueryBankcruptRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xde\x0f\"W\n\x18QueryBankcruptRewardResp\x12\r\n\x05total\x18\x01 \x01(\x05\x12\x0e\n\x06remain\x18\x02 \x01(\x05\x12\x0c\n\x04gold\x18\x03 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xdf\x0f\"+\n\x19ReceiveBankcruptRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe0\x0f\":\n\x1aReceiveBankcruptRewardResp\x12\x0c\n\x04gold\x18\x01 \x01(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe1\x0f\"%\n\x13RecordPlayRewardReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe2\x0f\"F\n\x14RecordPlayRewardResp\x12\r\n\x05total\x18\x01 \x02(\x05\x12\x0f\n\x07\x63urrent\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe3\x0f\x42$\n\x18\x63om.zhili.cardgame.protoB\x06RewardH\x03')
   ,
   dependencies=[struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -237,8 +237,8 @@ _RECEIVEPLAYREWARDRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=762,
-  serialized_end=776,
+  serialized_start=782,
+  serialized_end=796,
 )
 _sym_db.RegisterEnumDescriptor(_RECEIVEPLAYREWARDRESP_DEF)
 
@@ -255,8 +255,8 @@ _RECEIVECODEREWARDREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=816,
-  serialized_end=830,
+  serialized_start=836,
+  serialized_end=850,
 )
 _sym_db.RegisterEnumDescriptor(_RECEIVECODEREWARDREQ_DEF)
 
@@ -273,8 +273,8 @@ _RECEIVECODEREWARDRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=891,
-  serialized_end=905,
+  serialized_start=911,
+  serialized_end=925,
 )
 _sym_db.RegisterEnumDescriptor(_RECEIVECODEREWARDRESP_DEF)
 
@@ -291,8 +291,8 @@ _QUERYBANKCRUPTREWARDREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=934,
-  serialized_end=948,
+  serialized_start=954,
+  serialized_end=968,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYBANKCRUPTREWARDREQ_DEF)
 
@@ -309,8 +309,8 @@ _QUERYBANKCRUPTREWARDRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1023,
-  serialized_end=1037,
+  serialized_start=1043,
+  serialized_end=1057,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYBANKCRUPTREWARDRESP_DEF)
 
@@ -327,8 +327,8 @@ _RECEIVEBANKCRUPTREWARDREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1068,
-  serialized_end=1082,
+  serialized_start=1088,
+  serialized_end=1102,
 )
 _sym_db.RegisterEnumDescriptor(_RECEIVEBANKCRUPTREWARDREQ_DEF)
 
@@ -345,8 +345,8 @@ _RECEIVEBANKCRUPTREWARDRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1128,
-  serialized_end=1142,
+  serialized_start=1148,
+  serialized_end=1162,
 )
 _sym_db.RegisterEnumDescriptor(_RECEIVEBANKCRUPTREWARDRESP_DEF)
 
@@ -363,8 +363,8 @@ _RECORDPLAYREWARDREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1167,
-  serialized_end=1181,
+  serialized_start=1187,
+  serialized_end=1201,
 )
 _sym_db.RegisterEnumDescriptor(_RECORDPLAYREWARDREQ_DEF)
 
@@ -381,8 +381,8 @@ _RECORDPLAYREWARDRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1239,
-  serialized_end=1253,
+  serialized_start=1259,
+  serialized_end=1273,
 )
 _sym_db.RegisterEnumDescriptor(_RECORDPLAYREWARDRESP_DEF)
 
@@ -721,6 +721,13 @@ _RECEIVEPLAYREWARDRESP = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='next_round', full_name='cardgame.ReceivePlayRewardResp.next_round', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -734,7 +741,7 @@ _RECEIVEPLAYREWARDRESP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=703,
-  serialized_end=776,
+  serialized_end=796,
 )
 
 
@@ -764,8 +771,8 @@ _RECEIVECODEREWARDREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=778,
-  serialized_end=830,
+  serialized_start=798,
+  serialized_end=850,
 )
 
 
@@ -795,8 +802,8 @@ _RECEIVECODEREWARDRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=832,
-  serialized_end=905,
+  serialized_start=852,
+  serialized_end=925,
 )
 
 
@@ -819,8 +826,8 @@ _QUERYBANKCRUPTREWARDREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=907,
-  serialized_end=948,
+  serialized_start=927,
+  serialized_end=968,
 )
 
 
@@ -864,8 +871,8 @@ _QUERYBANKCRUPTREWARDRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=950,
-  serialized_end=1037,
+  serialized_start=970,
+  serialized_end=1057,
 )
 
 
@@ -888,8 +895,8 @@ _RECEIVEBANKCRUPTREWARDREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1039,
-  serialized_end=1082,
+  serialized_start=1059,
+  serialized_end=1102,
 )
 
 
@@ -919,8 +926,8 @@ _RECEIVEBANKCRUPTREWARDRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1084,
-  serialized_end=1142,
+  serialized_start=1104,
+  serialized_end=1162,
 )
 
 
@@ -943,8 +950,8 @@ _RECORDPLAYREWARDREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1144,
-  serialized_end=1181,
+  serialized_start=1164,
+  serialized_end=1201,
 )
 
 
@@ -981,8 +988,8 @@ _RECORDPLAYREWARDRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1183,
-  serialized_end=1253,
+  serialized_start=1203,
+  serialized_end=1273,
 )
 
 _QUERYREWARDSREQ_DEF.containing_type = _QUERYREWARDSREQ

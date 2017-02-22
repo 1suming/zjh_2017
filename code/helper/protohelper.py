@@ -132,4 +132,6 @@ def set_item(pb, item):
     copy_simple_field(pb,item,not_fields = ["birthday","best"])
 
 def set_charge(pb, item):
-    copy_simple_field(pb,item, not_fields = ['extra_diamond'])
+    copy_simple_field(pb,item, not_fields = ['money'])
+    pb.money = int(item.money * 100)
+

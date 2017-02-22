@@ -1443,7 +1443,7 @@ def test_card(imei,imsi,token,need_idle,*args):
         # normal_login_game_server_time(client, '13412341777','123456', '88899111121')
         # trade_page_list(client, '13488889999','123456', '865372020475361')
         # trade_buy(client, '13412311111','123456', 'device_id_333')
-        # trade_sell(client, '13488889999','123456', '865372020475361')
+        # trade_sell(client, '15919430507','wang0000', '865372020475361')
         # trade_out(client, '13488889999','123456', '865372020475361')
         # query_user_bag(client, '13488889999','123456', '865372020475361')
         # use_user_bag(client, '13488889999','123456', '865372020475361')
@@ -1452,7 +1452,7 @@ def test_card(imei,imsi,token,need_idle,*args):
         # register_game(client, '13412311111','123456','1234','imei_1111','imsi_2222','device_id_333','LT333')
         # get_hall_query(client,'15919430507','wang0000','865372020475361')
 
-        normal_logout(client, '15919430507','wang0000', '865372020475361')
+        # normal_logout(client, '15919430507','wang0000', '865372020475361')
         # update_user(client, '13412311111','123456', 'device_id_333')
 
         # get_annoucments(client, str(999999),str(999998), 'token_123')

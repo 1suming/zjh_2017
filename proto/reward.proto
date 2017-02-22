@@ -86,6 +86,7 @@ message ReceivePlayRewardResp {
 		ID = 2011;
 	}
 	optional Result result = 1;
+	optional int32 next_round = 2;
 }
 
 

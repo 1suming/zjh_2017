@@ -92,3 +92,5 @@ STATE_ENABLE = 0
 UPGRADE_URL = 'http://192.168.2.75/upgrade/'
 PAY_RESULT_URL = 'http://121.201.29.89:18000/pay_result'
 CP_KEY = 'bde25760c1556899efc0dff13bf41b4e' # bde25760c1556899efc0dff13bf41b4e
+
+TAX_NUM = 0.05

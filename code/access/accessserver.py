@@ -19,6 +19,7 @@ from ctypes import *
 from message.base import *
 from message.resultdef import *
 from proto.access_pb2 import *
+from proto.hall_pb2 import *
 
 from config import var
 
@@ -136,8 +137,12 @@ class AccessClientConnection(object):
             old_connection = self.access_server.users.get(req.header.user,None)
             if old_connection != None:
                 logging.info("Same user is logined so kick off previous one user = %d",req.header.user )
+                event = create_client_event(NotificationEvent)
+                event.header.user = req.header.user
+                event.header.result = 0
+                event.body.type = 5 # N_KICK_OFF = 5;
+                old_connection.send(event.encode())
                 old_connection.close()
-                
             self.access_server.users[req.header.user] = self
 
             self.access_server.redis.hset("server" + str(self.access_server.server_id),req.header.user,self.connection_id)

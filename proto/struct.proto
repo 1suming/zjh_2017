@@ -310,6 +310,7 @@ message FriendApply {
 	repeated Gift gifts  = 8;
 }
 
+
 message FriendMessage {
 	required int32 message_id = 1;
 	required int32 from_user = 2;
@@ -319,7 +320,6 @@ message FriendMessage {
 	required int32 time = 6;
 	required string message = 7;
 }
-
 
 
 message RankPlayer {

@@ -77,7 +77,7 @@ class HallService(GameService):
         self.manager = Manager(self)
         self.sender = EventSender(self.manager)
         gevent.spawn(self.queue_notification)
-        gevent.spawn(self.queue_charge)
+        # gevent.spawn(self.queue_charge)
 	#gevent.spawn_later(10,self.say_hello)
 
     # 系统自定义广播，定时发送
@@ -226,10 +226,10 @@ class HallService(GameService):
         event.body.message.to = req.body.friend_id
         event.body.message.time = int(time.time())
         event.body.message.message = req.body.message
-        event.body.from_user_nick = from_user.nick
-        event.body.from_user_avatar = from_user.avatar
+        event.body.message.from_user_nick = from_user.nick
+        event.body.message.from_user_avatar = from_user.avatar
 
-        if self.sender.send_friend_message(event,req.body.friend_id) == None:
+        if self.sender.send_friend_message(event,req.body.friend_id) == False:
             self.redis.hset('message_'+str(req.body.friend_id),event.body.message.message_id,event.body.SerializeToString())
             cachehelper.add_friend_queue(self.redis,req.body.friend_id)
 
@@ -460,11 +460,8 @@ class HallService(GameService):
         elif diff_day > 1:
             # 第一次登陆，赠送经验卡
             if user_gf.signin_days == -1:
-                bag = TBagItem()
-                bag.uid = req.header.user
-                bag.item_id = DEFAULT_USER_ITEM[0]
-                bag.countof = DEFAULT_USER_ITEM[1]
-                session.add(bag)
+                bag = BagObject(session)
+                bag.save_user_item(req.header.user, DEFAULT_USER_ITEM[0],DEFAULT_USER_ITEM[1])
 
             index = 0
             # 3.修改用户扩展表的最后签到时间和签到天数（签到天数必须判断是否是连续签到）
@@ -510,7 +507,8 @@ class HallService(GameService):
             # 月累计签到，奖励日
             if total_signin_day in SIGN_MONTH_LUCK:
                 luck_day = SIGN_MONTH_LUCK.get(total_signin_day)
-                BagObject.save_user_item(req.header.user, luck_day[1], luck_day[0])
+                bag = BagObject()
+                bag.save_user_item(req.header.user, luck_day[1], luck_day[0])
 
         resp.body.result.gold = signs[index].gold
         resp.body.result.diamond = signs[index].diamond
@@ -542,6 +540,10 @@ class HallService(GameService):
             user_gf.signin_days = DEFAULT_USER_GLODFLOWER['signin_days']
             user_gf.last_signin_day = DEFAULT_USER_GLODFLOWER['last_signin_day']
             user_gf.change_nick = DEFAULT_USER_GLODFLOWER['change_nick']
+            user_gf.wealth_rank = DEFAULT_USER_GLODFLOWER['wealth_rank']
+            user_gf.win_rank = DEFAULT_USER_GLODFLOWER['win_rank']
+            user_gf.charm_rank = DEFAULT_USER_GLODFLOWER['charm_rank']
+            user_gf.charge_rank = DEFAULT_USER_GLODFLOWER['charge_rank']
             session.add(user_gf)
 
         resp.body.brief.nick = user_info.nick
@@ -571,6 +573,7 @@ class HallService(GameService):
 
         # 签到验证
         diff_day = (date.today() - user_gf.last_signin_day).days
+
         if diff_day >= 1:
             resp.body.is_signin = False
         else:
@@ -581,17 +584,17 @@ class HallService(GameService):
         has_friend_count = 0 if has_friend_count == None else has_friend_count
         if has_friend_count > 0:
              self.redis.hincrby('friend_queue',req.header.user,has_friend_count)
-             resp.body.notification.has_friend = has_friend_count
+             resp.body.notification.has_friend = int(has_friend_count)
         else:
              resp.body.notification.has_friend = 0
 
         # 发送好友消息事件
-        # if has_friend_count > 0:
-        #     messages = self.redis.hgetall('message_'+str(req.header.user))
-        #     for index in messages:
-        #         event = create_client_event(FriendMessageEvent)
-        #         event.body.ParseFromString(messages[index])
-        #         self.sender.send_event([req.header.user],event)
+        if has_friend_count > 0:
+            messages = self.redis.hgetall('message_'+str(req.header.user))
+            for index in messages:
+                event = create_client_event(FriendMessageEvent)
+                event.body.ParseFromString(messages[index])
+                self.sender.send_event([req.header.user],event)
         resp.header.result = 0
     # 查询用户
     @USE_TRANSACTION
@@ -881,16 +884,31 @@ class HallService(GameService):
             resp.header.result = RESULT_FAILED_INVALID_AUTH
             return
 
+        # 出售商品验证
+        trade = session.query(TTrade).filter(TTrade.id == req.body.trade_id).first()
+        if user_info.diamond < trade.diamond:
+            resp.header.result = -1
+            return
 
         try:
+            # 修改交易记录
             result = session.query(TTrade).with_lockmode("update").filter(and_(TTrade.id == req.body.trade_id, \
                                                                                TTrade.status != 1, TTrade.diamond <= user_info.diamond)).update({
                 TTrade.buyer : user_info.id,
                 TTrade.buy_time : datetime.now(),
+                TTrade.status : 1,
             })
             if result != 1:
                 resp.header.result = -1
                 return
+            # 修改出售者数据
+            seller_info = self.da.get_user(trade.seller)
+            seller_info.diamond= seller_info.diamond + trade.diamond
+            self.da.save_user(session, seller_info)
+            # 修改购买者数据
+            user_info.gold = user_info.gold + trade.gold
+            user_info.diamond = user_info.diamond - trade.diamond
+            self.da.save_user(session,user_info)
         except Exception as e:
             print e.message
             resp.header.result = -1
@@ -908,7 +926,8 @@ class HallService(GameService):
             resp.header.result = RESULT_FAILED_INVALID_AUTH
             return
 
-        if user_info.gold <= req.body.gold:
+        # 扣税
+        if user_info.gold <= (TAX_NUM * req.body.gold) + req.body.gold:
             resp.header.result = RESULT_FAILED_INVALID_GOLD
             return
 
@@ -921,7 +940,8 @@ class HallService(GameService):
         trade.status = 0
         session.add(trade)
 
-        user_info.gold = user_info.gold - int(req.body.gold)
+
+        user_info.gold = user_info.gold - int((TAX_NUM * req.body.gold) + req.body.gold)
         self.da.save_user(session,user_info)
 
         self.get_result(user_info, resp)
@@ -929,13 +949,14 @@ class HallService(GameService):
     # 下架金币
     @USE_TRANSACTION
     def handle_out_gold(self,session,req,resp,event):
+        # -1 下架，0=交易中，1=被买走
         user_info = self.da.get_user(req.header.user)
         trade = session.query(TTrade).filter(and_(TTrade.id == req.body.trade_id, TTrade.status == 0)).first()
 
         if trade == None:
             resp.header.result = -1
             return
-        session.query(TTrade).with_lockmode('update').filter(TTrade.id == req.body.trade_id).update({
+        session.query(TTrade).with_lockmode('update').filter(and_(TTrade.id == req.body.trade_id, TTrade.status == 0)).update({
             TTrade.status : -1
         })
         user_info.gold = user_info.gold + trade.gold
@@ -1079,19 +1100,20 @@ class HallService(GameService):
         if int(record['total']) != int(record['current']):
             resp.header.result = RESULT_FAILED_RECEIVE_REWARD
             return
-        print '========>',record
+
         round_reward_conf = RewardObject.get_conf(int(record['total']))
-        print '========>',round_reward_conf
+
         if round_reward_conf == None:
             resp.header.result = RESULT_FAILED_RECEIVE_REWARD
             return
         next_round_reward_conf = RewardObject.get_next_round(int(record['total']))
-        print '========>',next_round_reward_conf
+
         self.redis.hmset(key,{'total':next_round_reward_conf[0],'current':0})
         user_info = self.da.get_user(req.header.user)
         user_info.gold = user_info.gold + random.randint(round_reward_conf[1],round_reward_conf[2])
         self.da.save_user(session, user_info)
 
+        resp.body.next_round = next_round_reward_conf[0]
         resp.body.result.gold = user_info.gold
         resp.header.result = 0
 
@@ -1106,17 +1128,23 @@ class HallService(GameService):
             if order != None:
                 resp.header.result = -1
                 return
+
+        charge_item = session.query(TChargeItem).filter(TChargeItem.id == req.body.shop_id).first()
+        if charge_item == None:
+            resp.header.result = -1
+            return
+
         order = TOrder()
         order.order_sn = order_sn
         order.uid = req.header.user
-        order.money = 1
+        order.money = charge_item.money
         order.shop_id = req.body.shop_id
         order.status = -1
         order.comment = req.body.comment
         order.create_time = datehelper.get_today_str()
         session.add(order)
 
-        resp.body.money = 1
+        resp.body.money = int(charge_item.money * 100)
         resp.body.order_sn = str(order_sn)
         resp.body.callback = PAY_RESULT_URL
         resp.header.result=0
@@ -1158,6 +1186,10 @@ class HallService(GameService):
         resp.header.result = 0
 
 
+    # 充值成功，给客户端发送消息
+    def charge_success(self):
+        pass
+
     # 退出
     def handle_logout(self,session,req,resp,event):
         try :
@@ -1187,6 +1219,7 @@ class HallService(GameService):
             event.body.param2 = json.dumps(json_object['param2'])
 
             self.sender.send_event(users,event)
+
 
     def get_order_sn(self):
         return time.strftime('%Y%m%d')+str(random.randint(10000,99999))

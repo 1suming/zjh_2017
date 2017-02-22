@@ -88,5 +88,6 @@ enum NotificationType {
 	N_MAIL = 2;
 	N_REWARD = 3;
 	N_GIFT_RECEIVED = 4;
+	N_KICK_OFF = 5;
 }
 
