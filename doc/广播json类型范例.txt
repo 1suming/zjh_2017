@@ -1,0 +1,84 @@
+1.新用户注册
+{
+	"type":1,
+    	"nick":"扎金花王子",
+	"nick_color":'#ffccee'
+}
+2.VIP升级广播
+{	"type":2,
+	"nick":"炸金花王子",
+	"nick_color":"#ff0032",
+}
+3.牌桌输赢广播
+{
+	"type":3,
+	"winner_nick":"炸金花王子",
+	"winner_nick_color":"#fff",
+	"table_type":1, //初级场|高级场
+	"table_type_color":"#06f"
+	"winner_gold":3333121,
+	"winner_gold_color":"#ff1234"
+}
+4.赠送礼物广播
+{
+	"type":4,
+	"from_uid":10025,
+	"from_nick":"炸金花王子",
+	"from_nick_color":"#ff1",
+	"to_uid":10026,
+	"to_nick":"豆浆油条",
+	"to_nick_color":"#ff3",
+	"gift_type":1, // 1=玫瑰，2=鸡蛋,0=其他物品
+	"gift":"玫瑰",
+	"gift_color":"#ff2"
+}
+5.系统提醒
+{
+	"type":5,
+	"message":"本游戏不提供任何形式的游戏外充值，请勿上当受骗！",
+	"message_color":red
+}
+6.金币交易
+{
+	"type":6,
+	"nick":"炸鸡花王子",
+	"nick_color:"red",
+	"gold":33,
+	"gold_color":"#ff1",
+	"diamond":3,
+	"diamond_color":"#fff"
+}
+7.世界喇叭
+{
+	"type":7,
+	"message":"辣鸡",
+	"nick_id":33,
+	"nick":"哈哈哈哈",
+	"nick_color":"#ff1",
+	
+}
+8.获胜人物
+{
+	"type":"8",
+	"nick":"逆风飞翔",
+	"nick_color":"#fff",
+	"table_type" = "1",
+	"luck_type" = 3 // 1=顺金，2=豹子
+}
+9.排名人物
+{
+	"type":9,
+	"nick":"冷见效",
+	"nick_color":"#fff",
+	"index":4,
+	"count":20,
+	"top_type": 3 // 1=财富排行，2=魅力排行
+}
+
+10.充值成功提醒
+{
+	"type":10,
+	"money":33.99,
+	"diamond":6,
+	"gold":0,
+}
