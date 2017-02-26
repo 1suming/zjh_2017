@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Administrator'
 
-RANK_WEALTH_TOP = 10
+RANK_WEALTH_TOP = 20
 
-RANK_CHARGE_TOP = 10
+RANK_CHARGE_TOP = 20
+
+RANK_MAKE_MONEY_TOP = 20
 
 RANK_FAKE = [
     {'id':1,'uid':20120,'nick':'haha1','avatar':'http://192.168.2.75:5000/static/upload/10023_867356020226898_tmp_avatar.png','gold':100},

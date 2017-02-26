@@ -96,7 +96,7 @@ message Reward {
 	optional int64 diamond = 6;
 	repeated Item items = 7;
 	repeated Gift gifts = 8;
-	required int32 state = 9; // 0 = done， 1 = success，其它则是去完成
+	required int32 state = 9; // 0 = done(已领奖)， 1 = success（去领奖），其它则是去完成
 	required string action = 10; // table=牌桌,send_world_chat=世界喇叭界面,profile=个人中心,charge=充值
 	optional int32 icon = 11;
 }
@@ -310,7 +310,6 @@ message FriendApply {
 	repeated Gift gifts  = 8;
 }
 
-
 message FriendMessage {
 	required int32 message_id = 1;
 	required int32 from_user = 2;
@@ -329,7 +328,6 @@ message RankPlayer {
 	required string avatar = 4;
 	required int64 gold = 5;
 	required int32 charm = 6;
-
 	optional string rank_reward = 7; // 排名奖励信息
 	optional int32 money_maked = 8; //  赚取的钱
 	optional int32 vip = 9;

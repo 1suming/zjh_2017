@@ -39,8 +39,9 @@ class TRewardTask(TableObject):
     def __init__(self):
         TableObject.__init__(self)
     def __repr__(self):
-        return 'category=%s,is_daily=%d,name=%s,description=%s,params=%s,gold=%d,diamond=%d,items=%s,gifts=%s' % \
-               (self.category.encode('utf-8'),self.is_daily,self.name.encode('utf-8'),self.description.encode('utf-8'),self.params,self.gold,self.diamond,self.items,self.gifts)
+        return 'action=%s' % self.action
+        # return 'category=%s,is_daily=%d,name=%s,description=%s,params=%s,gold=%d,diamond=%d,items=%s,gifts=%,action=%s' % \
+        #        (self.category.encode('utf-8'),self.is_daily,self.name.encode('utf-8'),self.description.encode('utf-8'),self.params,self.gold,self.diamond,self.items,self.gifts,self.action)
     # def __repr__(self):
     #     return "brithday=%s,id=%d,mobile=%s,nick=%s,state=%d,imei=%s,imsi=%s,password=%s,create_time=%d,nick=%s,sign=%s,address=%s, sex=%d,channel=%d" % \
     #             (self.brithday,self.id,self.mobile,self.nick,self.state,self.imei,self.imsi,self.password,self.create_time,self.nick,self.sign,self.address, self.sex,self.channel)

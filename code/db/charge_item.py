@@ -19,6 +19,8 @@ from sqlalchemy.orm import Mapper
 tab_charge_item = Table("charge_item", metadata,
                  Column("id",Integer, primary_key=True),
                  Column("diamond",Integer,default=0,nullable =False),
+                 Column("type",String(10)),
+                 Column("gold",Integer),
                  Column("icon",String(20)),
                  Column("money",DECIMAL(18,2)),
                  Column("description",String(140),nullable =False),

@@ -9,6 +9,9 @@ REWARD_PLAY_ROUND = [
     (20,20000,40000),
 ]
 
-REWARD_DAILY = []
 
-REWARD_DAILY
+
+REWARD_MAIL = {
+    8:'上传照片，更换头像，奖励2万金币'
+}
+

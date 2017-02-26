@@ -96,7 +96,7 @@ class LoginServer:
             RegisterReq.DEF.Value("ID"):self.handle_register,
             LoginReq.DEF.Value("ID"): self.handle_login,
             ResetReq.DEF.Value("ID"): self.handle_reset,
-            # LogoutReq.DEF.Value("ID"): self.handle_logout,
+            LogoutReq.DEF.Value("ID"): self.handle_logout,
             FastLoginReq.DEF.Value("ID"): self.handle_fast_login,
             GetVerifyCodeReq.DEF.Value("ID"): self.handle_get_verify_code,
             CheckUpgradeReq.DEF.Value("ID"):self.handle_check_upgrade,
@@ -141,7 +141,6 @@ class LoginServer:
                 msg,start = request_data
                 buffer = buffer[start:]
                 handler = self.message_handlers.get(msg.header.command)
-
                 if handler == None:
                     logging.info("receive invalid message" + str(msg.header.command))
                     break

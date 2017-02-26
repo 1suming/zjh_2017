@@ -19,7 +19,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='bank.proto',
   package='cardgame',
-  serialized_pb=_b('\n\nbank.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"\x1e\n\x0cQueryBankReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x94#\"T\n\rQueryBankResp\x12\x0c\n\x04gold\x18\x01 \x01(\x03\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x16\n\x0enext_vip_limit\x18\x03 \x01(\x03\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x95#\",\n\x0cSaveMoneyReq\x12\x0c\n\x04gold\x18\x01 \x02(\x03\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x96#\"\x1f\n\rSaveMoneyResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x97#B\"\n\x18\x63om.zhili.cardgame.protoB\x04\x42\x61nkH\x03')
+  serialized_pb=_b('\n\nbank.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"\x1e\n\x0cQueryBankReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x94#\"T\n\rQueryBankResp\x12\x0c\n\x04gold\x18\x01 \x01(\x03\x12\r\n\x05limit\x18\x02 \x01(\x03\x12\x16\n\x0enext_vip_limit\x18\x03 \x01(\x03\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x95#\",\n\x0cSaveMoneyReq\x12\x0c\n\x04gold\x18\x01 \x02(\x03\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x96#\"A\n\rSaveMoneyResp\x12 \n\x06result\x18\x01 \x02(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x97#B\"\n\x18\x63om.zhili.cardgame.protoB\x04\x42\x61nkH\x03')
   ,
   dependencies=[struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -93,8 +93,8 @@ _SAVEMONEYRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=219,
-  serialized_end=233,
+  serialized_start=253,
+  serialized_end=267,
 )
 _sym_db.RegisterEnumDescriptor(_SAVEMONEYRESP_DEF)
 
@@ -206,6 +206,13 @@ _SAVEMONEYRESP = _descriptor.Descriptor(
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
+    _descriptor.FieldDescriptor(
+      name='result', full_name='cardgame.SaveMoneyResp.result', index=0,
+      number=1, type=11, cpp_type=10, label=2,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -219,12 +226,13 @@ _SAVEMONEYRESP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=202,
-  serialized_end=233,
+  serialized_end=267,
 )
 
 _QUERYBANKREQ_DEF.containing_type = _QUERYBANKREQ
 _QUERYBANKRESP_DEF.containing_type = _QUERYBANKRESP
 _SAVEMONEYREQ_DEF.containing_type = _SAVEMONEYREQ
+_SAVEMONEYRESP.fields_by_name['result'].message_type = struct_pb2._RESULT
 _SAVEMONEYRESP_DEF.containing_type = _SAVEMONEYRESP
 DESCRIPTOR.message_types_by_name['QueryBankReq'] = _QUERYBANKREQ
 DESCRIPTOR.message_types_by_name['QueryBankResp'] = _QUERYBANKRESP

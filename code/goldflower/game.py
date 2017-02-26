@@ -299,6 +299,8 @@ class GameRound:
             if not gambler.is_fail:
                 gambler.stake(self.game.required_gold)
         self.game.sender.send_game_started()
+        # 发牌动作
+        gevent.sleep(3)
         self.turn_start_time = int(time.time())
         self.game.sender.send_current_turn(self.count,self.current_gambler)
         gevent.spawn_later(TURN_TIMEOUT,self.current_gambler.turn_timeout,self.count)

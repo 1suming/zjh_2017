@@ -25,6 +25,7 @@ from config import var
 
 LOGOUT_RESP_ID = LogoutResp.DEF.Value("ID")
 CONNECT_GAME_SERVER_REQ_ID = ConnectGameServerReq.DEF.Value("ID")
+KICKOFF_USER_CONNECTION_ID = QuitGameServerReq.DEF.Value("ID")
 
 CLIENT_TIMEOUT = 600
 MAX_CONNECTIONS = 400
@@ -108,7 +109,7 @@ class AccessClientConnection(object):
         self.handle_message(_close_client)
         self.send(_close_client)    
         self._closed = True
-        logging.info("=========== >>>: %d", self.user)
+        
         req = create_client_message(QuitGameServerReq)
         req.header.user = self.user
         self.access_server.access_service.forward_message(req.header,req.encode())
@@ -128,15 +129,22 @@ class AccessClientConnection(object):
         session = int(self.access_server.redis.hget("sessions",req.header.user))
         
         if session == req.body.session:
+        	
+        	
             self.heartbeat_time = int(time.time())
             self.is_safe = True
             self.user = req.header.user
             self.login_time = int(time.time())
             self.session = session
-            
+
+            old_server_id = self.access_server.redis.hget("mapping",req.header.user)
+            if old_server_id != None and int(old_server_id) != self.access_server.server_id:
+                old_server_id = int(old_server_id)
+                self.access_server.access_service.forward_message_directly(old_server_id,KICKOFF_USER_CONNECTION_ID,req.header.user,-1)
             old_connection = self.access_server.users.get(req.header.user,None)
             if old_connection != None:
                 logging.info("Same user is logined so kick off previous one user = %d",req.header.user )
+                # 断开前需要发事件通知客户端
                 event = create_client_event(NotificationEvent)
                 event.header.user = req.header.user
                 event.header.result = 0
@@ -190,7 +198,7 @@ class AccessClientConnection(object):
             logging.info("result(%d) is failure and user = %d, it should not happen",result,client_message.header.user)
             self.close()
             
-    def on_safe_message(self,client_message):           
+    def on_safe_message(self,client_message):
         access_server = self.access_server
         # ����Ƿ�ȫ��¼��
         if (client_message.header.user not in access_server.users or client_message.header.user != self.user):

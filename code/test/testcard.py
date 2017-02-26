@@ -170,6 +170,11 @@ def update_user(client,mobile,password,device_id):
         print req.header.user,'=',req.header.result
         client.socket.send(req.encode())
 
+        print '4444444444444444444444444444444444'
+
+
+
+
     except:
         traceback.print_exc()
     finally:
@@ -959,6 +964,49 @@ def receive_mails(client,mobile = '13412341777',password= '123456',device_id='d_
     finally:
         pass
 
+def receive_friend_message(client,mobile = '13412341777',password= '123456',device_id='d_9444',act = ''):
+    try:
+        MessageMapping.init()
+        resp = client.normal_test_enter_server(mobile,password,device_id)
+
+        print '1111111111111111111'
+        print resp.header.user,'=',resp.header.result
+        print resp.body
+
+        client.setup_socket()
+        result = client.connect_game_server(resp.header.user, resp.body.session, 1)
+        print '2222222222222222222'
+        print result.header.user,'=',result.header.result
+        print result.body
+
+        time.sleep(3)
+        req = create_client_message(QueryHallReq)
+        req.header.user = result.header.user
+        req.body.max_mail_id = 0
+        req.body.max_announcement_id = 0
+        client.socket.send(req.encode())
+
+        print '3333333333333333333333333333333333'
+        time.sleep(5)
+        req = create_client_message(ReceiveFriendMessageReq)
+        req.header.user = result.header.user
+        req.body.message_id = 13
+        client.socket.send(req.encode())
+
+        # req = create_client_message(QueryUserReq)
+        # req.header.user = result.header.user
+        # req.body.uid = result.header.user
+        # client.socket.send(req.encode())
+
+      # client.socket.send(req.encode())
+
+    except Exception as e:
+        traceback.print_exc()
+    finally:
+        pass
+
+
+
 def send_mail(client,mobile = '13412341777',password= '123456',device_id='d_9444',act = ''):
     try:
         MessageMapping.init()
@@ -997,8 +1045,8 @@ def send_mail(client,mobile = '13412341777',password= '123456',device_id='d_9444
 def get_friends(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
     try:
         MessageMapping.init()
-        resp = client.normal_test_enter_server(mobile,password,device_id)
-
+        # resp = client.normal_test_enter_server(mobile,password,device_id)
+        resp = client.fast_test_enter_server('A00000568CD11','','','')
         print '1111111111111111111'
         print resp.header.user,'=',resp.header.result
         print resp.body
@@ -1153,8 +1201,8 @@ def send_friends_message(client,mobile = '13412341777',password= '123456',device
         print '3333333333333333333333333333333333'
         req = create_client_message(SendFriendMessageReq)
         req.header.user = result.header.user
-        req.body.friend_id = 10020
-        req.body.message = '77 flowers for you'
+        req.body.friend_id = 10000
+        req.body.message = '88 flowers for you'
 
         client.socket.send(req.encode())
 
@@ -1428,12 +1476,13 @@ def test_card(imei,imsi,token,need_idle,*args):
         # upgrade_check(client, '13488889999','123456', '865372020475361')
         # get_rank(client, '13488889999','123456', '865372020475361')
 
-        send_friends_message(client, '15919430507','wang0000', '865372020475361')
+        # send_friends_message(client, '15919430507','wang0000', '865372020475361')
         # make_friends_apply(client, '13412311111','123456', 'device_id_333')
         # remove_friends_apply(client, '13412311111','123456', 'device_id_333')
+        # receive_friend_message(client, '13412345678','123456','000000000000000')
         # receive_mails(client, '13412311111','123456', 'device_id_333')
 
-        # get_friends_apply(client, '13412311111','123456', 'device_id_333')
+        # get_friends_apply(client, '15815052843','987654', '865647020556892')
         # get_friends(client, '13412311111','123456', 'device_id_333')
         # query_bank(client, '13488889999','123456', '865372020475361')
 
@@ -1450,10 +1499,10 @@ def test_card(imei,imsi,token,need_idle,*args):
         # query_player(client, '13412311111','123456', 'device_id_333')
        #  fast_login_game(client,'device_id_333','imei_1010','imsi_2020', 'token_2020')
         # register_game(client, '13412311111','123456','1234','imei_1111','imsi_2222','device_id_333','LT333')
-        # get_hall_query(client,'15919430507','wang0000','865372020475361')
+        # get_hall_query(client,'13455556666','123456','867582021385215')
 
         # normal_logout(client, '15919430507','wang0000', '865372020475361')
-        # update_user(client, '13412311111','123456', 'device_id_333')
+        update_user(client, '13412311111','123456', '351702077470363')
 
         # get_annoucments(client, str(999999),str(999998), 'token_123')
 
@@ -1463,7 +1512,7 @@ def test_card(imei,imsi,token,need_idle,*args):
         # today_sign(client, '13488889999', '123456', '865372020475361')
         # send_chat_world(client,'13488889999', '123456', '865372020475361')
         # send_chat_room(client,'13412311111', '123456', 'device_id_333')
-        # get_rewards(client, '13412311111','123456', 'device_id_333')
+        # get_rewards(client, '15815052845','123456', 'A00000568CDD11')
         # revice_rewards(client, '13412311111','123456', 'device_id_333')
         # get_shop_item(client, '13412311111','123456', 'device_id_333')
         # get_register_code(client,'13412311111', '123456', 'device_id_333')

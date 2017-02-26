@@ -87,7 +87,7 @@ message OutGoldReq {
     enum DEF {
         ID = 3010;
     }
-	required int32 trade_id = 1;
+    required int32 trade_id = 1;
 }
 
 message OutGoldResp {

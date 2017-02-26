@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <ul>
+  {% for item in items %}
+    <li><h2>{{ item.from_user_nick }}</h2>{{ item.from_user_avatar }} </li>
+  {% else %}
+    <li><em>Unbelievable.  No entries here so far</em></li>
+  {% endfor %}
+        </ul>
+</body>
+</html>

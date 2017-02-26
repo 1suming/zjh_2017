@@ -88,6 +88,11 @@ enum NotificationType {
 	N_MAIL = 2;
 	N_REWARD = 3;
 	N_GIFT_RECEIVED = 4;
-	N_KICK_OFF = 5;
+	N_KICK_OFF = 5;//强制下线
 }
 
+enum RewardType {
+    DONE = 0;      // 已完成，已领取
+    SUCCESS = 1;   // 已完成，未领取
+    NO_TASK = -1;  // 未完成
+}

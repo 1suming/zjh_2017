@@ -29,6 +29,7 @@ message LoginResp {
 	optional int32 session = 2;
 	optional GameServer server = 3;
 }
+
 // 重置密码
 message ResetReq {
 	enum DEF{
@@ -64,9 +65,6 @@ message FastLoginResp {
 	optional int32 session = 2;
 	optional GameServer server = 3;
 }
-
-
-
 
 
 message GetVerifyCodeReq {

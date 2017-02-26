@@ -14,6 +14,7 @@ from db.item import *
 from db.rank_gold_top import *
 from db.rank_charge_top import *
 from db.rank_make_money_top import *
+from db.reward_user_log import *
 from helper import protohelper
 from helper import datehelper
 from datetime import date,datetime
@@ -21,9 +22,10 @@ from helper import cachehelper
 import time
 
 from proto import struct_pb2 as pb2
-from proto import constant_pb2
+from proto.constant_pb2 import *
 
 from sqlalchemy import desc,and_
+
 
 class ShopObject:
     def __init__(self,dataaccess,session):
@@ -84,6 +86,25 @@ class MessageObject:
         if message != None:
             self.da.redis.hdel('message_queue',user)
         return message
+
+    @staticmethod
+    def send_mail(session, user_info, task_id, **kwargs):
+
+        # 加入邮件日志，待用户下次启动拉取
+        mail = TMail()
+        mail.from_user = 10000
+        mail.to_user = user_info.id
+        mail.send_time = int(time.time())
+        mail.title = kwargs.get('title')
+        mail.content = kwargs.get('content')
+        mail.type = kwargs.get('type')
+        mail.diamond = kwargs.get('diamond',0)
+        mail.gold = kwargs.get('gold',0)
+        mail.items = kwargs.get('items')
+        mail.gifts = kwargs.get('gifts')
+        mail.received_time = kwargs.get('received_time')
+        mail.state = 0 # 0 = 未收取
+        session.add(mail)
 
     # def send_mail(self, contents, **kwargs):
     #     print '222222222222222222222222222222222'
@@ -159,7 +180,7 @@ class BagObject:
         return True
 
     def use_horn(self, service, uid, args):
-        cachehelper.add_notification_queue(service.redis,service.redis.hkeys('online'), 5,{'message':args['message'],"message_color":'red'})
+        cachehelper.add_notification_queue(service.redis,service.redis.hkeys('online'), 7,{'message':args['message'],"nick_id":args['nick_id'],"nick":args['nick'],"vip":args['vip']})
 
     def use_exp_1(self, service, user,args):
         if type(user) == int:
@@ -271,7 +292,7 @@ class RankObject:
 
     def charge_top(self,rank_time):
         query = self.session.query(TRankChargeTop)
-        if constant_pb2.RANK_YESTERDAY == rank_time:
+        if RankTime.RANK_YESTERDAY == rank_time:
             query = query.filter(TRankChargeTop.add_date == datehelper.get_yesterday())
         else:
             query = query.filter(TRankChargeTop.add_date == datehelper.get_datetime().strftime('%Y-%m-%d'))
@@ -281,12 +302,11 @@ class RankObject:
 
     def make_money_top(self,rank_time):
         query = self.session.query(TRankMakeMoneyTop)
-        print constant_pb2.RANK_LAST_WEEK,rank_time
-        if constant_pb2.RANK_LAST_WEEK == rank_time:
+        if RankTime.RANK_LAST_WEEK == rank_time:
             query = query.filter(and_(TRankMakeMoneyTop.add_year == datehelper.get_last_week().strftime('%Y'),TRankMakeMoneyTop.week_of_year == datehelper.get_last_week().strftime('%W')) )
         else:
             query = query.filter(and_(TRankMakeMoneyTop.add_year == datehelper.get_datetime().strftime('%Y'),TRankMakeMoneyTop.week_of_year == datehelper.get_datetime().strftime('%W')) )
-        items = query.order_by(desc(TRankMakeMoneyTop.gold)).limit(RANK_CHARGE_TOP).all()
+        items = query.order_by(desc(TRankMakeMoneyTop.gold)).limit(RANK_MAKE_MONEY_TOP).all()
         self.merage_fake(items)
         return items
 
@@ -444,6 +464,60 @@ class ItemObject:
         return session.query(TItem).filter(TItem.id == item_id).first()
 
 class RewardObject:
+
+    @staticmethod
+    def task_edit_avatar(service, session, user_info, avatar):
+
+        # 验证是否完成任务
+        if user_info.avatar == avatar:
+            return
+
+        # 8 = 上传头像, 已经加过钱了，就直接返回
+        if RewardObject.check_reward_log(session, user_info.id, 8 ):
+            return
+
+        # 给用户加钱或道具
+        RewardObject.reward_done(session, user_info, 8, BagObject())
+
+        # 发送邮件
+        MessageObject.send_mail(service, session, user_info, 8, )
+        # 广播
+
+    @staticmethod
+    def check_reward_log(session, uid, task_id):
+        task_log = session.query(TRewardUserLog).filter(and_(TRewardUserLog.uid == uid,TrewardUserLog.task_id == task_id)).first()
+
+        if task_log is None:
+            task_log = TRewardUserLog()
+            task_log.uid = uid
+            task_log.task_id = task_id
+            task_log.state == 1
+            task_log.create_time = datehelper.get_today_str()
+            session.add(task_log)
+
+        if task_log.state == 0:
+            # 已经加过钱了
+            return True
+        return False
+
+    @staticmethod
+    def reward_done(session,user_info,task_id, bag = None):
+        task = session.query(TRewardTask).filter(TRewardTask.id == task_id).first()
+        if task is not None:
+            if task.gold > 0:
+                user_info.gold = user_info.gold + task.gold
+            if task.diamond > 0:
+                user_info.diamond = user_info.diamond + task.diamond
+            if task.items is not None and task.items != '':
+                for item in task.items.split(','):
+                    bag.save_user_item(user_info.id, item[0], item[2])
+            return True
+        return False
+
+    @staticmethod
+    def send_mail(session, user_info, task_id):
+        pass
+
     @staticmethod
     def is_done(round):
         if round == REWARD_PLAY_ROUND[-1][0]:
