@@ -1,0 +1,55 @@
+1.user_goldflowe.exp +玩牌经验功能，参照【个人信息设定文档】
+√2.赢牌次数，与前端对赢牌字段及功能
+√3.充值+vip经验功能（顺便把首冲也弄完了）
+√4.下架不需要+钻石
+√5.vip0, vip1及vip2，不能挂售金币
+√6.vip中踢人不可被踢出房间
+7.签到问题，+金币有问题，没有送指定的vip道具
+8.拒绝好友(好友模块需重新验证)
+-------> <type 'str'> avatar 
+---------------> <type 'int'> charm 0
+---------------> <type 'str'> sign 小赌怡情，大赌致富。
+---------------> <type 'int'> type 0
+---------------> <type 'int'> id 11130
+---------------> <type 'str'> channel test
+2017-03-02 13:58:06,890 ERROR Error Happened
+Traceback (most recent call last):
+  File "/root/new_code_1206/code/util/handlerutil.py", line 39, in f
+    func_result = func(self,session,req,resp,event)
+  File "/root/new_code_1206/code/hall/hallservice.py", line 360, in handle_friends_apply
+    self.friend.make_friend_apply(session, req.body.apply_id, req.body.accept, user_info, friend_info)
+  File "/root/new_code_1206/code/hall/hallobject.py", line 187, in make_friend_apply
+    self.send_mail_make_friend(session, user_info, friend_info, accept)
+  File "/root/new_code_1206/code/hall/hallobject.py", line 227, in send_mail_make_friend
+    content = MAIL_CONF['friend_make_no_apply_source'] % (user_info_source.nick)
+TypeError: not all arguments converted during string formatting
+2017-03-02 13:58:07,048 INFO access service OnEvent User=11130 event_type=4011
+
+9.新玩家注册昵称广播为None,需要修改为新玩家昵称
+8.财富榜用户上线提醒修改，不是指定的财富榜用户
+10.vip用经验卡或充值升级了，需要提醒广播
+11.排名（充值和周赚金榜）和排名奖励
+12.充值（快充）
+13.签到日，领取奖励28日
+882 INFO receive a message : cmd=4200 | user=11126 | route=-1 
+2017-03-02 14:23:25,882 INFO message body:
+
+---------------> <type 'int'> diamond 870
+---------------> <type 'int'> vip_exp 25
+---------------> <type 'int'> gold 51185.0
+2017-03-02 14:23:25,884 ERROR Error Happened
+Traceback (most recent call last):
+  File "/root/new_code_1206/code/util/handlerutil.py", line 39, in f
+    func_result = func(self,session,req,resp,event)
+  File "/root/new_code_1206/code/hall/hallservice.py", line 1025, in handle_bag
+    user_info = self.da.get_user(req.header.user)
+  File "/root/new_code_1206/code/dal/core.py", line 25, in get_user
+    if dal_user.load():
+  File "/root/new_code_1206/code/dal/base.py", line 38, in load
+    data = self.load_from_redis()
+  File "/root/new_code_1206/code/dal/base.py", line 87, in load_from_redis
+    new_data[k] = self.get_real_value(k,v)
+  File "/root/new_code_1206/code/dal/base.py", line 24, in get_real_value
+    return python_type(v)
+ValueError: invalid literal for int() with base 10: '51185.0'
+2017-03-02 14:23:25,885 INFO access service OnEvent User=11126 eve

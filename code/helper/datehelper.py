@@ -7,6 +7,9 @@ import time
 def get_datetime():
     return datetime.datetime.now()
 
+def get_date_str():
+    return time.strftime('%Y-%m-%d')
+
 def get_today_str():
     return time.strftime('%Y-%m-%d %H:%M:%S')
 

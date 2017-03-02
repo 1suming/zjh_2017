@@ -1,23 +1,30 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Administrator'
 
-import json,sys,redis,time
+import json,sys,redis,time,os
 import hashlib
 
-from flask import Flask,request,render_template,redirect
+from flask import Flask,request,render_template,redirect, url_for,jsonify
+from werkzeug import secure_filename
+# from os.path import join, dirname, realpath
+
+
 from conf import DevConfig
-
-
-#from config.var import *
+# from config.var import *
 from db.connect import *
 from db.order import *
 from db.mail import *
+from db.bag_item import *
 from db.charge_item import *
 from db.mail import *
+from db.reward_user_log import *
 from db.customer_service_log import *
 from db.user import *
+# from hall.hallobject import *
+from helper import datehelper
 from sqlalchemy import and_
 from sqlalchemy.sql import desc
+
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -34,9 +41,89 @@ CALLBACK = 'http://121.201.29.89:18000/pay_result'
 CHARGE_KEY = 'cqkj2017'
 CP_KEY = 'bde25760c1556899efc0dff13bf41b4e'
 
-@app.route('/')
-def home():
-    return '<h1>hello world!</h1>'
+UPLOAD_FOLDER = 'static/upload'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+REAL_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static/upload')
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+
+        file = request.files['file']
+        uid = request.form['uid']
+        device_id = request.form['device_id']
+
+        if file == None or uid == None or device_id == None:
+            return jsonify(result=0,message='error,file or uid or device_id is empty!')
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(REAL_PATH, uid+'_'+device_id+'_'+filename))
+            # return redirect(url_for('uploaded_file', filename=filename))
+            full_filename ='/'+uid+'_'+device_id+'_'+filename
+            path_url = request.url_root+app.config['UPLOAD_FOLDER']+full_filename
+
+
+            result = session.query(TUser).filter(TUser.id == uid).filter(TUser.id == int(uid)).update({
+                TUser.avatar:path_url
+            })
+
+
+
+            if result > 0:
+                # 修改头像换缓存
+                if r.exists('u'+str(uid)):
+                    r.hset('u'+str(uid), 'avatar', path_url)
+
+                # 记录完成头像任务
+                task_log = session.query(TRewardUserLog).filter(and_(TRewardUserLog.uid == uid,TRewardUserLog.task_id == 10)).first()
+                if task_log is None:
+                    task_log = TRewardUserLog()
+                    task_log.uid = uid
+                    task_log.task_id = 10 # 修改任务头像id
+                    task_log.state = 1 # 1=已完成，未领取 。 0 = 已完成，已领取。 其他 = 未完成
+                    task_log.create_time = datehelper.get_today_str()
+                    session.add(task_log)
+
+                return jsonify(result=0,message='success,message:'+full_filename+',path:'+path_url,url=path_url)
+            return jsonify(result=-1,message='error:upload return false')
+            # if execute(conn, "UPDATE `user` SET `avatar` = '%s' WHERE `id`=%d" % (path_url, int(uid))):
+            #     return jsonify(result=0,message='success,message:'+full_filename+',path:'+path_url,url=path_url)
+            # return jsonify(result=-1,message='error:upload return false')
+            #return jsonify(rr=0,mm='success,message:'+full_filename+',path:'+path_url,uu=path_url)
+
+    pathDir =  os.listdir(REAL_PATH)
+    html = ''
+    for allDir in pathDir:
+        # child = os.path.join('%s%s' % (REAL_PATH, allDir))
+        html +='<li><a href="'+request.url_root+UPLOAD_FOLDER+'/'+allDir+'">'+request.url_root+UPLOAD_FOLDER+'/'+allDir+'</a></li>'
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form action="" method=post enctype=multipart/form-data>
+      <p><input type=file name=file>
+      <input type=text name=uid placeholder=uid>
+      <input type=text name=device_id placeholder=device_id>
+         <input type=submit value=Upload>
+    </form>
+    <ol>
+    %s
+    </ol>
+    ''' % html
+# ''' % "<br>".join(os.listdir(app.config['UPLOAD_FOLDER'],))
+
+
+
+
+
+
+
+
+
 
 @app.route('/customer')
 def customer():
@@ -49,8 +136,6 @@ def customer():
         item.from_user_nick = user_info.get('nick')
         item.from_user_avatar = user_info.get('avatar')
     return render_template('customer.html',items = items)
-
-
 
 @app.route('/pay_result', methods=['POST'])
 def pay_result():
@@ -119,9 +204,43 @@ def pay_result():
     session.add(mail)
     session.flush()
 
-    session.query(TUser).with_lockmode("update").filter(TUser.id == order.uid).update({
-        TUser.is_charge:1
-    })
+
+
+    if r.exists('u'+str(order.uid)):
+        r.delete('u'+str(order.uid))
+
+    user_info = session.query(TUser).filter(TUser.id == order.uid, TUser.is_charge == 0).first()
+    if user_info.is_charge == 0:
+        session.query(TUser).with_lockmode("update").filter(TUser.id == order.uid, TUser.is_charge == 0).update({
+            TUser.is_charge:1,
+            TUser.gold:TUser.gold+300000,
+            TUser.gold:TUser.diamond+10
+        })
+    # 1	horn	大喇叭	可以公开喊话	2017-02-14 15:33:01
+    # 2	kick	踢人卡	奖玩家踢出房间	2017-02-14 15:35:02
+    # 3	exp_1	经验卡1点	使用后获得1点VIP经验	2017-02-15 10:43:51
+    # 4	exp_10	经验卡10点	使用后获得10点VIP经验	2017-02-15 11:15:49
+    # 5	tgold	金币名称	金币介绍	2017-02-15 16:57:49
+    # 大喇叭 10
+        save_countof(session, {
+            'uid':order.uid,
+            'stuff_id':1,
+            'countof':10,
+        })
+        # 踢人卡 10
+        save_countof(session, {
+            'uid':order.uid,
+            'stuff_id':2,
+            'countof':10,
+        })
+        # 经验卡10点
+        save_countof(session, {
+            'uid':order.uid,
+            'stuff_id':4,
+            'countof':1,
+        })
+
+
 
     # r = redis.Redis(host='121.201.29.89',port=26379,db=0,password='Wgc@123456')
     # r.lpush('queue_charge', {'order_sn':data['private']['order'],'gold':shop_item.gold,'diamond':shop_item.diamond})
@@ -137,6 +256,16 @@ def get_sign(data):
 
 def get_md5(s):
     return hashlib.md5(s).hexdigest()
+
+
+def save_countof(session, fields):
+    insert_stmt = "INSERT INTO bag_item(uid,item_id,countof) VALUES (:col_1,:col_2,:col_3) ON DUPLICATE KEY UPDATE countof = countof + :col_3;"
+    session.execute(insert_stmt, {
+        'col_1':fields['uid'],
+        'col_2':fields['stuff_id'],
+        'col_3':fields['countof']
+    })
+    session.flush()
 
 if __name__ == '__main__':
     # Entry the application

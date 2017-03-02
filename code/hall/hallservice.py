@@ -6,6 +6,7 @@ import traceback
 
 import sys
 import binascii
+import decimal
 from ctypes import *
 from sqlalchemy.sql import select, update, delete, insert, and_, subquery, not_, null, func, text,exists
 from sqlalchemy import desc
@@ -63,6 +64,8 @@ from config.var import *
 from config.reward import *
 from config.item import *
 from config.sign import *
+from config.mail import *
+from config.broadcast import *
 from helper import protohelper
 from helper import cachehelper
 from helper import datehelper
@@ -70,6 +73,10 @@ from helper import datehelper
 from dal.core import *
 from hall.hallobject import *
 from hall.eventsender import *
+
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 class HallService(GameService):
 
     def init(self):
@@ -78,33 +85,59 @@ class HallService(GameService):
         self.manager = Manager(self)
         self.sender = EventSender(self.manager)
         gevent.spawn(self.queue_notification)
+        gevent.spawn(self.say_hello)
+        gevent.spawn_later(10, self.say_hello_2)
         # gevent.spawn(self.queue_charge)
-	#gevent.spawn_later(10,self.say_hello)
+
+        self.bag = BagObject(self)
+        self.hall = HallObject(self)
+        self.user_gf = UserGoldFlower(self)
+        self.sign = SignObject(self)
+        self.friend = FriendObject(self)
+        self.rank = RankObject(self)
+        self.shop = ShopObject(self)
+        self.item = ItemObject(self)
+        self.reward = RewardObject(self)
+        self.userobj = UserObject(self)
+        self.vip = VIPObject(self)
+        self.broke = BrokeObject(self)
 
 
     # 系统自定义广播，定时发送
     def say_hello(self):
         while True:
-            cachehelper.add_notification_queue(self.redis,self.redis.hkeys('online'), 5,{'message':random.choice(['本游戏不提供任何形式的游戏外充值，请勿上当受骗！','查看一下进程\n[root@centos mysql]# ps aux |grep mysq*']),"message_color":'red'})
-            gevent.sleep(20)
+            MessageObject.push_message(self, self.redis.hkeys('online'), 5,{'message':BORADCAST_CONF['sys']} )
+            gevent.sleep(NOTI_TIME)
+
+    def say_hello_2(self):
+        while True:
+            MessageObject.push_message(self, self.redis.hkeys('online'), 5,{'message':BORADCAST_CONF['sys2']} )
+            gevent.sleep(NOTI_TIME_2)
 
     def queue_charge(self):
         while True:
             _,charge = self.redis.brpop("queue_charge")
             order = session.query(TOrder).filter(TOrder.order_sn == charge['order_sn']).first()
-            if order == None:
+            if order == None or order != 0:
                 continue
+
             # 告知客户端已经充值成功
             # event = create_client_event(NotificationEvent)
             # event.body.type = NotificationType.N_CHARGE
             # self.sender.send_event([order.uid],event)
+
+            # "type":10,
+            # "money":33.99,
+            # "diamond":6,
+            # "gold":0,
 
             # 充值成功，给客户端发送消息
             event = create_client_event(NotificationEvent)
             event.body.type = NotificationType.N_MAIL
             event.body.param1 = 10
             event.body.param2 = json.dumps({'money':order.charge,'gold':charge['gold'],'diamond':charge['diamond']})
-
+            if self.manager.offline(order.uid) != 0:
+                MessageObject.push_message(self, [order.uid], 10, {'money':str(order.charge),'diamond':0,'gold':''})
 
 
     def setup_route(self):
@@ -132,7 +165,6 @@ class HallService(GameService):
         self.registe_command(ReceivePlayRewardReq, ReceivePlayRewardResp, self.handle_receive_play_reward)
         self.registe_command(RecordPlayRewardReq, RecordPlayRewardResp, self.handle_record_play_reward)
 
-
         # 商城、交易
         self.registe_command(QueryShopReq,QueryShopResp,self.handle_shop)
         self.registe_command(BuyItemReq,BuyItemResp,self.handle_shop_buy)
@@ -144,7 +176,7 @@ class HallService(GameService):
         # 背包
         self.registe_command(QueryBagReq,QueryBagResp,self.handle_bag)
 
-        # 道具
+        # 使用道具
         self.registe_command(UseItemReq,UseItemResp,self.handle_use_bag)
 
         # 银行
@@ -174,61 +206,103 @@ class HallService(GameService):
         # 充值
         self.registe_command(QueryChargeReq,QueryChargeResp,self.handle_charge)
 
-        # 退出
-        # self.registe_command(LogoutReq,LogoutResp,self.handle_logout)
+        # 快速补币
+        self.registe_command(QueryQuickBuyGoldReq,QueryQuickBuyGoldResp,self.handle_quick_charge)
 
     # 破产补助查询
     @USE_TRANSACTION
     def handle_query_bankcrupt(self, session, req, resp, event):
-        user = self.da.get_user(req.header.user)
-        resp.body.total,resp.body.remain,resp.body.gold = BrokeObject.query_broke(req.header.user,self.redis,VIP_CONF[user.vip] )
+        user_info = self.da.get_user(req.header.user)
+        resp.body.total,resp.body.remain,resp.body.gold = BrokeObject.query_broke(req.header.user,self.redis, VIP_CONF[self.vip.to_level(user_info.vip_exp)] )
         resp.header.result = 0
 
     # 破产补助领取
     @USE_TRANSACTION
     def handle_receive_bankcrupt(self, session, req, resp, event):
-        user = self.da.get_user(req.header.user)
-        resp.header.result,resp.body.gold = BrokeObject.receive_broke(self,session,user, VIP_CONF[user.vip])
+        user_info = self.da.get_user(req.header.user)
+
+        resp.header.result,resp.body.gold = BrokeObject.receive_broke(self,session,user, VIP_CONF[self.vip.to_level(user_info.vip_exp)])
 
     # 排名查询
     @USE_TRANSACTION
     def handle_rank(self, session, req, resp, event):
-        rank = RankObject(session)
-        rank.set_pb( resp, rank.get_lists(req.body.rank_type, req.body.rank_time) )
+
+        # // 排行榜类型
+        # enum RankType {
+        # 	RANK_WEALTH = 1;
+        # 	RANK_CHARGE = 2;
+        # 	RANK_CHARM = 3;
+        # 	RANK_MAKE_MONEY = 4;
+        # }
+        #
+        # // 排行榜参数
+        # enum RankTime{
+        # 	RANK_ALL_TIME = 0;
+        # 	RANK_YESTERDAY = 1;
+        # 	RANK_TODAY = 2;
+        # 	RANK_LAST_MONTH = 3;
+        # 	RANK_THIS_MONTH = 4;
+        # 	RANK_LAST_WEEK = 5;
+        # 	RANK_THIS_WEEK = 6;
+        # }
+        items = []
+        if req.body.rank_type == RANK_WEALTH:
+            # 总财富榜
+            items = self.rank.wealth_top(session, 0)
+        elif req.body.rank_type == RANK_CHARGE:
+            # 日充值榜
+            items = self.rank.charge_top(session, req.body.rank_time)
+        elif req.body.rank_type == RANK_MAKE_MONEY:
+            # 周赚金榜
+            items = self.rank.make_money_top(session, req.body.rank_time)
+
+        for index in range(len(items)):
+            print items[index]
+            protohelper.set_top(resp.body.players.add(), items[index], index)
         resp.header.result = 0
 
-    # region 好友模块
+
+        # self.rank.set_pb( resp, self.rank.get_lists(session ,req.body.rank_type, req.body.rank_time) )
+        # rank.set_pb( resp, rank.get_lists(req.body.rank_type, req.body.rank_time) )
+        resp.header.result = 0
+
+
     @USE_TRANSACTION
     def handle_get_friends(self,session,req,resp,event):
         page = req.body.page
         page_size = req.body.page_size
-        friends = session.query(TFriend).filter(TFriend.uid1 == req.header.user).order_by(TFriend.id).offset((int(page) - 1) * page_size).limit(page_size)
+        friends = session.query(TFriend).filter(TFriend.apply_uid == req.header.user).order_by(TFriend.id).offset((int(page) - 1) * page_size).limit(page_size)
 
         for friend in friends:
-            friend_user = self.da.get_user(friend.uid2)
+            friend_user = self.da.get_user(friend.to_uid)
             if friend_user == None:
                 continue
-            friend_obj = FriendObject(resp.body.friends.add())
-            friend_obj.get_proto_struct(friend_user)
-            friend_obj.pb.type = friend.type
-            friend_obj.pb.is_online = False if self.redis.hget('online',friend.id) == None else True
-            protohelper.set_room_table(friend_obj.pb,friend_user.id,self.redis)
 
-        countof_applies = session.query(TFriendApply).filter(and_(TFriendApply.uid2 == req.header.user, TFriendApply.state == 1)).count()
+            pb = resp.body.friends.add()
+            pb.avatar = friend_user.avatar
+            pb.gold = friend_user.gold
+            pb.uid = friend_user.id
+            pb.nick = friend_user.nick
+            pb.type = friend.type
+            pb.is_online = False if self.redis.hget('online',friend.id) == None else True
+            protohelper.set_room_table(pb,friend_user.id,self.redis)
+
+        countof_applies = session.query(TFriendApply).filter(and_(TFriendApply.to_uid == req.header.user, TFriendApply.state == 1)).count()
         resp.body.countof_applies = countof_applies
         resp.header.result = 0
     @USE_TRANSACTION
     def handle_get_friends_applies(self,session,req,resp,event):
         page = req.body.page
         page_size = req.body.page_size
-        apply_friends = session.query(TFriendApply).filter(and_(TFriendApply.uid2 == req.header.user, TFriendApply.state == 1)).order_by(TFriendApply.id).offset((int(page) - 1) * page_size).limit(page_size)
+
+        apply_friends = session.query(TFriendApply).filter(and_(TFriendApply.to_uid == req.header.user, TFriendApply.state == 1))\
+            .order_by(TFriendApply.id)\
+            .offset((int(page) - 1) * page_size).limit(page_size)
+
         for item in apply_friends:
-            friend_apply_obj = FriendApplyObject(resp.body.applies.add())
-            friend_apply_obj.get_proto_struct(item)
-            apply_user = self.da.get_user(item.uid1)
-            friend_apply_obj.pb.apply_from_avatar = apply_user.avatar
-            friend_apply_obj.pb.apply_from_nick = apply_user.nick
-            # protohelper.set_gifts_str(self.redis,friend_apply_obj.pb,item.gifts)
+            temp_user = self.da.get_user(item.apply_uid)
+            protohelper.set_friend_applies(resp.body.applies.add(), item, nick = temp_user.nick,avatar = temp_user.avatar)
+
         resp.header.result = 0
     @USE_TRANSACTION
     def handle_send_friends_message(self,session,req,resp,event):
@@ -257,104 +331,64 @@ class HallService(GameService):
 
         resp.header.result = 0
 
+    # 申请好友
     @USE_TRANSACTION
     def handle_make_friends(self,session,req,resp,event):
-        friend_apply = session.query(TFriendApply).filter(and_(TFriendApply.uid1 == req.header.user,TFriendApply.uid2 == req.body.target,TFriendApply.state == 1)).first()
-        if friend_apply != None:
-            gifts = ''
-            for item in req.body.gifts:
-                gifts += str(item.id)+'-'+str(item.count)
+        user_info = self.da.get_user(req.header.user)
+        friend_info = self.da.get_user(req.body.target)
 
-            for item in req.body.gifts:
-                gifts += str(item.id)+'-'+str(item.count)
-            gifts.rstrip(',')
-            session.query(TFriendApply).filter(and_(TFriendApply.uid1 == req.header.user,TFriendApply.uid2 == req.body.target)).update({
-                TFriendApply.message : req.body.message,
-                TFriendApply.gifts : gifts,
-                TFriendApply.apply_time : datetime.now()
-            })
-            # todo 功能待定...删掉当前用户送礼物所花费的金币
-        else:
-            friend_apply = TFriendApply()
-            friend_apply.uid1 = req.header.user
-            friend_apply.uid2 = req.body.target
-            friend_apply.message = req.body.message
-            friend_apply.apply_time = datetime.now()
-            friend_apply.state = 1
-            gifts = ''
-            for item in req.body.gifts:
-                gifts += str(item.id)+'-'+str(item.count)
-            gifts.rstrip(',')
-            friend_apply.gifts = gifts
-            session.add(friend_apply)
-            session.flush()
+        # 自己+自己，直接返回
+        if user_info.id == friend_info.id:
+            resp.header.result = RESULT_FAILED_INVALID_FRIEND
+            return
 
-        apply_from = self.da.get_user(friend_apply.uid1)
+        # vip验证好友数限制
+        firend_count = self.friend.get_friends_count(session, user_info.id)
+        if self.vip.over_friend_max( self.vip.to_level(user_info.vip_exp), firend_count ):
+            resp.header.result = RESULT_FAILED_FRIEND_MAX
+            return
 
-        event = create_client_event(FriendApplyEvent)
-        event.body.apply.id = friend_apply.id
-        event.body.apply.apply_from = friend_apply.uid1
-        event.body.apply.apply_from_nick = apply_from.nick
-        event.body.apply.apply_from_avatar = apply_from.avatar
-        event.body.apply.to = friend_apply.uid2
-        event.body.apply.time = int(time.mktime(friend_apply.apply_time.timetuple()))
-        event.body.apply.message = friend_apply.message
-        for gift in gifts:
-            add_gift = event.body.apply.gifts.add()
-            add_gift.id = gift.id
-            add_gift.name = gift.name
-            add_gift.icon = gift.icon
-            add_gift.count = gift.count
 
-        if self.sender.make_friend_apply(event,friend_apply.uid2) == None:
-            cachehelper.add_friend_queue(self.redis,friend_apply.uid1,friend_apply.uid2)
+        resp.header.result = self.friend.make_friend(session, user_info, friend_info, req.body.message)
 
-        resp.header.result = 0
+
+
+    # 同意/拒绝好友申请
     @USE_TRANSACTION
     def handle_friends_apply(self,session,req,resp,event):
-        friend_apply = session.query(TFriendApply).filter(and_(TFriendApply.id == req.body.apply_id, TFriendApply.state == 1)).first()
-        if friend_apply == None:
-            resp.header.result = -1
-            return
-        session.query(TFriendApply).with_lockmode("update").filter(and_(TFriendApply.id == req.body.apply_id, TFriendApply.state == 1)).update({
-            TFriendApply.state : 0 if req.body.accept else 2,
-            TFriendApply.finish_time : datetime.now()
-        })
+        user_info = self.da.get_user(req.header.user)
+        apply_record = self.friend.get_friend_apply(session, req.body.apply_id)
+        friend_info = self.da.get_user(apply_record.to_uid)
 
-        if req.body.accept == False:
-            resp.header.result = 0
-            return
+        self.friend.make_friend_apply(session, req.body.apply_id, req.body.accept, user_info, friend_info)
 
-        friend1 = TFriend()
-        friend1.uid1 = friend_apply.uid1  # apply_id
-        friend1.uid2 = friend_apply.uid2  # to_id
-        friend1.type = 0
-        friend1.create_time = datetime.now()
-        session.add(friend1)
-        friend2 = TFriend()
-        friend2.uid1 = friend_apply.uid2
-        friend2.uid2 = friend_apply.uid1
-        friend2.type = 0
-        friend2.create_time = datetime.now()
-        session.add(friend2)
+
 
         resp.header.result = 0
+
     @USE_TRANSACTION
     def handle_receive_friends_message(self,session,req,resp,event):
         self.redis.hdel('message_'+str(req.header.user),req.body.message_id)
 
         resp.header.result = 0
+
+    # 删除好友
     @USE_TRANSACTION
     def handle_remove_friends(self,session,req,resp,event):
         # 自己删除好友
-        session.query(TFriend).filter(and_(TFriend.uid1 == req.header.user,TFriend.uid2 == req.body.friend_id)).delete()
+        session.query(TFriend).filter(and_(TFriend.apply_uid == req.header.user,TFriend.to_uid == req.body.friend_id)).delete()
         # 从好友中删除自己
-        session.query(TFriend).filter(and_(TFriend.uid1 == req.body.friend_id,TFriend.uid2 == req.header.user)).delete()
+        session.query(TFriend).filter(and_(TFriend.apply_uid == req.body.friend_id,TFriend.to_uid == req.header.user)).delete()
+
         # 删除自己申请该好友的记录或者该好友申请自己好友的记录
-        session.query(TFriendApply).filter(and_(TFriendApply.uid1 == req.header.user,TFriendApply.uid2 == req.body.friend_id)).delete()
-        session.query(TFriendApply).filter(and_(TFriendApply.uid1 == req.body.friend_id,TFriendApply.uid2 == req.header.user)).delete()
+        session.query(TFriendApply).filter(and_(TFriendApply.apply_uid == req.header.user,TFriendApply.to_uid == req.body.friend_id)).delete()
+        session.query(TFriendApply).filter(and_(TFriendApply.apply_uid == req.body.friend_id,TFriendApply.to_uid == req.header.user)).delete()
+
+        user_info_source = self.da.get_user(req.header.user)
+        user_info_target = self.da.get_user(req.body.friend_id)
+        self.friend.send_mail_remove_friend(session, user_info_source, user_info_target)
         resp.header.result = 0
-    # endregion
+
 
     # 给指定用户发送邮件
     @USE_TRANSACTION
@@ -374,10 +408,11 @@ class HallService(GameService):
             resp.header.result = -1
             return
         resp.header.result = 0
+
     # 查询邮件信息
     @USE_TRANSACTION
     def handle_fetch_mail(self,session,req,resp,event):
-        mails = session.query(TMail).filter(and_(TMail.to_user == req.header.user, TMail.id > req.body.max_mail_id,TMail.type != 2)).all()
+        mails = session.query(TMail).filter(and_(TMail.to_user == req.header.user, TMail.id > req.body.max_mail_id)).order_by(desc(TMail.sent_time)).limit(100)
 
         item_ids = []
 
@@ -407,43 +442,46 @@ class HallService(GameService):
                             break
 
         resp.header.user = 0
+
     # 确认接收邮件
     @USE_TRANSACTION
     def handle_receive_mail(self,session,req,resp,event):
         mail = session.query(TMail).filter(TMail.id == req.body.mail_id).first()
-        if mail == None or mail.state != 1:
-            resp.header.result = -2
+        if mail == None or mail.state == 1:
+            resp.header.result = RESULT_FAILED_MAIL
             return
 
         user_info = self.da.get_user(req.header.user)
         user_info.gold = user_info.gold + mail.gold
-        user_info.diamond = user_info.diamond + mail.gold
+        user_info.diamond = user_info.diamond + mail.diamond
         self.da.save_user(session,user_info)
 
         bag_obj = BagObject(session)
-        result_obj = ResultObject(resp.body.result)
         if mail.items != None and mail.items != '' and len(mail.items) > 0:
-            for item in mail.items.split(','): # 1-1,2-1,3-1
-                bag_obj.save_user_item(req.header.user, item[0],item[2])
-                _item = json.loads(self.redis.hget('conf_gift', item[0]))
-                _item['count'] = int(item[2])
-                result_obj.set_item(_item)
+            for item_str in mail.items.split(','): # 1-1,2-1,3-1
+                bag_obj.save_user_item(session, req.header.user, item_str[0],item_str[2])
+                item = ItemObject.get_item(session, item_str[0])
+                print '====================>'
+                item_add = resp.body.result.items_added.add()
+                item_add.id = item.id
+                item_add.name = item.name
+                item_add.icon = item.icon
+                item_add.count = int(item_str[2])
+                item_add.description = item.description
+                print '=================>',item_add
 
-        if mail.gifts != None and mail.gifts != '' and len(mail.gifts) > 0:
-            for gift in mail.gifts.split(','):
-                bag_obj.save_user_gift(req.header.user, gift[0],gift[2])
-                _gift = json.loads(self.redis.hget('conf_gift', gift[0]))
-                _gift['count'] = int(gift[2])
-                result_obj.set_gift(_gift)
 
         session.query(TMail).with_lockmode("update").filter(TMail.id == req.body.mail_id).update({
             TMail.state:1,
             TMail.received_time:int(time.time())
         })
 
-        self.get_result(user_info,resp)
-
+        resp.body.result.gold = user_info.gold
+        resp.body.result.diamond = user_info.diamond
+        resp.body.result.incr_gold = mail.gold
+        resp.body.result.incr_diamond = mail.diamond
         resp.header.result = 0
+
     # 查询签到
     @USE_TRANSACTION
     def handle_query_signin(self,session,req,resp,event):
@@ -451,172 +489,85 @@ class HallService(GameService):
         for item in signs:
             protohelper.set_signs(resp.body.rewards.add(), item)
 
-        user_gf = session.query(TUserGoldFlower).filter(TUserGoldFlower.id == req.header.user).first()
-        resp.body.signin_days = user_gf.signin_days
+        sign_log = session.query(TRewardSigninMonth).filter(TRewardSigninMonth.id == req.header.user).first()
+        if sign_log.signin_days == -1 or sign_log.total_days == -1:
+            resp.header.result = RESULT_FAILED_INVALID_REWARD
+            return
 
-        signin_month = session.query(TRewardSigninMonth).filter(and_(TRewardSigninMonth.uid == req.header.user, \
-                                                                     func.month(TRewardSigninMonth.last_signin_day) == time.strftime('%m'), \
-                                                                     func.year(TRewardSigninMonth.last_signin_day) == time.strftime('%Y'))).first()
-        if signin_month != None:
-            resp.body.month_sigin_days = signin_month.signin_days
+        resp.body.signin_days = sign_log.signin_days
+        resp.body.month_sigin_days = sign_log.total_days
         resp.header.result = 0
+
+
     # 确认接收签到
     @USE_TRANSACTION
     def handle_signin(self,session,req,resp,event):
-        user_gf = session.query(TUserGoldFlower).filter(TUserGoldFlower.id == req.header.user).first()
-        if user_gf == None:
-            resp.header.result = RESULT_FAILED_ACCOUNT_EMPTY
-            return
-        user = self.da.get_user(req.header.user)
-        # 1.判断今日是否已经签到
-        signs = session.query(TRewardSignin).all()
+        user_info = self.da.get_user(req.header.user)
+        sign_log = self.sign.get_sign_log(session, user_info.id)
 
-        if user_gf.last_signin_day != None:
-            diff_day = (date.today() - user_gf.last_signin_day).days
-        else:
-            diff_day = 1
-
-        index = user_gf.signin_days
-        if diff_day == 0:
+        # 今日是否签到
+        if self.sign.today_is_sign(sign_log):
             resp.header.result = RESULT_FAILED_TODAY_SIGNED
             return
-        elif diff_day > 1:
-            # 第一次登陆，赠送经验卡
-            if user_gf.signin_days == -1:
-                bag = BagObject(session)
-                bag.save_user_item(req.header.user, DEFAULT_USER_ITEM[0],DEFAULT_USER_ITEM[1])
 
-            index = 0
-            # 3.修改用户扩展表的最后签到时间和签到天数（签到天数必须判断是否是连续签到）
-            session.query(TUserGoldFlower).with_lockmode("update").filter(TUserGoldFlower.id == user_gf.id).update({
-                TUserGoldFlower.signin_days: 1,
-                TUserGoldFlower.last_signin_day : date.today()
-            })
-        elif diff_day == 1:
-            # 3.修改用户扩展表的最后签到时间和签到天数（签到天数必须判断是否是连续签到）
-            session.query(TUserGoldFlower).with_lockmode("update").filter(TUserGoldFlower.id == user_gf.id).update({
-                TUserGoldFlower.signin_days: TUserGoldFlower.signin_days + 1,
-                TUserGoldFlower.last_signin_day : date.today()
-            })
-            if user_gf.signin_days >= SYS_MAX_SIGN_DAY:
-                index = SYS_MAX_SIGN_DAY - 1
+        # 签到
+        total_days,signin_days, sign_luck_max = self.sign.sign_now(session, sign_log, user_info)
+        if total_days < 0  or signin_days < 0:
+            resp.header.result = RESULT_FAILED_TODAY_SIGNED
+            return
 
-        user.gold = user.gold + signs[index].gold
-        # ser.diamond = user.diamond + signs[index].diamond
-
-        # 根据vip设定,添加额外的签到金额
-        user.gold = user.gold + VIP_CONF[user.vip]['sign_reward'] * user.gold
-        self.da.save_user(session,user)
-
-        # 2.插入签到累计数据表或者修改数据表（签到天数）
-        signin_month = session.query(TRewardSigninMonth).filter(TRewardSigninMonth.uid == user_gf.id).first()
-        if signin_month == None:
-            # 需要创建该条记录,说明该用户为首次使用该游戏
-            signin_month = TRewardSigninMonth()
-            signin_month.uid = user_gf.id
-            signin_month.signin_days = 1
-            signin_month.last_signin_day = date.today()
-            session.add(signin_month)
+        # 签到奖励，需要判断vip等级
+        incr_gold = 0
+        if self.vip.to_level(user_info.vip_exp) <= 0:
+            incr_gold = self.sign.sign_reward(session, user_info, sign_luck_max)
         else:
-            if datetime.now().strftime('%m') == user_gf.last_signin_day.strftime('%m'):
-                total_signin_day = TRewardSigninMonth.signin_days + 1
-            else:
-                total_signin_day = 1
+            incr_gold = self.sign.sign_reward_vip(session, user_info, sign_luck_max)
 
-            session.query(TRewardSigninMonth).with_lockmode("update").filter(TRewardSigninMonth.uid == user_gf.id).update({
-                TRewardSigninMonth.signin_days: total_signin_day,
-                TRewardSigninMonth.last_signin_day : date.today()
-            })
-            # 月累计签到，奖励日
-            if total_signin_day in SIGN_MONTH_LUCK:
-                luck_day = SIGN_MONTH_LUCK.get(total_signin_day)
-                bag = BagObject()
-                bag.save_user_item(req.header.user, luck_day[1], luck_day[0])
+        # 累计签到，幸运日发送奖品
+        item,count = self.sign.sign_luck_day(session, total_days, sign_log.id)
+        if item is not None and count > 0:
+            protohelper.set_item_add(resp.body.result.items_added.add() ,item, count)
 
-        resp.body.result.gold = signs[index].gold
-        resp.body.result.diamond = signs[index].diamond
+        protohelper.set_result(resp.body.result, gold=user_info.gold, diamond=user_info.diamond, incr_gold=incr_gold)
+
+
         resp.header.result = 0
+
+
     # 查询大厅
     @USE_TRANSACTION
     def handle_query_hall(self,session,req,resp,event):
+
         user_info = self.da.get_user(req.header.user)
-        now = time.strftime("%Y-%m-%d %H:%M:%S")
-        if user_info == None:
+        if self.hall.user_is_none(user_info):
             resp.header.result = RESULT_FAILED_ACCOUNT_EMPTY
             return
 
-        user_gf = session.query(TUserGoldFlower).filter(TUserGoldFlower.id == req.header.user).first()
-        #user_gf = self.da.get_user_gf(req.header.user)
+        user_gf = self.user_gf.get_user_gf(session, user_info.id)
         if user_gf == None:
             # 需要创建该条记录,说明该用户为首次使用该游戏
-            user_gf = TUserGoldFlower()
-            user_gf.id = req.header.user
-            user_gf.channel = user_info.channel
-            user_gf.exp = DEFAULT_USER_GLODFLOWER['exp']
-            user_gf.win_games = DEFAULT_USER_GLODFLOWER['win_games']
-            user_gf.total_games = DEFAULT_USER_GLODFLOWER['total_games']
-            user_gf.best = DEFAULT_USER_GLODFLOWER['best']
-            user_gf.create_time = now
-            user_gf.max_bank = DEFAULT_USER_GLODFLOWER['max_bank']
-            user_gf.max_items = DEFAULT_USER_GLODFLOWER['max_items']
-            user_gf.max_gifts = DEFAULT_USER_GLODFLOWER['max_gifts']
-            user_gf.signin_days = DEFAULT_USER_GLODFLOWER['signin_days']
-            user_gf.last_signin_day = DEFAULT_USER_GLODFLOWER['last_signin_day']
-            user_gf.change_nick = DEFAULT_USER_GLODFLOWER['change_nick']
-            user_gf.wealth_rank = DEFAULT_USER_GLODFLOWER['wealth_rank']
-            user_gf.win_rank = DEFAULT_USER_GLODFLOWER['win_rank']
-            user_gf.charm_rank = DEFAULT_USER_GLODFLOWER['charm_rank']
-            user_gf.charge_rank = DEFAULT_USER_GLODFLOWER['charge_rank']
-            session.add(user_gf)
+            # 初始化 user_goldflowe表和bag_item表记录
+            self.user_gf.add_user_gf(session, user_info.id, user_info.channel)
+            self.bag.user_init(session, req.header.user)
+            self.sign.sign_init(session, req.header.user)
+            self.reward.task_first_login(session, req.header.user)
+            self.userobj.new_user_broadcast(user_info)
 
-        resp.body.brief.nick = user_info.nick
-        resp.body.brief.uid = user_info.id
-        resp.body.brief.avatar = user_info.avatar
-        resp.body.brief.gold = user_info.gold
-        resp.body.brief.seat = -1
-        resp.body.brief.vip = user_info.vip
-        resp.body.brief.diamond = user_info.diamond
-        resp.body.brief.vip_exp = 0 if user_info.vip_exp == None else user_info.vip_exp
+        protohelper.set_brief_hall(resp.body.brief, user_info)
 
-        # 获取通知信息
-        has_reward_count = session.query(TRewardUserLog).filter(and_(TRewardUserLog.state == STATE_NO_ACCEPT_REWARD, TRewardUserLog.uid == user_info.id)).count()
-        has_announcement_count = session.query(TAnnouncement).filter(and_(TAnnouncement.id > req.body.max_announcement_id, TAnnouncement.start_time <= now, now <= TAnnouncement.end_time)).count()
-        resp.body.notification.has_announcement = has_announcement_count if has_announcement_count > 0 else 0
-        resp.body.notification.has_reward = has_reward_count if has_reward_count > 0 else 0
+        # 获取用户大厅信息
+        self.hall.load_user_hall(session, user_info, user_gf, req.body.max_announcement_id, req.body.max_mail_id)
 
-        # 是否已经充值过
-        resp.body.is_charge = True if user_info.is_charge > 0 else False
+        # 设置大厅protobuf
+        protohelper.set_hall(resp.body, self.hall)
 
-        # 获取公告信息
-        announcements = session.query(TAnnouncement).filter(and_(TAnnouncement.start_time <= now, \
-                                                              TAnnouncement.end_time>=now, \
-                                                              TAnnouncement.popup == STATE_NEED_POPUP)).order_by(TAnnouncement.sort).all()
-        for item in announcements:
-            protohelper.set_announcement(resp.body.announcements.add(), item)
-
-        # 签到验证
-        diff_day = (date.today() - user_gf.last_signin_day).days
-
-        if diff_day >= 1:
-            resp.body.is_signin = False
-        else:
-            resp.body.is_signin = True
-
-        # 好友
-        has_friend_count = self.redis.hlen('message_'+str(req.header.user))
-        has_friend_count = 0 if has_friend_count == None else has_friend_count
-        resp.body.notification.has_friend = has_friend_count
-
-        # 发送好友消息事件
-        if has_friend_count > 0:
-            messages = self.redis.hgetall('message_'+str(req.header.user))
-            print '=========================>',messages
-            for index in messages:
-                print '----------->',messages[index]
-                event = create_client_event(FriendMessageEvent)
-                event.body.ParseFromString(messages[index])
-                self.sender.send_event([req.header.user],event)
+        # 有好友信息就推送出去
+        if self.hall.has_friend_count > 0:
+            self.friend.load_friend_message(user_info.id)
+            self.friend.send_friend_message(user_info.id)
         resp.header.result = 0
+
+
     # 查询用户
     @USE_TRANSACTION
     def handle_query_user(self,session,req,resp,event):
@@ -633,46 +584,37 @@ class HallService(GameService):
             resp.header.result = -1
             return
 
+        account = session.query(TAccount).filter(TAccount.id == req.body.uid).first()
+        if account is not  None and account.mobile is not None:
+            resp.body.player.mobile = account.mobile
+
         protohelper.set_player(resp.body.player,user_info,user_gf)
         resp.header.result = 0
     # 更新用户
     @USE_TRANSACTION
     def handle_update_user(self,session,req,resp,event):
-
         user_info = self.da.get_user(req.header.user)
 
         if len(req.body.nick) > 0:
+            # 任务-成就任务：修改昵称
+            self.reward.task_change_nick(session, user_info, req.body.nick)
             user_info.nick = req.body.nick
         if len(req.body.birthday) > 0:
             user_info.birthday = req.body.birthday
         if len(req.body.sign)  > 0:
             user_info.sign = req.body.sign
-        if len(req.body.avatar) > 0:
-            # 任务-成就任务：个性展示
-            if user_info.avatar != req.body.avatar:
-                user_info.avatar = user_info.avatar
-
-
         if len(req.body.sex) > 0:
             user_info.sex = req.body.sex
 
         self.da.save_user(session, user_info)
-        result = session.query(TRewardUserLog).filter(TRewardUserLog.uid == user_info.id).first()
 
-        if result == None:
-            # 完成任务，加入奖励记录，记录状态用户待接收
-            reward_log = TRewardUserLog()
-            reward_log.uid = user_info.id
-            reward_log.task_id = 1
-            reward_log.state = STATE_NO_ACCEPT_REWARD
-            reward_log.finish_date = time.strftime('%Y-%m-%d')
-            reward_log.create_time = time.strftime('%Y-%m-%d %H:%M:%S')
-            session.add(reward_log)
+        # 返回result标准格式
+        # protohelper.set_result(resp.body.result, gold = user_info.gold,
+        #                    diamond = user_info.diamond,
+        #                    incr_gold = self.reward.result['incr_gold'])
+        # for item in self.reward.result['items_add']:
+        #     protohelper.set_item_add(resp.body.result.items_added.add(), item, item['count'])
 
-        # 发送用户修改成功广播
-        cachehelper.add_notification_queue(self.redis,self.redis.hkeys('online'), BORADCAST_CHANGE_NAME,{'nick':req.body.nick,"vip":user_info.vip})
-        resp.body.result.gold = user_info.gold
-        resp.body.result.diamond = user_info.diamond
         resp.header.result = 0
 
     # 查询公告
@@ -690,7 +632,7 @@ class HallService(GameService):
     # 查询奖励
     @USE_TRANSACTION
     def handle_rewards(self,session,req,resp,event):
-        rewards = session.query(TRewardTask).all()
+        rewards = session.query(TRewardTask).filter(TRewardTask.id <= 10).all()
         reward_logs = session.query(TRewardUserLog).filter(TRewardUserLog.uid == req.header.user).all()
         if len(rewards) <= 0:
             resp.header.result = -1
@@ -703,34 +645,24 @@ class HallService(GameService):
     @USE_TRANSACTION
     def handle_rewards_receive(self,session,req,resp,event):
         user_info = self.da.get_user(req.header.user)
-        try:
-            task = session.query(TRewardTask).filter(TRewardTask.id == req.body.reward_id).first()
-            if task == None:
-                resp.header.result = -1
-                return
 
-            task_log = session.query(TRewardUserLog).filter(and_(TRewardUserLog.uid == req.header.user,TRewardUserLog.task_id == req.body.reward_id)).first()
-            if task_log == None or task_log.state == 0:
-                resp.header.result = -1
-                return
-
-            user_info.gold = user_info.gold + task.gold
-            user_info.diamond = user_info.diamond + task.diamond
-            self.da.save_user(session, user_info)
-
-            session.query(TRewardUserLog).with_lockmode("update").filter(and_(TRewardUserLog.uid == req.header.user, TRewardUserLog.task_id == req.body.reward_id,TRewardUserLog.state == 1)).update({
-                TRewardUserLog.state: 0
-            })
-
-        except Exception as e:
-            print e.message
-            resp.header.result = -1
+        if self.reward.is_undone(session, user_info.id,req.body.reward_id):
+            resp.header.result = RESULT_FAILED_INVALID_REWARD
             return
 
-        resp.body.result.gold = task.gold
-        resp.body.result.diamond = task.diamond
-        cachehelper.add_notification_queue(self.redis,self.redis.hkeys('online'), BORADCAST_CHANGE_NAME,{'nick':user_info.nick,"vip":user_info.vip})
+        if self.reward.give_user_reward(session, user_info, req.body.reward_id):
+            self.reward.edit_reward_state(session, user_info.id, req.body.reward_id)
+
+        # 返回result标准格式
+        protohelper.set_result(resp.body.result, gold = user_info.gold,
+                           diamond = user_info.diamond,
+                           incr_gold = self.reward.result['incr_gold'],
+                           incr_diamond = self.reward.result['incr_diamond'])
+        for item in self.reward.result['items_add']:
+            protohelper.set_item_add(resp.body.result.items_added.add(), item, item['count'])
+
         resp.header.result = 0
+
     # 发送聊天（牌桌内|牌桌外）
     @USE_TRANSACTION
     def handle_send_chat(self,session,req,resp,event):
@@ -739,13 +671,13 @@ class HallService(GameService):
              return
          if req.body.table_id <= 0:
              # 世界聊天，需要具有聊天道具卡
-             bag = BagObject(session)
-             if bag.has_item(req.header.user, ITEM_MAP['horn'][0]) == False:
+             if self.bag.has_item(session, req.header.user, ITEM_MAP['horn'][0]) == False:
                  resp.header.result = RESULT_FAILED_INVALID_BAG
                  return
 
-             if bag.use_user_item(req.header.user,  ITEM_MAP['horn'][0]) > 0:
-                 bag.use_item(self, req.header.user, 'horn', message = req.body.message, nick_id = user_info.id, nick = user_info.nick, vip = user_info.vip)
+             if self.bag.use_horn_item(session,req.header.user, 1) > 0:
+                self.bag.send_horn_item(self.redis.hkeys('online'), user_info,  req.body.message)
+
          elif req.body.table_id > 0:
              keys = self.redis.keys("table_*_" + str(req.body.table_id))
              if len(keys) != 1:
@@ -776,7 +708,7 @@ class HallService(GameService):
         reward_code = session.query(TRewardCode).filter(TRewardCode.code == req.body.code).first()
 
         if reward_code == None:
-            resp.header.result = -1
+            resp.header.result = RESULT_FAILED_CODE
             return
 
         if time.mktime(reward_code.expired_at.timetuple()) <= time.time():
@@ -790,7 +722,7 @@ class HallService(GameService):
         reward_code_log = session.query(TRewardCodeRecord).filter(and_(TRewardCodeRecord.code_id == reward_code.id, \
                                                                        TRewardCodeRecord.uid == req.header.user)).first()
         if reward_code_log != None:
-            resp.header.result = -2
+            resp.header.result = RESULT_FAILED_CODE_USED
             return
         try:
             code_record = TRewardCodeRecord()
@@ -814,12 +746,13 @@ class HallService(GameService):
             self.da.save_user(session, user_info)
         except Exception as e:
             print e.message
-            resp.header.result = -3
+            resp.header.result = RESULT_FAILED_CODE
             return
 
-        resp.body.result.gold = reward_code.gold
-        resp.body.result.diamond = reward_code.diamond
-
+        resp.body.result.gold = user_info.gold
+        resp.body.result.diamond = user_info.diamond
+        resp.body.result.incr_gold = reward_code.gold
+        resp.body.result.incr_diamond = reward_code.diamond
         resp.header.user = 0
     # 查询商品
     @USE_TRANSACTION
@@ -829,39 +762,33 @@ class HallService(GameService):
         for spi in shopitem:
             protohelper.set_shop_item(resp.body.items.add(), spi, items)
         resp.header.result = 0
+
     # 购买商品
     @USE_TRANSACTION
     def handle_shop_buy(self,session,req,resp,event):
         user_info = self.da.get_user(req.header.user)
 
-        shopitem = session.query(TShopItem).filter(TShopItem.id == req.body.shop_item_id).first()
-
-        if ShopObject(self.da,session).buy(user_info, shopitem, req) == False:
+        if self.shop.buy_item(session, user_info, req.body.shop_item_id, req.body.count) == False:
             resp.header.result = RESULT_FAILED_SHOP
             return
 
-        item = session.query(TItem).filter(TItem.id == shopitem.item_id).first()
-        resp.body.result.gold = user_info.gold
-        resp.body.result.diamond = user_info.diamond
+        # type,1=金币，2=道具
+        protohelper.set_result(resp.body.result, gold = user_info.gold, diamond = user_info.diamond,
+                           incr_gold =self.shop.shop_item.gold, incr_diamond = -(self.shop.shop_item.total))
 
-        item_add = resp.body.result.items_added.add()
-        item_add.id = item.id
-        item_add.name = item.name
-        item_add.icon = item.icon
-        item_add.count = req.body.count
-        item_add.description = item.description
+        protohelper.set_item_add(resp.body.result.items_added.add(),
+                             self.shop.get_item_by_shop(session, req.body.shop_item_id),req.body.count)
+        # 发送购买记录邮件
+        self.shop.send_mail(session, user_info, req.body.shop_item_id)
         resp.header.result = 0
+
+
     # 查询交易记录
     @USE_TRANSACTION
     def handle_trade(self,session,req,resp,event):
         page = req.body.page
         page_size = req.body.page_size
         can_buy = req.body.can_buy
-
-        # metrades = session.query(TTrade).filter(and_(TTrade.status == 1,TTrade.seller == req.header.user)).order_by(TTrade.id)
-        # # myself data
-        # for me in metrades:
-        #     protohelper.set_trades(resp.body.trades.add(), me, self.da.get_user(me.seller))
 
         if can_buy:
             user_info = self.da.get_user(req.header.user)
@@ -877,19 +804,22 @@ class HallService(GameService):
             protohelper.set_trades(resp.body.trades.add(), item,self.da.get_user(item.seller))
         resp.body.total = trades_count
         resp.header.user = 0
+
     # 购买交易
     @USE_TRANSACTION
     def handle_trade_buy(self,session,req,resp,event):
         user_info = self.da.get_user(req.header.user)
+
         # 权限验证，vip1及以上等级可在金币交易中购买金币交易
-        if VIPObject.check_vip_auth(user_info.vip, sys._getframe().f_code.co_name) == False:
+        # if VIPObject.check_vip_auth(self.vip.to_level(user_info.vip_exp), sys._getframe().f_code.co_name) == False:
+        if self.vip.denied_buy_gold( self.vip.to_level(user_info.vip_exp) ):
             resp.header.result = RESULT_FAILED_INVALID_AUTH
             return
 
         # 出售商品验证
         trade = session.query(TTrade).filter(TTrade.id == req.body.trade_id).first()
         if user_info.diamond < trade.diamond:
-            resp.header.result = -1
+            resp.header.result = RESULT_FAILED_SHOP_DIAMOND
             return
 
         try:
@@ -901,30 +831,53 @@ class HallService(GameService):
                 TTrade.status : 1,
             })
             if result != 1:
-                resp.header.result = -1
+                resp.header.result = RESULT_FAILED_SHOP
                 return
-            # 修改出售者数据
-            seller_info = self.da.get_user(trade.seller)
-            seller_info.diamond= seller_info.diamond + trade.diamond
-            self.da.save_user(session, seller_info)
+            # 修改出售者数据，通过邮件领取的方式
+            # seller_info = self.da.get_user(trade.seller)
+            # seller_info.diamond= seller_info.diamond + trade.diamond
+            # self.da.save_user(session, seller_info)
+
             # 修改购买者数据
             user_info.gold = user_info.gold + trade.gold
             user_info.diamond = user_info.diamond - trade.diamond
             self.da.save_user(session,user_info)
         except Exception as e:
             print e.message
-            resp.header.result = -1
+            resp.header.result = RESULT_FAILED_SHOP
             return
 
-        self.get_result(user_info, resp)
+        # 发送当前用户的消费记录
+        t = time.time()
+        content = MAIL_CONF['trade_buy_gold'] % (time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(t)),trade.diamond ,trade.gold)
+        MessageObject.send_mail(session, user_info, 0, \
+                                title=u'消费记录',
+                                content=content,
+                                type=0, ) # 不带附件
+
+        # 给挂售的用户发领取邮件
+        content = MAIL_CONF['trade_sell_success'] % (trade.gold,trade.diamond)
+        MessageObject.send_mail(session, trade.seller, 0,\
+                                title=u'领取钻石',
+                                content=content,
+                                type=1, # 带附件
+                                diamond=trade.diamond,)
+
+        resp.body.result.gold = user_info.gold
+        resp.body.result.diamond = user_info.diamond
+        resp.body.result.incr_gold = trade.gold
+        resp.body.result.incr_diamond = -trade.diamond
         resp.header.result = 0
     # 出售金币
     @USE_TRANSACTION
     def handle_sell_gold(self,session,req,resp,event):
         user_info = self.da.get_user(req.header.user)
 
+
+
         # 权限验证，vip2及以上等级可在金币交易中出售金币
-        if VIPObject.check_vip_auth(user_info.vip, sys._getframe().f_code.co_name) == False:
+        # if VIPObject.check_vip_auth(self.vip.to_level(user_info.vip_exp), sys._getframe().f_code.co_name) == False:
+        if self.vip.denied_sell_gold(self.vip.to_level(user_info.vip_exp)):
             resp.header.result = RESULT_FAILED_INVALID_AUTH
             return
 
@@ -942,30 +895,31 @@ class HallService(GameService):
         trade.status = 0
         session.add(trade)
 
-
-        user_info.gold = user_info.gold - int((TAX_NUM * req.body.gold) + req.body.gold)
+        tax_gold = int((TAX_NUM * req.body.gold) + req.body.gold)
+        user_info.gold = user_info.gold - tax_gold
         self.da.save_user(session,user_info)
 
-        self.get_result(user_info, resp)
+        # 广播，当前用户挂售金币成功
+        content = BORADCAST_CONF['trade_sell'] % (user_info.nick.decode('utf-8'), trade.gold, trade.diamond)
+        MessageObject.push_message(self, self.redis.hgetall('online').keys(),5,{'message':content} )
+
+        resp.body.result.gold = user_info.gold
+        resp.body.result.diamond = user_info.diamond
+        resp.body.result.incr_gold = -tax_gold
         resp.header.result = 0
     # 下架金币
     @USE_TRANSACTION
     def handle_out_gold(self,session,req,resp,event):
         # -1 下架，0=交易中，1=被买走
         user_info = self.da.get_user(req.header.user)
-        trade = session.query(TTrade).filter(and_(TTrade.id == req.body.trade_id, TTrade.status == 0)).first()
+        if self.shop.sell_out(session, user_info, req.body.trade_id) == False:
+            resp.header.result = RESULT_FAILED_SHOP
 
-        if trade == None:
-            resp.header.result = -1
-            return
-        session.query(TTrade).with_lockmode('update').filter(and_(TTrade.id == req.body.trade_id, TTrade.status == 0)).update({
-            TTrade.status : -1
-        })
-        user_info.gold = user_info.gold + trade.gold
-        self.da.save_user(session, user_info)
-
-        resp.body.result.gold = user_info.gold
+        trade = self.shop.get_trade(session, req.body.trade_id)
+        protohelper.set_result(resp.body.result, gold = user_info.gold, diamond = user_info.diamond,
+                               incr_gold = trade.gold, incr_diamond = trade.diamond)
         resp.header.result = 0
+
 
 
 
@@ -978,7 +932,7 @@ class HallService(GameService):
             return
 
         items = session.query(TItem).all()
-        gifts = session.query(TGift).all()
+        # gifts = session.query(TGift).all()
 
         # load item
         user_items = session.query(TBagItem).filter(TBagItem.uid == req.header.user).all()
@@ -986,41 +940,45 @@ class HallService(GameService):
             protohelper.set_bag_item(resp.body.items.add(), user_item, items)
 
         # load bag
-        user_gifts = session.query(TBagGift).filter(TBagGift.uid == req.header.user).all()
-        for user_gift in user_gifts:
-            protohelper.set_bag_gift(resp.body.gifts.add(), user_gift, gifts)
+        # user_gifts = session.query(TBagGift).filter(TBagGift.uid == req.header.user).all()
+        # for user_gift in user_gifts:
+        #     protohelper.set_bag_gift(resp.body.gifts.add(), user_gift, gifts)
 
         resp.header.result = 0
+
     # 使用背包内的道具
     @USE_TRANSACTION
     def handle_use_bag(self,session,req,resp,event):
-        # 使用道具功能，暂时只有经验卡能使用到该方法
-        bag = BagObject(session)
-        if bag.has_item(req.header.user, req.body.item_id) == False:
+
+        # 暂时只有vip经验卡能使用到该方法
+        if self.bag.has_item(session, req.header.user, req.body.item_id, req.body.count) == False:
             resp.header.result = RESULT_FAILED_INVALID_BAG
             return
 
+        # 使用道具
+        result = self.bag.use_user_item(session, req.header.user, req.body.item_id, countof=req.body.count)
+        if result <= 0:
+            resp.header.result = RESULT_FAILED_INVALID_BAG
+            return
 
-        item_ids = []
-        for v in ITEM_MAP.values():
-            item_ids.append(v[0])
-        if req.body.item_id in item_ids:
-            result = bag.use_user_item(req.header.user, req.body.item_id)
-            if result <= 0:
-                resp.header.result = RESULT_FAILED_INVALID_BAG
-                return
-            if bool(bag.use_item(self, req.header.user, ITEM_MAP[req.body.item_id][1])) != True:
-                resp.header.result = RESULT_FAILED_INVALID_BAG
-                return
+        # 加vip经验
+        user_info = self.da.get_user(req.header.user)
+        user_info.vip_exp = 0 if user_info.vip_exp <= 0 else user_info.vip_exp
+        for times in range(req.body.count):
+            user_info.vip_exp = user_info.vip_exp + ItemObject.get_item_conf(req.body.item_id)[0]
 
+        self.da.save_user(session, user_info)
+
+        # 返回数据
         item = ItemObject.get_item(session, req.body.item_id)
         pb = resp.body.result.items_removed.add()
         pb.id = item.id
         pb.name = item.name
         pb.icon = item.icon
         pb.description = item.description
-        pb.count = result
+        pb.count = req.body.count
         resp.header.result = 0
+
     # 查询银行
     @USE_TRANSACTION
     def handle_bank(self,session,req,resp,event):
@@ -1030,22 +988,24 @@ class HallService(GameService):
         user_info = self.da.get_user(req.header.user)
 
         resp.body.gold = bank_account.gold if bank_account != None else 0
-        resp.body.limit = VIP_CONF[user_info.vip]['bank_max']
-        resp.body.next_vip_limit = VIP_CONF[-1]['bank_max'] if (user_info.vip + 1) >= len(VIP_CONF) else VIP_CONF[user_info.vip + 1]['bank_max']
+        resp.body.limit = VIP_CONF[self.vip.to_level(user_info.vip_exp)]['bank_max']
+        resp.body.next_vip_limit = VIP_CONF[-1]['bank_max'] if (self.vip.to_level(user_info.vip_exp) + 1) >= len(VIP_CONF) else VIP_CONF[self.vip.to_level(user_info.vip_exp) + 1]['bank_max']
         resp.header.user = 0
     # 存钱到银行
     @USE_TRANSACTION
     def handle_bank_save(self,session,req,resp,event):
         user_info = self.da.get_user(req.header.user)
-        if req.body.gold > VIP_CONF[user_info.vip]['bank_max']:
-            resp.header.result = RESULT_FAILED_INVALID_GOLD
+
+        # vip 银行存款限制
+        if self.vip.over_bank_max(self.vip.to_level(user_info.vip_exp), req.body.gold):
+            resp.header.result = RESULT_FAILED_BANK_MAX
             return
 
         if req.body.gold > 0 and user_info.gold < req.body.gold:
             resp.header.result = RESULT_FAILED_INVALID_GOLD
             return
 
-        if VIP_CONF[user_info.vip]['bank_max'] > 0:
+        if VIP_CONF[self.vip.to_level(user_info.vip_exp)]['bank_max'] > 0:
             bank_account = session.query(TBankAccount).filter(TBankAccount.uid == req.header.user).first()
             if bank_account == None:
                 bank_account = TBankAccount()
@@ -1062,7 +1022,7 @@ class HallService(GameService):
                 resp.header.result = RESULT_FAILED_INVALID_GOLD
                 return
         else:
-            if (bank_account.gold + req.body.gold) > VIP_CONF[user_info.vip]['bank_max']:
+            if (bank_account.gold + req.body.gold) > VIP_CONF[self.vip.to_level(user_info.vip_exp)]['bank_max']:
                 resp.header.result = RESULT_FAILED_INVALID_GOLD
                 return
 
@@ -1133,26 +1093,41 @@ class HallService(GameService):
                 resp.header.result = -1
                 return
 
-        charge_item = session.query(TChargeItem).filter(TChargeItem.id == req.body.shop_id).first()
-        if charge_item == None:
-            resp.header.result = -1
-            return
+        if req.body.shop_id > 0:
+            charge_item = session.query(TChargeItem).filter(TChargeItem.id == req.body.shop_id).first()
+            if charge_item == None:
+                resp.header.result = -1
+                return
+            item = ItemObject.get_item(session, req.body.shop_id)
+            money = charge_item.money
+            name = item.name
+        else:
+            money,name,name = QUICK_CHARGE[abs(req.body.shop_id)-1]
 
         order = TOrder()
         order.order_sn = order_sn
         order.uid = req.header.user
-        order.money = charge_item.money
+        order.money = money
         order.shop_id = req.body.shop_id
         order.status = -1
         order.comment = req.body.comment
         order.create_time = datehelper.get_today_str()
         session.add(order)
 
-        resp.body.name = charge_item.name
-        resp.body.money = int(charge_item.money * 100)
+        resp.body.name = name
+        resp.body.money = int(money * decimal.Decimal(100))
         resp.body.order_sn = str(order_sn)
         resp.body.callback = PAY_RESULT_URL
         resp.header.result=0
+
+    @USE_TRANSACTION
+    def handle_quick_charge(self,session,req,resp,event):
+        money,gold,name = QUICK_CHARGE[abs(req.body.table_type)-1]
+        print '===================>'
+        print money,gold,name
+        resp.body.money = money
+        resp.body.gold = gold
+        resp.header.result = 0
 
     # 记录牌桌次数
     @USE_TRANSACTION
@@ -1190,19 +1165,6 @@ class HallService(GameService):
             protohelper.set_charge(resp.body.items.add(), item)
         resp.header.result = 0
 
-
-    # 充值成功，给客户端发送消息
-    # 退出
-    def handle_logout(self,session,req,resp,event):
-        try :
-            resp.header.result = 0
-            if req.header.user:
-                self.redis.hdel("sessions",req.header.user)
-                resp.header.result = 0
-            else:
-                resp.header.result = -1
-        except Exception as e:
-            logging.error('user session is lost: %d ' % req.header.user)
 
     # 获取通用result结果
     def get_result(self,user,resp):

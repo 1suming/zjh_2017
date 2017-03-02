@@ -19,7 +19,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='bag.proto',
   package='cardgame',
-  serialized_pb=_b('\n\tbag.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"\x1d\n\x0bQueryBagReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8 \"\\\n\x0cQueryBagResp\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x02 \x03(\x0b\x32\x0e.cardgame.Gift\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9 \"-\n\nUseItemReq\x12\x0f\n\x07item_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xea \"?\n\x0bUseItemResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xeb B!\n\x18\x63om.zhili.cardgame.protoB\x03\x42\x61gH\x03')
+  serialized_pb=_b('\n\tbag.proto\x12\x08\x63\x61rdgame\x1a\x0cstruct.proto\"\x1d\n\x0bQueryBagReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8 \"\\\n\x0cQueryBagResp\x12\x1d\n\x05items\x18\x01 \x03(\x0b\x32\x0e.cardgame.Item\x12\x1d\n\x05gifts\x18\x02 \x03(\x0b\x32\x0e.cardgame.Gift\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9 \"<\n\nUseItemReq\x12\x0f\n\x07item_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xea \"?\n\x0bUseItemResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xeb B!\n\x18\x63om.zhili.cardgame.protoB\x03\x42\x61gH\x03')
   ,
   dependencies=[struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -75,8 +75,8 @@ _USEITEMREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=193,
-  serialized_end=207,
+  serialized_start=208,
+  serialized_end=222,
 )
 _sym_db.RegisterEnumDescriptor(_USEITEMREQ_DEF)
 
@@ -93,8 +93,8 @@ _USEITEMRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=258,
-  serialized_end=272,
+  serialized_start=273,
+  serialized_end=287,
 )
 _sym_db.RegisterEnumDescriptor(_USEITEMRESP_DEF)
 
@@ -175,6 +175,13 @@ _USEITEMREQ = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='count', full_name='cardgame.UseItemReq.count', index=1,
+      number=2, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -188,7 +195,7 @@ _USEITEMREQ = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=162,
-  serialized_end=207,
+  serialized_end=222,
 )
 
 
@@ -218,8 +225,8 @@ _USEITEMRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=209,
-  serialized_end=272,
+  serialized_start=224,
+  serialized_end=287,
 )
 
 _QUERYBAGREQ_DEF.containing_type = _QUERYBAGREQ

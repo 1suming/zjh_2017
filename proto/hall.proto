@@ -60,7 +60,7 @@ message UpdateUserResp {
 		ID = 1005;
 	}
 	
-	required Result result = 1;
+	optional Result result = 1;
 }
 
 message QueryAnnouncementsReq {
@@ -145,4 +145,22 @@ message QueryChargeResp {
         ID = 1153;
     }
     repeated ChargeItem items = 1;
+}
+
+//快速补币查询接口
+message QueryQuickBuyGoldReq {
+    enum DEF {
+       ID = 1154;
+    }
+    required int32 table_type = 1;
+}
+
+
+message QueryQuickBuyGoldResp{
+    enum DEF {
+      ID = 1155;
+    }
+    required int32 money = 1;
+    required int32 gold = 2;
+
 }

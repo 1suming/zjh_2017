@@ -27,6 +27,7 @@ message UseItemReq {
 		ID = 4202;
 	}
 	required int32 item_id = 1;
+	required int32 count = 2;
 }
 
 message UseItemResp {

@@ -15,3 +15,5 @@ class DevConfig(Config):
     DEBUG = True
     HOST='0.0.0.0'
     PORT=8000
+    UPLOAD_FOLDER = 'static/upload'
+    MAX_CONTENT_LENGTH = 1 * 1024 * 1024

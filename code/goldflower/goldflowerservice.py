@@ -159,43 +159,37 @@ class GoldFlowerService(GameService):
             resp.header.result = RESULT_FAILED_NO_KICK
             return
 
-        bag = BagObject(session)
-        if bag.has_item(req.header.user, ITEM_MAP['kick'][0]) == False:
+        # 背包中是否存在相关道具
+        bag = BagObject(self)
+        if bag.has_item(session, req.header.user, ITEM_MAP['kick'][0]) == False:
             resp.header.result = RESULT_FAILED_INVALID_BAG
             return
 
-
         # 权限验证，被踢的人在vip6及以上等级有免踢权限
         other_user = self.redis.get('u'+str(req.body.other))
-        if 'no_kick' in VIP_CONF[other_user.vip]['auth']:
+        vip = VIPObject(self)
+        if vip.to_level(other_user.vip_exp) >= NO_KICK_LEVEL:
+        # if 'no_kick' in VIP_CONF[other_user.vip]['auth']:
             resp.header.result = RESULT_FAILED_NO_KICK
+            return
 
-        item_ids = []
-        for v in ITEM_MAP.values():
-            item_ids.append(v[0])
+        # 使用道具
+        result = bag.use_user_item(req.header.user, ITEM_MAP['kick'][0])
+        if result <= 0:
+            resp.header.result = RESULT_FAILED_INVALID_BAG
+            return
 
-        # 使用道具功能
-        if ITEM_MAP['kick'][0] in item_ids:
-            result = bag.use_user_item(req.header.user, ITEM_MAP['kick'][0])
-            if result <= 0:
-                resp.header.result = RESULT_FAILED_INVALID_BAG
-                return
-            if bool(bag.use_item(self, req.header.user, 'kick')) != True:
-                resp.header.result = RESULT_FAILED_INVALID_BAG
-                return
+        # 踢走某人操作
+        if table == None:
+            resp.header.result = RESULT_FAILED_INVALID_TABLE
+            return False
+        table.lock.acquire()
+        try :
+            table.kick_player(req.header.user, req.body.other)
+        finally:
+            table.lock.release()
 
-        if resp.header.result != RESULT_FAILED_NO_KICK:
-
-            if table == None:
-                resp.header.result = RESULT_FAILED_INVALID_TABLE
-                return False
-
-            table.lock.acquire()
-            try :
-                table.kick_player(req.header.user, req.body.other)
-            finally:
-                table.lock.release()
-
+        # 返回数据
         item = ItemObject.get_item(session, ITEM_MAP['kick'][0])
         pb = resp.body.result.items_removed.add()
         pb.id = item.id
@@ -204,3 +198,6 @@ class GoldFlowerService(GameService):
         pb.description = item.description
         pb.count = result
         resp.header.result = 0
+
+
+        resp.body.other = req.body.other

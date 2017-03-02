@@ -10,8 +10,11 @@ REWARD_PLAY_ROUND = [
 ]
 
 
+REWARD_CONF = {
+    'first_login':{'id':8,'type':0,'diamond':0,'gold':0,'items':'4-1','gifts':'','received_time':'','profile':''},
+    'update_nick':{'id':9,'type':0,'diamond':0,'gold':20000,'items':'','gifts':'','received_time':'','profile':''},
+    'update_avatar':{'id':10,'type':0,'diamond':0,'gold':20000,'items':'','gifts':'','received_time':'','profile':''},
 
-REWARD_MAIL = {
-    8:'上传照片，更换头像，奖励2万金币'
 }
+
 

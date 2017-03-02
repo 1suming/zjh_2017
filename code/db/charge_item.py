@@ -34,6 +34,9 @@ tab_charge_item = Table("charge_item", metadata,
 class TChargeItem(TableObject):
     def __init__(self):
         TableObject.__init__(self)
+
+    def __repr__(self):
+        return 'id=%d,diamond=%d,gold=%d,descript=%s'
     
 mapper_charge_item = Mapper(TChargeItem,tab_charge_item)
 

@@ -18,8 +18,8 @@ from sqlalchemy.orm import Mapper
 
 tab_friend_apply = Table("friend_apply", metadata,
                  Column("id",Integer, primary_key=True),
-                 Column("uid1",Integer,nullable =False),
-                 Column("uid2",Integer,nullable =False),
+                 Column("apply_uid",Integer,nullable =False), # 申请方
+                 Column("to_uid",Integer,nullable =False),    # 答复方
                  Column("gifts",String(100)),  # 格式如下:"(gift_id,count),(gift_id,count),...."
                  Column("message",String(140)),
                  Column("state",SmallInteger,nullable =False),
@@ -34,8 +34,8 @@ class TFriendApply(TableObject):
         TableObject.__init__(self)
 
     def __repr__(self):
-        return 'id=%d,uid1=%d,uid2=%d,gifts=%s,message=%s,state=%d,apply_time=%s,finish_time=%s' % \
-               (self.id,self.uid1,self.uid2,self.gifts,self.message,self.state,str(self.apply_time),str(self.finish_time))
+        return 'id=%d,apply_uid=%d,to_uid=%d,gifts=%s,message=%s,state=%d,apply_time=%s,finish_time=%s' % \
+               (self.id,self.apply_uid,self.to_uid,self.gifts,self.message,self.state,str(self.apply_time),str(self.finish_time))
     
 mapper_friend_apply = Mapper(TFriendApply,tab_friend_apply)
 

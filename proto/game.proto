@@ -64,7 +64,9 @@ message KickOtherResp {
 	enum DEF {
 		ID = 5007;
 	}
-	optional Result results = 1;
+	required int32 other = 1;
+	optional Result results = 2;
+
 }
 
 

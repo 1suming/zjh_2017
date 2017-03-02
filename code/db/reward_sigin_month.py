@@ -18,8 +18,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 tab_reward_signin_month = Table("reward_sigin_month", metadata,
                     Column("id", Integer, primary_key=True),
-                    Column("uid", Integer),
                     Column("signin_days",Integer),
+                    Column("total_days",Integer),
                     Column("last_signin_day",Date),
                  )
 
@@ -27,8 +27,8 @@ class TRewardSigninMonth(TableObject):
     def __init__(self):
         TableObject.__init__(self)
     def __repr__(self):
-        return 'id=%d,uid=%d,signin_days=%d,last_signin_day=%s' % \
-               (self.id,self.uid,self.signin_days,self.uid,self.sign_days)
+        return 'id=%d,signin_days=%d,last_signin_day=%s' % \
+               (self.id,self.signin_days,self.uid,self.signin_days)
 
 mapper_reward_signin_month = Mapper(TRewardSigninMonth,tab_reward_signin_month)
 

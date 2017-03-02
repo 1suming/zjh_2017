@@ -267,9 +267,9 @@ class TableManager:
             return RESULT_FAILED_INVALID_GOLD,None
         config = TABLE_GAME_CONFIG[table_type]
         if config[0] >= 0 and user.gold < config[0]:
-            return RESULT_FAILED_INVALID_GOLD,None
+            return RESULT_FAILED_INVALID_GOLD_LESS,None
         if config[1] >= 0 and user.gold > config[1]:
-            return RESULT_FAILED_INVALID_GOLD,None
+            return RESULT_FAILED_INVALID_GOLD_MORE,None
 
         old_table = self.get_player_table(uid)
 

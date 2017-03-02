@@ -29,6 +29,9 @@ from db.account import *
 from db.user import *
 from util.asyncsocket import *
 from helper.smshelper import SMS
+from config.broadcast import *
+from hall.hallobject import *
+
 
 pool = Pool(50)
 
@@ -210,10 +213,12 @@ class LoginServer:
                 account.imei = message.body.imei
                 account.imsi = message.body.imsi
                 account.state = STATE_ENABLE # 0=通过验证，-1=未通过验证
+                user_info = session.query(TUser).filter(TUser.id == account.id).first()
             else:
                 account = self.add_account(message)
                 session.add(account)
-                session.add(self.add_user(account.id))
+                user_info = self.add_user(account.id)
+                session.add(user_info)
             session.commit()
 
             random_key = random_session()
@@ -250,13 +255,15 @@ class LoginServer:
                 account = self.add_account(message)
                 session.add(account)
                 session.flush()
-
-                session.add(self.add_user(account.id))
+                user_info = self.add_user(account.id)
+                session.add(user_info)
                 session.commit()
             else:
                 if self.av.check_state(account.state) == False:
                     resp.header.result = RESULT_FAILED_ACCOUNT_INVALID
                     return
+
+
             # 用户数据返回
             random_key = random_session()
             resp.body.uid = account.id
@@ -430,6 +437,7 @@ class LoginServer:
         user.sign = DEFAULT_USER['sign']
         user.sex = DEFAULT_USER['sex']
         user.create_time = time.strftime("%Y-%m-%d %H:%M:%S")
+        user.is_charge = DEFAULT_USER['is_charge']
         return user
 
     def get_idle_server(self):

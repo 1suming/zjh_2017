@@ -50,7 +50,7 @@ def set_shop_item(pb, shopitem, items):
                 pb.item.id = im.id
                 pb.item.icon = im.icon
                 pb.item.name = im.name
-                pb.item.count = 1
+                pb.item.count = 1 if shopitem.countof is None else shopitem.countof
                 pb.item.description = im.description
                 break;
 
@@ -123,15 +123,66 @@ def set_top(pb, rank_player, index):
     pb.nick = rank_player['nick']
     pb.avatar =rank_player['avatar'] if rank_player['avatar'] else ''
     pb.gold = rank_player['gold'] if rank_player['gold'] else 0
-    pb.rank_reward = ''
-    pb.money_maked = 0
+    pb.rank_reward = rank_player['rank_reward']
+    pb.money_maked = rank_player['money_maked']
     pb.charm = 0
+    pb.vip = rank_player['vip']
 
 
 def set_item(pb, item):
     copy_simple_field(pb,item,not_fields = ["birthday","best"])
 
+def set_item_add(pb, item, count):
+    if type(item) == dict:
+        pb.id = item['id']
+        pb.name = item['name']
+        pb.icon = item['icon']
+        pb.count = int(count)
+        pb.description = item['description']
+        return
+    pb.id = item.id
+    pb.name = item.name
+    pb.icon = item.icon
+    pb.count = count
+    pb.description = item.description
+
 def set_charge(pb, item):
     copy_simple_field(pb,item, not_fields = ['money'])
     pb.money = int(item.money * 100)
 
+def set_brief_hall(pb, user_info):
+    pb.nick = user_info.nick
+    pb.uid = user_info.id
+    pb.avatar = user_info.avatar
+    pb.gold = user_info.gold
+    pb.seat = -1
+    pb.vip = user_info.vip
+    pb.diamond = user_info.diamond
+    pb.vip_exp = 0 if user_info.vip_exp == None else user_info.vip_exp
+
+def set_hall(pb, hall):
+    pb.notification.has_announcement = hall.has_announcement_count
+    pb.notification.has_reward = hall.has_reward_count
+    pb.notification.has_mail = hall.has_mail
+    pb.is_charge = hall.is_charge
+    for item in hall.announcements:
+        set_announcement(pb.announcements.add(), item)
+    pb.is_signin = hall.is_sign
+    pb.notification.has_friend = hall.has_friend_count
+
+def set_result(pb, gold = 0,diamond = 0,incr_gold = 0,incr_diamond = 0):
+    pb.gold = int(gold)
+    pb.diamond = int(diamond)
+    pb.incr_gold = int(incr_gold)
+    pb.incr_diamond = int(incr_diamond)
+
+
+
+def set_friend_applies(pb, item,nick,avatar):
+    pb.id = item.id
+    pb.apply_from = item.apply_uid
+    pb.apply_from_nick = nick
+    pb.apply_from_avatar = avatar
+    pb.to = item.to_uid
+    pb.time = int(time.mktime(time.strptime(item.apply_time.strftime('%Y-%m-%d %H:%M:%S'), '%Y-%m-%d %H:%M:%S')))
+    pb.message = item.message

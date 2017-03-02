@@ -52,7 +52,9 @@ DEFAULT_USER={
     'charm':0,
     'birthday':dt_date(2000,1,1),
     'sex':0,
+    'is_charge':0,
     'vip_exp':0,
+    'default_item':(1,1),
 }
 
 DEFAULT_USER_GLODFLOWER ={
@@ -80,8 +82,6 @@ PRM_MAX_DEVICE_ID = 15
 PRM_MAX_PASSWORD_LEN = 15
 PRM_MIN_PASSWORD_LEN = 6
 
-SYS_MAX_SIGN_DAY = 7
-
 STATE_IS_SHOW = 0
 STATE_NO_ACCEPT_REWARD = 1
 STATE_ACCEPT_REWARD = 0
@@ -93,4 +93,23 @@ UPGRADE_URL = 'http://192.168.2.75/upgrade/'
 PAY_RESULT_URL = 'http://121.201.29.89:18000/pay_result'
 CP_KEY = 'bde25760c1556899efc0dff13bf41b4e' # bde25760c1556899efc0dff13bf41b4e
 
-TAX_NUM = 0.05
+TAX_NUM = 0.05 # 金币交易，税率
+
+
+QUICK_CHARGE = [
+    (500, 15, u'新手场'),
+    (3000, 90, u'普通场'),
+    (15000, 450, u'高级场'),
+    (60000, 1800, u'大师场'),
+]
+NO_KICK_LEVEL = 6   # 被踢的人在vip6及以上等级有免踢权限
+BUY_GOLD_LEVEL = 1  # vip1及以上才可以购买金币
+SELL_GOLD_LEVEL = 3 # vip3及以上等级可在金币交易中出售金币
+
+# 系统提醒时间
+NOTI_TIME = 300
+NOTI_TIME_2 = 180
+# 新手场   5元       15万金币
+# 普通场   30元     90万金币
+# 高级场  150元   450万金币
+# 大师场  600元  1800万金币

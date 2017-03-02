@@ -47,8 +47,10 @@ def fast_login_game(client,device_id,imei,imsi,token):
         resp2 = client.get_message()
         print '1111111111111111111111111111111111111111111'
 
-        req2 = create_client_message(GetServerTimeReq)
+        req2 = create_client_message(QueryHallReq)
         req2.header.user = resp.header.user
+        req2.body.max_mail_id = 0
+        req2.body.max_announcement_id = 0
         client.socket.send(req2.encode())
         # client.get_message()
         # req2 = create_client_message(QueryUserReq)
@@ -78,7 +80,14 @@ def register_game(client,mobile,password,verify_code,imei,imsi,device_id,channel
         req = create_client_message(ConnectGameServerReq)
         req.header.user = resp.header.user
         req.body.session = resp.body.session
+        client.socket.send(req.encode())
 
+        result = client.get_message()
+
+        req = create_client_message(QueryHallReq)
+        req.header.user = result.header.user
+        req.body.max_mail_id = 0
+        req.body.max_announcement_id = 0
         client.socket.send(req.encode())
     except:
         traceback.print_exc()
@@ -101,6 +110,7 @@ def normal_login_game_server_time(client,mobile,password,device_id):
         print result.header.user,'=',result.header.result
         print result.body
 
+        time.sleep(3)
         req = create_client_message(GetServerTimeReq)
         req.header.user = result.header.user
         client.socket.send(req.encode())
@@ -163,10 +173,10 @@ def update_user(client,mobile,password,device_id):
         print '33333333333333333333333333333333333'
         req = create_client_message(UpdateUserReq)
         req.header.user = result.header.user
-        req.body.sign = '222222签名喔~~~'
-        # req.body.nick = '1111111张学友'
+        req.body.sign = u'222222签名喔~~~'
+        req.body.nick = u'1111111张学友'
         req.body.birthday = '1911-01-11'
-        req.body.avatar = 'http://p2.gexing.com/touxiang/2012/3/17/201237180763704.jpg'
+        req.body.avatar = 'https://www.baid111.c1om/img111111111/bd11_111111logo1.pn123123g'
         print req.header.user,'=',req.header.result
         client.socket.send(req.encode())
 
@@ -355,7 +365,7 @@ def revice_rewards(client,mobile,password,device_id):
 
         req2 = create_client_message(ReceiveRewardReq)
         req2.header.user = result.header.user
-        req2.body.reward_id = 2
+        req2.body.reward_id = 9
         client.socket.send(req2.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -620,8 +630,8 @@ def buy_shop_item(client,mobile = '13412341777',password= '123456',device_id='d_
         print '3333333333333333333333333333333333'
         req = create_client_message(BuyItemReq)
         req.header.user = result.header.user
-        req.body.shop_item_id = 1
-        req.body.count = 1
+        req.body.shop_item_id = 3
+        req.body.count = 3
         client.socket.send(req.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -688,7 +698,7 @@ def trade_buy(client,mobile = '13412341777',password= '123456',device_id='d_9444
         print '3333333333333333333333333333333333'
         req = create_client_message(BuyTradeReq)
         req.header.user = result.header.user
-        req.body.trade_id = 1
+        req.body.trade_id = 107
         client.socket.send(req.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -818,7 +828,7 @@ def use_user_bag(client,mobile = '13412341777',password= '123456',device_id='d_9
         print '3333333333333333333333333333333333'
         req = create_client_message(UseItemReq)
         req.header.user = result.header.user
-        req.body.item_id = 1
+        req.body.item_id = 4
         client.socket.send(req.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -949,7 +959,7 @@ def receive_mails(client,mobile = '13412341777',password= '123456',device_id='d_
         print '3333333333333333333333333333333333'
         req = create_client_message(ReceiveAttachmentReq)
         req.header.user = result.header.user
-        req.body.mail_id = 2
+        req.body.mail_id = 30
         client.socket.send(req.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -1005,7 +1015,27 @@ def receive_friend_message(client,mobile = '13412341777',password= '123456',devi
     finally:
         pass
 
+def handle_friend(client,mobile = '13412341777',password= '123456',device_id='d_9444',act = ''):
+    MessageMapping.init()
+    resp = client.normal_test_enter_server(mobile,password,device_id)
 
+    print '1111111111111111111'
+    print resp.header.user,'=',resp.header.result
+    print resp.body
+
+    client.setup_socket()
+    result = client.connect_game_server(resp.header.user, resp.body.session, 1)
+    print '2222222222222222222'
+    print result.header.user,'=',result.header.result
+    print result.body
+
+    print '3333333333333333333333333333333333'
+    time.sleep(3)
+    req = create_client_message(HandleFriendApplyReq)
+    req.header.user = result.header.user
+    req.body.apply_id = 8
+    req.body.accept = True
+    client.socket.send(req.encode())
 
 def send_mail(client,mobile = '13412341777',password= '123456',device_id='d_9444',act = ''):
     try:
@@ -1129,12 +1159,12 @@ def make_friends_apply(client,mobile = '13412341777',password= '123456',device_i
         req = create_client_message(MakeFriendReq)
         req.header.user = result.header.user
         req.body.target = 10020
-        req.body.message = '88 flowers for you'
-        gift = req.body.gifts.add()
-        gift.id = 66
-        gift.name = '88 flowers'
-        gift.icon = '88flower'
-        gift.count = 2
+        req.body.message = '99 flowers for you'
+        # gift = req.body.gifts.add()
+        # gift.id = 66
+        # gift.name = '88 flowers'
+        # gift.icon = '88flower'
+        # gift.count = 2
         client.socket.send(req.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -1459,8 +1489,73 @@ def get_order(client,mobile = '13412341777',password= '123456',device_id='d_9444
     finally:
         pass
 
+def get_gold_top(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
+    try:
+        MessageMapping.init()
+        resp = client.normal_test_enter_server(mobile,password,device_id)
 
+        print '1111111111111111111'
+        print resp.header.user,'=',resp.header.result
+        print resp.body
 
+        client.setup_socket()
+        result = client.connect_game_server(resp.header.user, resp.body.session, 1)
+        print '2222222222222222222'
+        print result.header.user,'=',result.header.result
+        print result.body
+
+        print '3333333333333333333333333333333333'
+        req = create_client_message(QueryRankReq)
+        req.header.user = result.header.user
+        req.body.rank_type = 1
+        req.body.rank_time = 0
+        client.socket.send(req.encode())
+
+        # req = create_client_message(QueryUserReq)
+        # req.header.user = result.header.user
+        # req.body.uid = result.header.user
+        # client.socket.send(req.encode())
+
+      # client.socket.send(req.encode())
+
+    except Exception as e:
+        traceback.print_exc()
+    finally:
+        pass
+
+def get_charge_top(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
+    try:
+        MessageMapping.init()
+        resp = client.normal_test_enter_server(mobile,password,device_id)
+
+        print '1111111111111111111'
+        print resp.header.user,'=',resp.header.result
+        print resp.body
+
+        client.setup_socket()
+        result = client.connect_game_server(resp.header.user, resp.body.session, 1)
+        print '2222222222222222222'
+        print result.header.user,'=',result.header.result
+        print result.body
+
+        print '3333333333333333333333333333333333'
+        req = create_client_message(QueryRankReq)
+        req.header.user = result.header.user
+        req.body.rank_type = 2
+        req.body.rank_time = 2
+        client.socket.send(req.encode())
+
+        # req = create_client_message(QueryUserReq)
+        # req.header.user = result.header.user
+        # req.body.uid = result.header.user
+        # client.socket.send(req.encode())
+
+      # client.socket.send(req.encode())
+
+    except Exception as e:
+        traceback.print_exc()
+    finally:
+        pass
 def test_card(imei,imsi,token,need_idle,*args):
     resp = None
     try:
@@ -1468,6 +1563,8 @@ def test_card(imei,imsi,token,need_idle,*args):
         client = TestClient(str(999999),str(999998), 'token_123')
         # get_charge(client,'15919430507','wang0000','865372020475361')
         # get_order(client,'15919430507','wang0000','865372020475361')
+        # get_gold_top(client,'15919430507','wang0000','865372020475361')
+        # get_charge_top(client,'15919430507','wang0000','865372020475361')
 
         # reset_login(client, '13488889999','123456', '865372020475361')
 
@@ -1477,43 +1574,43 @@ def test_card(imei,imsi,token,need_idle,*args):
         # get_rank(client, '13488889999','123456', '865372020475361')
 
         # send_friends_message(client, '15919430507','wang0000', '865372020475361')
-        # make_friends_apply(client, '13412311111','123456', 'device_id_333')
+        # make_friends_apply(client, 'lxk','123456', '359901057716157')
         # remove_friends_apply(client, '13412311111','123456', 'device_id_333')
         # receive_friend_message(client, '13412345678','123456','000000000000000')
-        # receive_mails(client, '13412311111','123456', 'device_id_333')
-
-        # get_friends_apply(client, '15815052843','987654', '865647020556892')
-        # get_friends(client, '13412311111','123456', 'device_id_333')
+        # receive_mails(client, '13412345678','123456', '000000000000000')
+        #  handle_friend(client, '13412345678','123456', '000000000000000')
+        # get_friends_apply(client, '13412345678','123456', '000000000000000')
+        # get_friends(client, '13412345678','123456', '000000000000000')
         # query_bank(client, '13488889999','123456', '865372020475361')
 
         # active_bank_gold(client, '13488889999','123456', '865372020475361')
 
-        # buy_shop_item(client, '13412311111','123456', 'device_id_333')
+        # buy_shop_item(client, '13455556666','123456', '867582021385215')
         # normal_login_game_server_time(client, '13412341777','123456', '88899111121')
         # trade_page_list(client, '13488889999','123456', '865372020475361')
-        # trade_buy(client, '13412311111','123456', 'device_id_333')
+        # trade_buy(client, '13412311111','123456', '351702077470363')
         # trade_sell(client, '15919430507','wang0000', '865372020475361')
         # trade_out(client, '13488889999','123456', '865372020475361')
         # query_user_bag(client, '13488889999','123456', '865372020475361')
-        # use_user_bag(client, '13488889999','123456', '865372020475361')
+        # use_user_bag(client, '13412311111','123456', '351702077470363')
         # query_player(client, '13412311111','123456', 'device_id_333')
-       #  fast_login_game(client,'device_id_333','imei_1010','imsi_2020', 'token_2020')
-        # register_game(client, '13412311111','123456','1234','imei_1111','imsi_2222','device_id_333','LT333')
-        # get_hall_query(client,'13455556666','123456','867582021385215')
+        # fast_login_game(client,'device_id_333','imei_1010','imsi_2020', '865372020475361')
+        # register_game(client, '13322335566','123456','0','imei_1111','imsi_2222','asdjasj574515','LT333')
+        # get_hall_query(client,'13433334444','123456','865372020475362')
 
         # normal_logout(client, '15919430507','wang0000', '865372020475361')
-        update_user(client, '13412311111','123456', '351702077470363')
+        # update_user(client, '13412311111','123456', '351702077470363')
 
         # get_annoucments(client, str(999999),str(999998), 'token_123')
 
        #  use_code(client, '13412311111', '123456', 'device_id_333')
 
-        # get_signs(client, '13488889999', '123456', '865372020475361')
-        # today_sign(client, '13488889999', '123456', '865372020475361')
+        # get_signs(client, '13512359876', '123456', '862596034397830')
+        today_sign(client, '13411112222', '123456', '355060061352543')
         # send_chat_world(client,'13488889999', '123456', '865372020475361')
         # send_chat_room(client,'13412311111', '123456', 'device_id_333')
-        # get_rewards(client, '15815052845','123456', 'A00000568CDD11')
-        # revice_rewards(client, '13412311111','123456', 'device_id_333')
+        # get_rewards(client, '13412311111','123456', '351702077470363')
+        # revice_rewards(client, '13412311111','123456', '351702077470363')
         # get_shop_item(client, '13412311111','123456', 'device_id_333')
         # get_register_code(client,'13412311111', '123456', 'device_id_333')
 

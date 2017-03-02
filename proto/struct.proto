@@ -57,6 +57,8 @@ message Result {
 	repeated Item items_added = 5;
 	repeated Gift gifts_added = 6;
 	repeated Item items_removed = 7;
+	optional int64 incr_gold = 8; // 增量gold，有+有-
+	optional int64 incr_diamond = 9; // 增量钻石，有+有-
 }
 
 message Gift {

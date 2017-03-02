@@ -41,7 +41,10 @@ tab_user = Table("user", metadata,
 class TUser(TableObject):
     def __init__(self):
         TableObject.__init__(self)
-        
+
+    def __repr__(self):
+        return 'id=%d,nick=%s' % (self.id, self.nick)
+
 mapper_user = Mapper(TUser,tab_user)       
 
 if __name__=="__main__":

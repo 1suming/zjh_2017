@@ -46,7 +46,8 @@ class TUserGoldFlower(TableObject):
     def __init__(self):
         TableObject.__init__(self)
 
-
+    def __repr__(self):
+        return 'id=%d,signin_days=%d,last_signin_day=%s' % (self.id,self.signin_days,self.last_signin_day)
 
 mapper_user_goldflower = Mapper(TUserGoldFlower,tab_user_goldflower)
 

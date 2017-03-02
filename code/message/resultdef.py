@@ -3,8 +3,8 @@
 RESULT_SUCCEED                      = 0
 RESULT_FAILED                       = 1
 
-RESULT_FAILED_ACCOUNT_INVALID       = 2
-RESULT_FAILED_ACCOUNT_OR_PASSWORD_INVALID      = 3
+RESULT_FAILED_ACCOUNT_INVALID       = 2  # 账号异常
+
 RESULT_FAILED_NO_LOGIN              = 4
 RESULT_FAILED_NAME_EXISTED          = 5
 RESULT_FAILED_ACCOUNT_EMPTY         = 7
@@ -13,16 +13,17 @@ RESULT_FAILED_ACCOUNT_LENGTH_EQUALS_ZERO       = 9
 RESULT_FAILED_ACCOUNT_LENGTH       = 10
 
 RESULT_FAILED_CODE_FILL = 11
-RESULT_FAILED_CODE_EXPIRED = 12
-RESULT_FAILED_TODAY_SIGNED = 13
+
+
 
 RESULT_FAILED_SMS_EMPTY = -1100
 RESULT_FAILED_SMS_SEND_FAILED = -1104
 RESULT_FAILED_SMS_NOT_EQUALS = -1102
 RESULT_FAILED_SMS_EXITS = -1103
 
-RESULT_FAILED_SHOP_DIAMOND          = -200
-RESULT_FAILED_SHOP                  = -201
+
+
+
 
 RESULT_FAILED_INVALID_USER          = -10000
 RESULT_FAILED_INVALID_GOLD          = -10001
@@ -39,10 +40,49 @@ RESULT_FAILED_INVALID_ROUND         = -10011
 RESULT_FAILED_MORE_GAMBLERS         = -10012
 RESULT_FAILED_ALREADY_SIT           = -10013
 
+# 登录
+RESULT_FAILED_ACCOUNT_OR_PASSWORD_INVALID      = -100 # 账号或密码不对
 
-RESULT_FAILED_BROKE_FULL            = -20020
-RESULT_FAILED_INVALID_AUTH          = -20001
-RESULT_FAILED_INVALID_BAG           = -20010
+
+# 牌局
+RESULT_FAILED_INVALID_GOLD_LESS          = -10020    # 钱少
+RESULT_FAILED_INVALID_GOLD_MORE          = -10021    # 钱多
+
+# 商店
+RESULT_FAILED_INVALID_AUTH          = -20001      # VIP权限不足
+RESULT_FAILED_SHOP_DIAMOND          = -20002      # 钻石不足
+RESULT_FAILED_SHOP                  = -20003      # 交易失败，下架失败
+
+# 背包
+RESULT_FAILED_INVALID_BAG           = -20010      # 背包中不存在相关道具
 RESULT_FAILED_INVALID_RECORD        = -20011
 RESULT_FAILED_RECEIVE_REWARD        = -20012
-RESULT_FAILED_NO_KICK               = -20013
+
+# 踢人
+RESULT_FAILED_NO_KICK               = -20090       # 不可踢人（游戏中或VIP等级6及以上）
+# 兑换码
+RESULT_FAILED_CODE                  = -20091       # 兑换失败
+RESULT_FAILED_CODE_EXPIRED          = -20092       # 兑换码过期
+RESULT_FAILED_CODE_FILL             = -20093       # 兑换码充值人数已满
+RESULT_FAILED_CODE_USED             = -20094       # 当前用户已经使用过兑换码
+
+# 邮件
+RESULT_FAILED_MAIL                  = -20100       # 邮件已领取或不存在
+
+# 签到
+RESULT_FAILED_TODAY_SIGNED          = -20110       # 今日已签到
+
+# 好友
+RESULT_FAILED_INVALID_FRIEND        = -20200       # 添加好友失败
+RESULT_FAILED_FRIEND_MAX            = -20201       # 超过好友上线
+RESULT_FAILED_HAS_FRIEND        = -20202       # 重复添加好友
+RESULT_FAILED_MAKE_APPLY        = -20203       # 好友申请中
+
+# 奖励（任务）
+RESULT_FAILED_INVALID_REWARD        = -20200       # 任务失败
+
+# 银行
+RESULT_FAILED_BANK_MAX             = -20300       # 超过银行上线
+
+# 破产补助
+RESULT_FAILED_BROKE_FULL          = -20400        # 领取超过破产补助
