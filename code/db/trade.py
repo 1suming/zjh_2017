@@ -25,6 +25,7 @@ tab_trade = Table("trade", metadata,
                  Column("buyer",Integer),
                  Column("buy_time",DateTime),
                  Column("status",SMALLINT),
+                 Column("rate",DECIMAL(11,2)),
                  )
                  
 

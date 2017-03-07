@@ -55,9 +55,10 @@ def set_shop_item(pb, shopitem, items):
                 break;
 
 def set_trades(pb,trade,seller):
+
     copy_simple_field(pb,trade, not_fields = ["sell_time","buyer","buy_time"])
     pb.type = SHOP_GOLD
-    pb.seller_name = seller.nick
+    pb.seller_name = seller.nick.decode('utf-8')
 
 def set_bag_item(pb,user_item, items):
     for item in items:
@@ -118,6 +119,10 @@ def set_room_table(pb,uid,redis):
             return
 
 def set_top(pb, rank_player, index):
+
+    print '---------------------->'
+    rank_player
+    print '-------------------->'
     pb.rank = index + 1
     pb.uid = rank_player['uid']
     pb.nick = rank_player['nick']
@@ -126,7 +131,8 @@ def set_top(pb, rank_player, index):
     pb.rank_reward = rank_player['rank_reward']
     pb.money_maked = rank_player['money_maked']
     pb.charm = 0
-    pb.vip = rank_player['vip']
+    pb.vip = 0
+    pb.vip_exp = rank_player['vip_exp']
 
 
 def set_item(pb, item):

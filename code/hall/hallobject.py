@@ -440,19 +440,21 @@ class ShopObject:
 
     def get_lists(self, session,page,page_size,user_info, can_buy,my_sell):
         query = session.query(TTrade).join(TUser, TUser.id == TTrade.seller).filter(TTrade.status == 0)
-
-        if can_buy:
-            query = query.filter(and_(TTrade.diamond <= user_info.diamond, TTrade.seller != user_info.id))
         if my_sell:
             query = query.filter(TTrade.seller == user_info.id)
+        else:
+            if can_buy:
+                query = query.filter(and_(TTrade.diamond <= user_info.diamond, TTrade.seller != user_info.id))
+
 
         data_count = query.count()
-        items = query.order_by(desc(TTrade.id)).offset((int(page) - 1) * page_size).limit(page_size)
+        items = query.filter(TTrade.rate != None).order_by(TTrade.rate.asc(), TTrade.sell_time.desc()).offset((int(page) - 1) * page_size).limit(page_size)
+        print str(items)
         return data_count, items
 
     def sell_gold_brodacast(self, user_info, gold, diamond):
         # content = BORADCAST_CONF['trade_sell'] % (user_info.nick.decode('utf-8'), trade.gold, trade.diamond)
-        MessageObject.push_message(self.service, self.service.redis.hgetall('online').keys(),PUSH_TYPE['sys_broadcast'],{'nick':user_info.nick,'vip_exp':user_info.vip_exp,'gold':gold,'diamond':diamond} )
+        MessageObject.push_message(self.service, self.service.redis.hgetall('online').keys(),PUSH_TYPE['gold_trade'],{'nick':user_info.nick,'vip_exp':user_info.vip_exp,'gold':gold,'diamond':diamond} )
 
     def get_shop_item(self, session ,shop_item_id):
         return session.query(TShopItem).filter(TShopItem.id == shop_item_id).first()
@@ -485,10 +487,10 @@ class RankObject:
     # 财富榜人物上线，广播
     @staticmethod
     def gold_top_online_broadcast(service, session, user):
-        user_info = session.query(TUser).filter(TUser.id == user).first()
+        user_info = session.query(TUser.id,TUser.nick,TUser.vip_exp).filter(TUser.id == user).first()
 
         rank = -1
-        user_infos = session.query(TUser.id).order_by(desc(TUser.gold)).limit(15).all()
+        user_infos = session.query(TUser.id).order_by(desc(TUser.gold)).limit(RANK_CHARGE_TOP).all()
         print user_infos
         for index,rank_user in enumerate(user_infos):
 
@@ -508,8 +510,6 @@ class RankObject:
             'count':count,
             'top_type':1
         })
-
-
     # 日充值榜单，调用函数
     # RankObject.add_charge_top(session, 10026,'nick','avatar',100)
     # 周赚金榜单，调用函数
@@ -525,14 +525,17 @@ class RankObject:
 
     def wealth_top(self, session, rank_time):
         top = []
-        items = session.query(TRankGoldTop,TUser).filter(TRankGoldTop.uid == TUser.id).order_by(desc(TUser.gold))\
+        # items = session.query(TRankGoldTop,TUser).filter(TRankGoldTop.uid == TUser.id).order_by(desc(TUser.gold))\
+        #     .limit(RANK_CHARGE_TOP).all()
+        users = session.query(TUser).order_by(desc(TUser.gold))\
             .limit(RANK_CHARGE_TOP).all()
-        for item in items:
-            gold_top, user = item
-            top.append(self.pack_top(uid=user.id,nick=user.nick,avatar=user.avatar,gold=user.gold, vip=user.vip))
+        for user in users:
+            top.append(self.pack_top(uid=user.id,nick=user.nick,avatar=user.avatar,gold=user.gold, vip=user.vip,vip_exp=user.vip_exp))
+
         return top
 
     def pack_top(self, **kwargs):
+
         return {
             'uid':kwargs['uid'],
             'nick':kwargs['nick'],
@@ -542,6 +545,7 @@ class RankObject:
             'rank_reward':kwargs.get('rank_reward', ''),
             'money_maked':kwargs.get('money_maked',0),
             'charm':0,
+            'vip_exp':kwargs['vip_exp']
         }
 
     def charge_top(self,session, rank_time):
@@ -555,9 +559,11 @@ class RankObject:
         top = []
         for item in items:
             charge_top, user = item
-            top.append(self.pack_top(uid=user.id,nick=user.nick,avatar=user.avatar,gold=user.gold, vip=user.vip))
+            print user
+            top.append(self.pack_top(uid=user.id,nick=user.nick,avatar=user.avatar,gold=user.gold, vip=user.vip, vip_exp=user.vip_exp))
         if RANK_FAKE_CHARGE_ENABLE:
-            self.merage_fake(top, RANK_FAKE_CHARGE)
+            top = self.merage_fake(top, RANK_FAKE_CHARGE)
+
         return top
 
     def make_money_top(self,session, rank_time):
@@ -571,9 +577,12 @@ class RankObject:
         top = []
         for item in items:
             make_money, user = item
-            top.append(self.pack_top(uid=user.id,nick=user.nick,avatar=user.avatar,gold=user.gold, vip=user.vip))
+            top.append(self.pack_top(uid=user.id,nick=user.nick,avatar=user.avatar,gold=user.gold, vip=user.vip, vip_exp=user.vip_exp))
+
+
         if RANK_FAKE_MAKE_MONEYD_ENABLE:
-            self.merage_fake(items, RANK_FAKE_MAKE_MONEYD)
+            top = self.merage_fake(top, RANK_FAKE_MAKE_MONEYD)
+
         return top
 
 
@@ -591,6 +600,7 @@ class RankObject:
                 if len(data) >= RANK_FAKE_LEN:
                     break;
                 data.append(fake)
+        return data
     @staticmethod
     def add_charge_top(session,uid,nick,avatar,gold,vip):
         result = session.execute("INSERT INTO rank_charge_top(uid,nick,avatar,gold,add_date) VALUES (:uid,:nick,:avatar,:gold,:add_date)"
@@ -1109,7 +1119,7 @@ class VIPObject:
         return False
 
     def over_friend_max(self, vip, num):
-        return self.over_max('friend_max', vip,num)
+        return self.over_max('friend_max', vip, num)
 
     def over_bank_max(self, vip, money):
         return self.over_max('bank_max', vip, money)

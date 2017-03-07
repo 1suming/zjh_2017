@@ -146,3 +146,6 @@ PUSH_TYPE ={
     'rank_top':9,
     'charge_success':10,
 }
+
+# 出售金币时，兑换的钻石 / 金币 = 比率（乘以位数）
+SELL_RATE = 10000

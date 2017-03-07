@@ -665,7 +665,7 @@ def trade_page_list(client,mobile = '13412341777',password= '123456',device_id='
         req = create_client_message(QueryTradeReq)
         req.header.user = result.header.user
         req.body.page = 1
-        req.body.page_size = 50
+        req.body.page_size = 5
         req.body.can_buy = False
         req.body.my_sell = False
         client.socket.send(req.encode())
@@ -699,7 +699,7 @@ def trade_buy(client,mobile = '13412341777',password= '123456',device_id='d_9444
         print '3333333333333333333333333333333333'
         req = create_client_message(BuyTradeReq)
         req.header.user = result.header.user
-        req.body.trade_id = 107
+        req.body.trade_id = 174
         client.socket.send(req.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -732,7 +732,7 @@ def trade_sell(client,mobile = '13412341777',password= '123456',device_id='d_944
         print '3333333333333333333333333333333333'
         req = create_client_message(SellGoldReq)
         req.header.user = result.header.user
-        req.body.gold = 1000
+        req.body.gold = 1000000
         req.body.diamond = 10
         client.socket.send(req.encode())
 
@@ -1160,7 +1160,7 @@ def make_friends_apply(client,mobile = '13412341777',password= '123456',device_i
         print '3333333333333333333333333333333333'
         req = create_client_message(MakeFriendReq)
         req.header.user = result.header.user
-        req.body.target = 10019
+        req.body.target = 10023
         req.body.message = 'xxxxxxxxxx111111111111xxxxxxxxxxxxxxxxxxx'
         # gift = req.body.gifts.add()
         # gift.id = 66
@@ -1265,11 +1265,29 @@ def get_rank(client,mobile = '13412341777',password= '123456',device_id='d_9444'
         print result.header.user,'=',result.header.result
         print result.body
 
+# // 排行榜类型
+# enum RankType {
+# 	RANK_WEALTH = 1;
+# 	RANK_CHARGE = 2;
+# 	RANK_CHARM = 3;
+# 	RANK_MAKE_MONEY = 4;
+# }
+#
+# // 排行榜参数
+# enum RankTime{
+# 	RANK_ALL_TIME = 0;
+# 	RANK_YESTERDAY = 1;
+# 	RANK_TODAY = 2;
+# 	RANK_LAST_MONTH = 3;
+# 	RANK_THIS_MONTH = 4;
+# 	RANK_LAST_WEEK = 5;
+# 	RANK_THIS_WEEK = 6;
+# }
         print '3333333333333333333333333333333333'
         req = create_client_message(QueryRankReq)
         req.header.user = result.header.user
-        req.body.rank_type = 1
-        req.body.rank_time = 0
+        req.body.rank_type = 2
+        req.body.rank_time = 2
         client.socket.send(req.encode())
 
 
@@ -1628,10 +1646,10 @@ def test_card(imei,imsi,token,need_idle,*args):
         # get_broke(client, '13488889999','123456', '865372020475361')
         # receive_broke(client, '13488889999','123456', '865372020475361')
         # upgrade_check(client, '13488889999','123456', '865372020475361')
-        # get_rank(client, '13412345678','123456', '000000000000000')
+        # get_rank(client, '13422223333','123456', '867356020226898')
 
         # send_friends_message(client, '15919430507','wang0000', '865372020475361')
-        # make_friends_apply(client, '13412311111','123456', 'device_id_333')
+        # make_friends_apply(client, '15919430507','wang0000', '359901057716157')
         # remove_friends_apply(client, '13412311111','123456', 'device_id_333')
         # receive_friend_message(client, '13412345678','123456','000000000000000')
         # receive_mails(client, '13412345678','123456', '000000000000000')
@@ -1644,16 +1662,16 @@ def test_card(imei,imsi,token,need_idle,*args):
 
         # buy_shop_item(client, '13455556666','123456', '867582021385215')
         # normal_login_game_server_time(client, '13412341777','123456', '88899111121')
-        # trade_page_list(client, '13412345622','123456', '862596034397830')
-        # trade_buy(client, '13412311111','123456', '351702077470363')
-        # trade_sell(client, '15919430507','wang0000', '865372020475361')
+        # trade_page_list(client, '15919430507','wang0000', '359901057716157')
+        # trade_buy(client, '13422223333','123456', '867356020226898')
+        # trade_sell(client, '15919430507','wang0000', '359901057716157')
         # trade_out(client, '13488889999','123456', '865372020475361')
         # query_user_bag(client, '13488889999','123456', '865372020475361')
         # use_user_bag(client, '13412311111','123456', '351702077470363')
         # query_player(client, '13412311111','123456', 'device_id_333')
         # fast_login_game(client,'','865647020556892','imsi_2020', '865647020556892')
         # register_game(client, '13422556628','123456','0','imei_1111','imsi_2222','asdjxxx574515','LT333')
-        # get_hall_query(client,'lxk','123456','359901057716157')
+        # get_hall_query(client,'15919430507','wang0000','359901057716157')
         # bind_mobile(client, '')
         # normal_logout(client, '15919430507','wang0000', '865372020475361')
         # update_user(client, '13412311111','123456', '351702077470363')

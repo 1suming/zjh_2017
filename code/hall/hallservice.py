@@ -269,7 +269,7 @@ class HallService(GameService):
             items = self.rank.make_money_top(session, req.body.rank_time)
 
         for index in range(len(items)):
-            print items[index]
+
             protohelper.set_top(resp.body.players.add(), items[index], index)
         resp.header.result = 0
 
@@ -363,6 +363,7 @@ class HallService(GameService):
         if self.vip.over_friend_max( self.vip.to_level(user_info.vip_exp), my_firend_count ):
             resp.header.result = RESULT_FAILED_FRIEND_MAX
             return
+        
         target_firend_count = self.friend.get_friends_count(session, friend_info.id)
         if self.vip.over_friend_max( self.vip.to_level(friend_info.vip_exp), target_firend_count ):
             resp.header.result = RESULT_FAILED_FRIEND_MAX
@@ -907,9 +908,7 @@ class HallService(GameService):
         user_info = self.da.get_user(req.header.user)
 
 
-
         # 权限验证，vip2及以上等级可在金币交易中出售金币
-        # if VIPObject.check_vip_auth(self.vip.to_level(user_info.vip_exp), sys._getframe().f_code.co_name) == False:
         if self.vip.denied_sell_gold(self.vip.to_level(user_info.vip_exp)):
             resp.header.result = RESULT_FAILED_INVALID_AUTH
             return
@@ -925,6 +924,8 @@ class HallService(GameService):
         trade.gold = req.body.gold
         trade.diamond = req.body.diamond
         trade.sell_time = datetime.now()
+        trade.rate = float(req.body.diamond) / float(req.body.gold) * float(SELL_RATE)
+
         trade.status = 0
         session.add(trade)
 
@@ -933,8 +934,6 @@ class HallService(GameService):
         self.da.save_user(session,user_info)
 
         # 广播，当前用户挂售金币成功
-        # content = BORADCAST_CONF['trade_sell'] % (user_info.nick.decode('utf-8'), trade.gold, trade.diamond)
-        # MessageObject.push_message(self, self.redis.hgetall('online').keys(),5,{'message':content} )
         self.shop.sell_gold_brodacast(user_info, req.body.gold, req.body.diamond)
 
         resp.body.result.gold = user_info.gold
@@ -951,7 +950,7 @@ class HallService(GameService):
 
         trade = self.shop.get_trade(session, req.body.trade_id)
         protohelper.set_result(resp.body.result, gold = user_info.gold, diamond = user_info.diamond,
-                               incr_gold = trade.gold, incr_diamond = trade.diamond)
+                               incr_gold = trade.gold, incr_diamond = 0)
         resp.header.result = 0
 
 
