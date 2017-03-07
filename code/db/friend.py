@@ -31,7 +31,7 @@ class TFriend(TableObject):
         TableObject.__init__(self)
 
     def __repr__(self):
-        return 'id=%d,uid1=%d,uid2=%d,type=%d,create_time=%s' % (self.id,self.uid1,self.uid2,self.type,str(self.create_time))
+        return 'id=%d,apply_uid=%d,to_uid=%d' % (self.id,self.apply_uid,self.to_uid)
 
 mapper_friend = Mapper(TFriend,tab_friend)
 

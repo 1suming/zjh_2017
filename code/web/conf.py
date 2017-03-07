@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Administrator'
 
-class Config(object):
+class WebConfig(object):
     """Base config class."""
     pass
 
-class ProdConfig(Config):
+class ProdConfig(WebConfig):
     """Production config class."""
     pass
 
-class DevConfig(Config):
+class DevConfig(WebConfig):
     """Development config class."""
     # Open the DEBUG
     DEBUG = True

@@ -147,7 +147,7 @@ message QueryChargeResp {
     repeated ChargeItem items = 1;
 }
 
-//快速补币查询接口
+//查询快速补币
 message QueryQuickBuyGoldReq {
     enum DEF {
        ID = 1154;
@@ -163,4 +163,43 @@ message QueryQuickBuyGoldResp{
     required int32 money = 1;
     required int32 gold = 2;
 
+}
+
+//首充数据查询
+message QueryFirstTimeChargeReq{
+	enum DEF {
+            ID = 1156;
+	}
+}
+
+
+message QueryFirstTimeChargeResp{
+	enum DEF {
+	 ID = 1157;
+	}
+	required int32 money = 1;
+	required int32 diamond = 2;
+	required int32 gold = 3;
+	required int32 hore = 4;
+	required int32 kicking_card = 5;
+	required int32 vip_card = 6;
+
+}
+
+message BindMobileReq {
+	enum DEF{
+		ID = 1158;
+	}
+
+	required int32 uid = 1;
+	required string mobile = 2;
+	required string verify_code = 3;
+	required int32 bind_type = 4; //绑定类型：1：新用户绑定（password必传）,  2：绑定新手机号（password不传）, 3：解绑旧手机资格校验（password不传）
+	optional string password= 5;
+}
+
+message BindMobileResp {
+	enum DEF{
+		ID = 1159;
+	}
 }

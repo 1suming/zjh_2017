@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Administrator'
-from config.var import *
+
+import time,json,sys,os
+
 from config.rank import *
 from config.vip import *
 from config.item import *
@@ -8,6 +10,7 @@ from config.reward import *
 from config.sign import *
 from config.broadcast import *
 from config.mail import *
+from config.var import *
 from message.base import *
 from message.resultdef import *
 
@@ -44,7 +47,10 @@ from helper import protohelper
 from helper import datehelper
 from datetime import date,datetime
 from helper import cachehelper
-import time,json,sys
+from helper import encryhelper
+from task.achievementtask import *
+from task.dailytask import *
+
 
 from proto import struct_pb2 as pb2
 from proto.constant_pb2 import *
@@ -81,7 +87,10 @@ class HallObject:
         if sign_log is not None:
             self.is_sign = self.service.sign.today_is_sign(sign_log)
         friend_count = self.service.redis.hlen('message_'+str(user_info.id))
-        self.has_friend_count = friend_count if friend_count > 0 else 0
+        friend_count = friend_count if friend_count > 0 else 0 # 好友消息
+        friend_apply_count = self.service.friend.get_apply_count_for_me(session, user_info.id)
+        friend_apply_count = friend_apply_count if friend_apply_count > 0 else 0 #好友申请
+        self.has_friend_count = friend_count + friend_apply_count # 好友消息+好友申请
         self.has_mail = session.query(TMail).filter(and_(TMail.to_user == user_info.id, TMail.id > max_mail_id)).order_by(desc(TMail.id)).count()
 
 class UserObject:
@@ -94,7 +103,7 @@ class UserObject:
     # 提醒，新用户注册
     def new_user_broadcast(self, user_info):
         content = BORADCAST_CONF['reg'] % user_info.nick
-        MessageObject.push_message(self,self.redis.hkeys('online'),5,{'message':content})
+        MessageObject.push_message(self.service,self.service.redis.hkeys('online'),PUSH_TYPE['new_user_register'],{'message':content,'vip_exp':user_info.vip_exp})
 
 class UserGoldFlower:
     def __init__(self, service):
@@ -215,6 +224,9 @@ class FriendObject:
     def get_friend_apply(self, session, apply_id):
         return session.query(TFriendApply).filter(and_(TFriendApply.id == apply_id)).first()
 
+    def get_apply_count_for_me(self, session, user):
+        return session.query(TFriendApply).filter(and_(TFriendApply.to_uid == user, TFriendApply.state == 1)).count()
+
     def load_friend_message(self, user):
         self.friend_message = self.service.redis.hgetall('message_'+str(user))
 
@@ -229,17 +241,15 @@ class FriendObject:
         # 玩家xxx同意/拒绝了你的好友申请！
         # 你同意/拒绝了玩家xxx的好友申请！
         if accept:
-            print 'yes , friend apply'
             content = MAIL_CONF['friend_make_apply_source'] % (user_info_source.nick)
-            MessageObject.send_mail(session, user_info_source, 0 ,title=u'好友申请提醒',content =content,type=0)
+            MessageObject.send_mail(session, user_info_target, 0 ,title=u'好友申请提醒',content =content,type=0)
             content = MAIL_CONF['friend_make_apply_target'] % (user_info_target.nick)
-            MessageObject.send_mail(session, user_info_target, 0 ,title=u'好友申请提醒',content =content,type=0)
-        else:
-            print 'no, firend no'
-            content = MAIL_CONF['friend_make_no_apply_source'] % (user_info_source.nick)
             MessageObject.send_mail(session, user_info_source, 0 ,title=u'好友申请提醒',content =content,type=0)
-            content = MAIL_CONF['friend_make_no_apply_target'] % (user_info_target.nick)
+        else:
+            content = MAIL_CONF['friend_make_no_apply_source'] % (user_info_source.nick)
             MessageObject.send_mail(session, user_info_target, 0 ,title=u'好友申请提醒',content =content,type=0)
+            content = MAIL_CONF['friend_make_no_apply_target'] % (user_info_target.nick)
+            MessageObject.send_mail(session, user_info_source, 0 ,title=u'好友申请提醒',content =content,type=0)
 
     def send_mail_remove_friend(self, session, user_info_source, user_info_target):
         # 你删除了与玩家xxx的好友关系！
@@ -345,14 +355,14 @@ class SignObject:
         return incr_gold
 
     # vip签到奖励
-    def sign_reward_vip(self, session, user_info, index):
+    def sign_reward_vip(self, session, user_info, index, sign_gold):
         if index == 0:
             return
         incr_gold = 0
-        # 普通签到加钱
-        incr_gold = self.sign_reward(session, user_info, index)
         # vip额外加钱
-        incr_gold = incr_gold + VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]['sign_reward'] * user_info.gold
+        incr_gold = VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]['sign_reward'] * sign_gold
+        print '------------->2.5',VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]['sign_reward']
+        print '--------------->2.6',VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]['sign_reward'] * sign_gold
         user_info.gold = user_info.gold +incr_gold
         self.service.da.save_user(session,user_info)
         return incr_gold
@@ -428,7 +438,21 @@ class ShopObject:
             content = MAIL_CONF['trade_buy_item'] % (datehelper.get_today_str(),self.shop_item.diamond, item.name)
             MessageObject.send_mail(session, user_info, 0, title=u'购买道具', content=content, type=0)
 
+    def get_lists(self, session,page,page_size,user_info, can_buy,my_sell):
+        query = session.query(TTrade).join(TUser, TUser.id == TTrade.seller).filter(TTrade.status == 0)
 
+        if can_buy:
+            query = query.filter(and_(TTrade.diamond <= user_info.diamond, TTrade.seller != user_info.id))
+        if my_sell:
+            query = query.filter(TTrade.seller == user_info.id)
+
+        data_count = query.count()
+        items = query.order_by(desc(TTrade.id)).offset((int(page) - 1) * page_size).limit(page_size)
+        return data_count, items
+
+    def sell_gold_brodacast(self, user_info, gold, diamond):
+        # content = BORADCAST_CONF['trade_sell'] % (user_info.nick.decode('utf-8'), trade.gold, trade.diamond)
+        MessageObject.push_message(self.service, self.service.redis.hgetall('online').keys(),PUSH_TYPE['sys_broadcast'],{'nick':user_info.nick,'vip_exp':user_info.vip_exp,'gold':gold,'diamond':diamond} )
 
     def get_shop_item(self, session ,shop_item_id):
         return session.query(TShopItem).filter(TShopItem.id == shop_item_id).first()
@@ -462,20 +486,28 @@ class RankObject:
     @staticmethod
     def gold_top_online_broadcast(service, session, user):
         user_info = session.query(TUser).filter(TUser.id == user).first()
-        gold_top = session.query(TRankGoldTop).filter(TRankGoldTop.uid == user).first()
-        if gold_top is None:
-            return
-        items = session.query(TRankGoldTop,TUser).filter(TRankGoldTop.uid == TUser.id).order_by(desc(TUser.gold))\
-            .limit(RANK_CHARGE_TOP).all()
-        rank = 0
-        for index in range(len(items)):
-            if items[index][1].id == user_info.id:
-                rank = index
+
+        rank = -1
+        user_infos = session.query(TUser.id).order_by(desc(TUser.gold)).limit(15).all()
+        print user_infos
+        for index,rank_user in enumerate(user_infos):
+
+            if rank_user[0] == user_info.id:
+                rank = index+1
                 break
-        if rank == 0:
+
+        if rank == -1:
             return
-        content = BORADCAST_CONF['gold_top_online'] % (rank, user_info.nick)
-        MessageObject.push_message(service, service.redis.hkeys('online'),5,{'message':content})
+        count = RANK_WEALTH_TOP
+        # todo...待确定
+        # content = BORADCAST_CONF['gold_top_online'] % (rank, user_info.nick)
+        MessageObject.push_message(service, service.redis.hkeys('online'),PUSH_TYPE['rank_top'],{
+            'nick':user_info.nick,
+            'vip_exp':user_info.vip_exp,
+            'index':rank,
+            'count':count,
+            'top_type':1
+        })
 
 
     # 日充值榜单，调用函数
@@ -490,10 +522,6 @@ class RankObject:
             2: self.charge_top,
             4: self.make_money_top,
         }
-
-    def get_lists(self, session, rank_type, rank_time = None):
-        func = self.rank_type_map[rank_type]
-        return func(session, rank_time)
 
     def wealth_top(self, session, rank_time):
         top = []
@@ -757,7 +785,23 @@ class RewardObject:
                 return REWARD_PLAY_ROUND[index]
         return None
 
+class TradeObject:
 
+    def __init__(self, service):
+        self.service = service
+
+class Profile:
+    def __init__(self, service):
+        self.service = service
+
+    def bind_mobile(self, session, uid, mobile, password = None):
+        new_data = {
+            TAccount.mobile : mobile
+        }
+        if password is not None:
+            new_data['password'] = encryhelper.md5_str(password+PASS_ENCRY_STR)
+
+        return session.query(TAccount).filter(TAccount.id == uid).update(new_data)
 
 
 # =============================>
@@ -808,6 +852,7 @@ class BankObject:
 class MessageObject:
     def __init__(self,dataaccess):
         self.da = dataaccess
+
     def get_friend_message(self,event,user):
         message = event.body.ParseFromString(self.da.redis.hget('message_queue',user))
         if message != None:
@@ -837,7 +882,6 @@ class MessageObject:
     def push_message(service,users,p1,p2,notifi_type = N_BROADCAST):
         item = {'users':users,'param1':p1,'param2':p2,'notifi_type':notifi_type}
         service.redis.lpush('notification_queue', json.dumps(item))
-        print '--------------------------------------------------------------------------->'
 
 
 class BagObject:
@@ -864,7 +908,7 @@ class BagObject:
         return False
 
     def send_horn_item(self, users,user_info, content):
-        MessageObject.push_message(self.service, users, 7, {'message':content,'nick_id':user_info.id,'nick':user_info.nick,'vip':self.service.vip.to_level(user_info.vip_exp)})
+        MessageObject.push_message(self.service, users, PUSH_TYPE['world_horn'], {'message':content,'nick_id':user_info.id,'nick':user_info.nick,'vip_exp':self.service.vip.to_level(user_info.vip_exp)})
 
     def save_user_gift(self, user,gift_id,countof):
         self.save_countof({'table_name':'bag_gift','stuff_id':gift_id,'uid':user,'countof':countof,'stuff_field':'gift_id'})
@@ -1033,7 +1077,7 @@ class BrokeObject:
             user.modify_gold(session, good)
             service.redis.set(key, total)
             t = time.time()
-            service.redis.expireat(key, datehelper.next_midnight_unix(delay_sec = 5) )
+            service.redis.expireat(key, int(datehelper.next_midnight_unix(delay_sec = 5)) )
             remain = int(service.redis.decr(key))
             return 0,good
 
@@ -1043,6 +1087,14 @@ class VIPObject:
     def __init__(self, service):
         self.service = service
         self.vip = VIP_CONF
+
+
+
+    # vip用户升级，需要广播
+    def level_up_broadcast(self, nick, vip_level):
+        content = BORADCAST_CONF['vip_up'] % (nick, vip_level)
+        MessageObject.push_message(self.service,self.service.redis.hkeys('online'),PUSH_TYPE['vip_upgrade'],{'nick':nick, 'vip_exp':vip_level})
+
 
     def denied_buy_gold(self, vip):
 

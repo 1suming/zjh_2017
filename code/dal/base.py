@@ -16,11 +16,12 @@ class DalObject(object):
         if v == None:
             return None
         python_type = self.meta_table.columns[k].type.python_type
-        print '--------------->',python_type,k,v
         if python_type == datetime:
             return datetime.strptime(v,"%Y-%m-%d %H:%M:%S")
         elif python_type == date:
             return datetime.strptime(v,"%Y-%m-%d").date()
+        elif python_type == float:
+            return  int(v)
         return python_type(v)
 
     def __setattr__(self, key, value):

@@ -65,7 +65,7 @@ class GoldFlowerService(GameService):
         table = None
         self.table_manager.lock.acquire()
         try :
-            result,table = self.table_manager.sit_table(req.body.table_id > 0, \
+            result,table = self.table_manager.sit_table(req.body.table_id, \
                     req.header.user,event.srcId, req.body.not_tables, req.body.table_type)
             if result < 0:
                 resp.header.result = result

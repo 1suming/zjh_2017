@@ -82,6 +82,8 @@ PRM_MAX_DEVICE_ID = 15
 PRM_MAX_PASSWORD_LEN = 15
 PRM_MIN_PASSWORD_LEN = 6
 
+SYS_MAX_SIGN_DAY = 7
+
 STATE_IS_SHOW = 0
 STATE_NO_ACCEPT_REWARD = 1
 STATE_ACCEPT_REWARD = 0
@@ -89,7 +91,7 @@ STATE_NEED_POPUP = 0
 STATE_DISABLED = -1
 STATE_ENABLE = 0
 
-UPGRADE_URL = 'http://192.168.2.75/upgrade/'
+UPGRADE_URL = 'http://121.201.29.89:18000/static/upgrade/'
 PAY_RESULT_URL = 'http://121.201.29.89:18000/pay_result'
 CP_KEY = 'bde25760c1556899efc0dff13bf41b4e' # bde25760c1556899efc0dff13bf41b4e
 
@@ -97,10 +99,11 @@ TAX_NUM = 0.05 # 金币交易，税率
 
 
 QUICK_CHARGE = [
-    (500, 15, u'新手场'),
-    (3000, 90, u'普通场'),
-    (15000, 450, u'高级场'),
-    (60000, 1800, u'大师场'),
+    # 分，万，商品名称
+    (500, 15, u'新手场',1),
+    (3000, 90, u'普通场',1),
+    (15000, 450, u'高级场',1),
+    (60000, 1800, u'大师场',1),
 ]
 NO_KICK_LEVEL = 6   # 被踢的人在vip6及以上等级有免踢权限
 BUY_GOLD_LEVEL = 1  # vip1及以上才可以购买金币
@@ -109,7 +112,37 @@ SELL_GOLD_LEVEL = 3 # vip3及以上等级可在金币交易中出售金币
 # 系统提醒时间
 NOTI_TIME = 300
 NOTI_TIME_2 = 180
-# 新手场   5元       15万金币
-# 普通场   30元     90万金币
-# 高级场  150元   450万金币
-# 大师场  600元  1800万金币
+	# optional int32 id = 1;
+	# required int32 money = 2;
+	# required int32 diamond = 3;
+	# required int32 gold = 4;
+	# required int32 hore = 5;
+	# required int32 kicking_card = 6;
+	# required int32 vip_card = 7;
+PASS_ENCRY_STR = 'cqkj2017'
+
+# 首冲
+FRIST_CHARGE = {
+    'title':u'首充',
+    'money' : 6100,
+    'real_money':1,
+    'diamond' : 10,
+    'gold' : 30, # 单位w
+    'hore' : 10,
+    'kicking_card':10,
+    'vip_card' :1,
+}
+
+# 系统推送消息类型
+PUSH_TYPE ={
+    'new_user_register':1,
+    'vip_upgrade':2,
+    'table_winner':3,
+    'send_gift':4,
+    'sys_broadcast':5,
+    'gold_trade':6,
+    'world_horn':7,
+    'luck_poker':8,
+    'rank_top':9,
+    'charge_success':10,
+}

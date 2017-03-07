@@ -17,9 +17,8 @@ from sqlalchemy.types import  *
 from sqlalchemy.ext.declarative import declarative_base
 
 tab_reward_user_log = Table("reward_user_log", metadata,
-                 Column("id", Integer, primary_key=True),
-                 Column("uid", Integer),
-                 Column("task_id",Integer),
+                 Column("uid", Integer, primary_key=True),
+                 Column("task_id",Integer, primary_key=True),
                  Column("state",Integer),
                  Column("finish_date",Date),
                  Column("create_time",DateTime),
@@ -31,8 +30,8 @@ class TRewardUserLog(TableObject):
     def __init__(self):
         TableObject.__init__(self)
     def __repr__(self):
-        return 'id=%d,uid=%d,task_id=%d,state=%d' % \
-               (self.id,self.uid,self.task_id,self.state)
+        return 'uid=%d,task_id=%d,state=%d' % \
+               (self.uid,self.task_id,self.state)
 
 mapper_reward_user_log = Mapper(TRewardUserLog,tab_reward_user_log)
 

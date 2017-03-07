@@ -43,6 +43,7 @@ message QueryTradeReq {
 	required int32 page = 1;
 	required int32 page_size = 2;
 	required bool can_buy = 3;
+	required bool my_sell = 4;
 }
 
 message QueryTradeResp {

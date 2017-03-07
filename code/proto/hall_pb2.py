@@ -20,7 +20,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hall.proto',
   package='cardgame',
-  serialized_pb=_b('\n\nhall.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"P\n\x0cQueryHallReq\x12\x13\n\x0bmax_mail_id\x18\x01 \x02(\x05\x12\x1b\n\x13max_announcement_id\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8\x07\"\xc8\x01\n\rQueryHallResp\x12$\n\x05\x62rief\x18\x01 \x01(\x0b\x32\x15.cardgame.PlayerBrief\x12,\n\x0cnotification\x18\x02 \x01(\x0b\x32\x16.cardgame.Notification\x12-\n\rannouncements\x18\x03 \x03(\x0b\x32\x16.cardgame.Announcement\x12\x11\n\tis_signin\x18\x04 \x01(\x08\x12\x11\n\tis_charge\x18\x05 \x01(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9\x07\"+\n\x0cQueryUserReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xea\x07\"A\n\rQueryUserResp\x12 \n\x06player\x18\x01 \x01(\x0b\x32\x10.cardgame.Player\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xeb\x07\"\x8c\x01\n\rUpdateUserReq\x12\x10\n\x08\x62irthday\x18\x01 \x01(\t\x12\x0c\n\x04sign\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontact\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0c\n\x04nick\x18\x05 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x06 \x01(\t\x12\x0b\n\x03sex\x18\x07 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xec\x07\"B\n\x0eUpdateUserResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xed\x07\"\'\n\x15QueryAnnouncementsReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xee\x07\"W\n\x16QueryAnnouncementsResp\x12-\n\rannouncements\x18\x01 \x03(\x0b\x32\x16.cardgame.Announcement\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xef\x07\"L\n\x0bSendGiftReq\x12\x0f\n\x07gift_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\x12\r\n\x05other\x18\x03 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf0\x07\"@\n\x0cSendGiftResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf1\x07\"m\n\x11NotificationEvent\x12(\n\x04type\x18\x01 \x02(\x0e\x32\x1a.cardgame.NotificationType\x12\x0e\n\x06param1\x18\x02 \x01(\x05\x12\x0e\n\x06param2\x18\x03 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xcc\x08\"?\n\x0b\x46\x65\x65\x64\x42\x61\x63kReq\x12\x0f\n\x07message\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontact\x18\x02 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe0\x08\"\x1e\n\x0c\x46\x65\x65\x64\x42\x61\x63kResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe1\x08\"B\n\x0e\x43reateOrderReq\x12\x0f\n\x07shop_id\x18\x01 \x02(\x05\x12\x0f\n\x07\x63omment\x18\x02 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xfe\x08\"b\n\x0f\x43reateOrderResp\x12\x10\n\x08order_sn\x18\x01 \x02(\t\x12\r\n\x05money\x18\x02 \x02(\x05\x12\x10\n\x08\x63\x61llback\x18\x03 \x02(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xff\x08\" \n\x0eQueryChargeReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x80\t\"F\n\x0fQueryChargeResp\x12#\n\x05items\x18\x01 \x03(\x0b\x32\x14.cardgame.ChargeItem\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x81\t\":\n\x14QueryQuickBuyGoldReq\x12\x12\n\ntable_type\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x82\t\"D\n\x15QueryQuickBuyGoldResp\x12\r\n\x05money\x18\x01 \x02(\x05\x12\x0c\n\x04gold\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x83\tB\"\n\x18\x63om.zhili.cardgame.protoB\x04HallH\x03')
+  serialized_pb=_b('\n\nhall.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"P\n\x0cQueryHallReq\x12\x13\n\x0bmax_mail_id\x18\x01 \x02(\x05\x12\x1b\n\x13max_announcement_id\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8\x07\"\xc8\x01\n\rQueryHallResp\x12$\n\x05\x62rief\x18\x01 \x01(\x0b\x32\x15.cardgame.PlayerBrief\x12,\n\x0cnotification\x18\x02 \x01(\x0b\x32\x16.cardgame.Notification\x12-\n\rannouncements\x18\x03 \x03(\x0b\x32\x16.cardgame.Announcement\x12\x11\n\tis_signin\x18\x04 \x01(\x08\x12\x11\n\tis_charge\x18\x05 \x01(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9\x07\"+\n\x0cQueryUserReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xea\x07\"A\n\rQueryUserResp\x12 \n\x06player\x18\x01 \x01(\x0b\x32\x10.cardgame.Player\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xeb\x07\"\x8c\x01\n\rUpdateUserReq\x12\x10\n\x08\x62irthday\x18\x01 \x01(\t\x12\x0c\n\x04sign\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontact\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0c\n\x04nick\x18\x05 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x06 \x01(\t\x12\x0b\n\x03sex\x18\x07 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xec\x07\"B\n\x0eUpdateUserResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xed\x07\"\'\n\x15QueryAnnouncementsReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xee\x07\"W\n\x16QueryAnnouncementsResp\x12-\n\rannouncements\x18\x01 \x03(\x0b\x32\x16.cardgame.Announcement\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xef\x07\"L\n\x0bSendGiftReq\x12\x0f\n\x07gift_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\x12\r\n\x05other\x18\x03 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf0\x07\"@\n\x0cSendGiftResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf1\x07\"m\n\x11NotificationEvent\x12(\n\x04type\x18\x01 \x02(\x0e\x32\x1a.cardgame.NotificationType\x12\x0e\n\x06param1\x18\x02 \x01(\x05\x12\x0e\n\x06param2\x18\x03 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xcc\x08\"?\n\x0b\x46\x65\x65\x64\x42\x61\x63kReq\x12\x0f\n\x07message\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontact\x18\x02 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe0\x08\"\x1e\n\x0c\x46\x65\x65\x64\x42\x61\x63kResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe1\x08\"B\n\x0e\x43reateOrderReq\x12\x0f\n\x07shop_id\x18\x01 \x02(\x05\x12\x0f\n\x07\x63omment\x18\x02 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xfe\x08\"b\n\x0f\x43reateOrderResp\x12\x10\n\x08order_sn\x18\x01 \x02(\t\x12\r\n\x05money\x18\x02 \x02(\x05\x12\x10\n\x08\x63\x61llback\x18\x03 \x02(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xff\x08\" \n\x0eQueryChargeReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x80\t\"F\n\x0fQueryChargeResp\x12#\n\x05items\x18\x01 \x03(\x0b\x32\x14.cardgame.ChargeItem\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x81\t\":\n\x14QueryQuickBuyGoldReq\x12\x12\n\ntable_type\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x82\t\"D\n\x15QueryQuickBuyGoldResp\x12\r\n\x05money\x18\x01 \x02(\x05\x12\x0c\n\x04gold\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x83\t\")\n\x17QueryFirstTimeChargeReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x84\t\"\x8e\x01\n\x18QueryFirstTimeChargeResp\x12\r\n\x05money\x18\x01 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x02 \x02(\x05\x12\x0c\n\x04gold\x18\x03 \x02(\x05\x12\x0c\n\x04hore\x18\x04 \x02(\x05\x12\x14\n\x0ckicking_card\x18\x05 \x02(\x05\x12\x10\n\x08vip_card\x18\x06 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x85\t\"v\n\rBindMobileReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0e\n\x06mobile\x18\x02 \x02(\t\x12\x13\n\x0bverify_code\x18\x03 \x02(\t\x12\x11\n\tbind_type\x18\x04 \x02(\x05\x12\x10\n\x08password\x18\x05 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x86\t\" \n\x0e\x42indMobileResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x87\tB\"\n\x18\x63om.zhili.cardgame.protoB\x04HallH\x03')
   ,
   dependencies=[constant_pb2.DESCRIPTOR,struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -368,6 +368,78 @@ _QUERYQUICKBUYGOLDRESP_DEF = _descriptor.EnumDescriptor(
   serialized_end=1546,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYQUICKBUYGOLDRESP_DEF)
+
+_QUERYFIRSTTIMECHARGEREQ_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.QueryFirstTimeChargeReq.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1156,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1575,
+  serialized_end=1589,
+)
+_sym_db.RegisterEnumDescriptor(_QUERYFIRSTTIMECHARGEREQ_DEF)
+
+_QUERYFIRSTTIMECHARGERESP_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.QueryFirstTimeChargeResp.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1157,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1720,
+  serialized_end=1734,
+)
+_sym_db.RegisterEnumDescriptor(_QUERYFIRSTTIMECHARGERESP_DEF)
+
+_BINDMOBILEREQ_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.BindMobileReq.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1158,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1840,
+  serialized_end=1854,
+)
+_sym_db.RegisterEnumDescriptor(_BINDMOBILEREQ_DEF)
+
+_BINDMOBILERESP_DEF = _descriptor.EnumDescriptor(
+  name='DEF',
+  full_name='cardgame.BindMobileResp.DEF',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='ID', index=0, number=1159,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1874,
+  serialized_end=1888,
+)
+_sym_db.RegisterEnumDescriptor(_BINDMOBILERESP_DEF)
 
 
 _QUERYHALLREQ = _descriptor.Descriptor(
@@ -1084,6 +1156,179 @@ _QUERYQUICKBUYGOLDRESP = _descriptor.Descriptor(
   serialized_end=1546,
 )
 
+
+_QUERYFIRSTTIMECHARGEREQ = _descriptor.Descriptor(
+  name='QueryFirstTimeChargeReq',
+  full_name='cardgame.QueryFirstTimeChargeReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _QUERYFIRSTTIMECHARGEREQ_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1548,
+  serialized_end=1589,
+)
+
+
+_QUERYFIRSTTIMECHARGERESP = _descriptor.Descriptor(
+  name='QueryFirstTimeChargeResp',
+  full_name='cardgame.QueryFirstTimeChargeResp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='money', full_name='cardgame.QueryFirstTimeChargeResp.money', index=0,
+      number=1, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='diamond', full_name='cardgame.QueryFirstTimeChargeResp.diamond', index=1,
+      number=2, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='gold', full_name='cardgame.QueryFirstTimeChargeResp.gold', index=2,
+      number=3, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='hore', full_name='cardgame.QueryFirstTimeChargeResp.hore', index=3,
+      number=4, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='kicking_card', full_name='cardgame.QueryFirstTimeChargeResp.kicking_card', index=4,
+      number=5, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='vip_card', full_name='cardgame.QueryFirstTimeChargeResp.vip_card', index=5,
+      number=6, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _QUERYFIRSTTIMECHARGERESP_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1592,
+  serialized_end=1734,
+)
+
+
+_BINDMOBILEREQ = _descriptor.Descriptor(
+  name='BindMobileReq',
+  full_name='cardgame.BindMobileReq',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='uid', full_name='cardgame.BindMobileReq.uid', index=0,
+      number=1, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='mobile', full_name='cardgame.BindMobileReq.mobile', index=1,
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='verify_code', full_name='cardgame.BindMobileReq.verify_code', index=2,
+      number=3, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='bind_type', full_name='cardgame.BindMobileReq.bind_type', index=3,
+      number=4, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='password', full_name='cardgame.BindMobileReq.password', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _BINDMOBILEREQ_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1736,
+  serialized_end=1854,
+)
+
+
+_BINDMOBILERESP = _descriptor.Descriptor(
+  name='BindMobileResp',
+  full_name='cardgame.BindMobileResp',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _BINDMOBILERESP_DEF,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1856,
+  serialized_end=1888,
+)
+
 _QUERYHALLREQ_DEF.containing_type = _QUERYHALLREQ
 _QUERYHALLRESP.fields_by_name['brief'].message_type = struct_pb2._PLAYERBRIEF
 _QUERYHALLRESP.fields_by_name['notification'].message_type = struct_pb2._NOTIFICATION
@@ -1112,6 +1357,10 @@ _QUERYCHARGERESP.fields_by_name['items'].message_type = struct_pb2._CHARGEITEM
 _QUERYCHARGERESP_DEF.containing_type = _QUERYCHARGERESP
 _QUERYQUICKBUYGOLDREQ_DEF.containing_type = _QUERYQUICKBUYGOLDREQ
 _QUERYQUICKBUYGOLDRESP_DEF.containing_type = _QUERYQUICKBUYGOLDRESP
+_QUERYFIRSTTIMECHARGEREQ_DEF.containing_type = _QUERYFIRSTTIMECHARGEREQ
+_QUERYFIRSTTIMECHARGERESP_DEF.containing_type = _QUERYFIRSTTIMECHARGERESP
+_BINDMOBILEREQ_DEF.containing_type = _BINDMOBILEREQ
+_BINDMOBILERESP_DEF.containing_type = _BINDMOBILERESP
 DESCRIPTOR.message_types_by_name['QueryHallReq'] = _QUERYHALLREQ
 DESCRIPTOR.message_types_by_name['QueryHallResp'] = _QUERYHALLRESP
 DESCRIPTOR.message_types_by_name['QueryUserReq'] = _QUERYUSERREQ
@@ -1131,6 +1380,10 @@ DESCRIPTOR.message_types_by_name['QueryChargeReq'] = _QUERYCHARGEREQ
 DESCRIPTOR.message_types_by_name['QueryChargeResp'] = _QUERYCHARGERESP
 DESCRIPTOR.message_types_by_name['QueryQuickBuyGoldReq'] = _QUERYQUICKBUYGOLDREQ
 DESCRIPTOR.message_types_by_name['QueryQuickBuyGoldResp'] = _QUERYQUICKBUYGOLDRESP
+DESCRIPTOR.message_types_by_name['QueryFirstTimeChargeReq'] = _QUERYFIRSTTIMECHARGEREQ
+DESCRIPTOR.message_types_by_name['QueryFirstTimeChargeResp'] = _QUERYFIRSTTIMECHARGERESP
+DESCRIPTOR.message_types_by_name['BindMobileReq'] = _BINDMOBILEREQ
+DESCRIPTOR.message_types_by_name['BindMobileResp'] = _BINDMOBILERESP
 
 QueryHallReq = _reflection.GeneratedProtocolMessageType('QueryHallReq', (_message.Message,), dict(
   DESCRIPTOR = _QUERYHALLREQ,
@@ -1264,6 +1517,34 @@ QueryQuickBuyGoldResp = _reflection.GeneratedProtocolMessageType('QueryQuickBuyG
   # @@protoc_insertion_point(class_scope:cardgame.QueryQuickBuyGoldResp)
   ))
 _sym_db.RegisterMessage(QueryQuickBuyGoldResp)
+
+QueryFirstTimeChargeReq = _reflection.GeneratedProtocolMessageType('QueryFirstTimeChargeReq', (_message.Message,), dict(
+  DESCRIPTOR = _QUERYFIRSTTIMECHARGEREQ,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.QueryFirstTimeChargeReq)
+  ))
+_sym_db.RegisterMessage(QueryFirstTimeChargeReq)
+
+QueryFirstTimeChargeResp = _reflection.GeneratedProtocolMessageType('QueryFirstTimeChargeResp', (_message.Message,), dict(
+  DESCRIPTOR = _QUERYFIRSTTIMECHARGERESP,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.QueryFirstTimeChargeResp)
+  ))
+_sym_db.RegisterMessage(QueryFirstTimeChargeResp)
+
+BindMobileReq = _reflection.GeneratedProtocolMessageType('BindMobileReq', (_message.Message,), dict(
+  DESCRIPTOR = _BINDMOBILEREQ,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.BindMobileReq)
+  ))
+_sym_db.RegisterMessage(BindMobileReq)
+
+BindMobileResp = _reflection.GeneratedProtocolMessageType('BindMobileResp', (_message.Message,), dict(
+  DESCRIPTOR = _BINDMOBILERESP,
+  __module__ = 'hall_pb2'
+  # @@protoc_insertion_point(class_scope:cardgame.BindMobileResp)
+  ))
+_sym_db.RegisterMessage(BindMobileResp)
 
 
 DESCRIPTOR.has_options = True

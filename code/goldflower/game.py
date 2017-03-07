@@ -28,8 +28,11 @@ from util.commonutil import *
 from gameconf import *
 from eventsender import *
 
-from helper import dbhelper
+from task.dailytask import *
+from task.achievementtask import *
 
+from helper import dbhelper
+from config import broadcast
             
 class Chip:
     def __init__(self,uid,gold):
@@ -243,6 +246,9 @@ class Gambler:
         self.game.total_gold += gold
         session = get_context("session",None)
         self.player.modify_gold(session,-gold)
+        
+        DailyTaskManager(self.game.table.redis).bet_gold(self.uid,gold)
+        
         return 0
 
     def has_gold(self,gold):
@@ -482,6 +488,8 @@ class GoldFlower:
         self.table.restart_game()
 
     def save_result(self,session,winner,win_gold,fee_gold):
+    	# the winner will be next game dealer
+    	self.table.dealer = winner.uid
 
         row_game = TGoldFlower()
         row_game.type = self.table.table_type
@@ -502,7 +510,7 @@ class GoldFlower:
             row_gambler.bet_gold = gambler.bet_gold
 
             row_gambler.is_winner = 1 if row_gambler.uid == winner.uid else 0
-            row_gambler.win_gold = win_gold if row_gambler.is_winner == 1 else -gambler.bet_gold
+            row_gambler.win_gold = (win_gold - gambler.bet_gold) if gambler.uid == winner.uid else -gambler.bet_gold
             row_gambler.fee_gold = fee_gold if row_gambler.is_winner == 1 else 0
 
             row_gambler.create_time = datetime.now()
@@ -521,20 +529,39 @@ class GoldFlower:
             user_gf.total_games += 1
             if user_gf.id == winner.uid :
                 user_gf.win_games += 1
+                
+            if self.table.table_type == TABLE_L:
+                user_gf.exp += 2 if user_gf.uid == winner.uid else 1
+            elif self.table.table_type == TABLE_M:
+                user_gf.exp += 4 if user_gf.uid == winner.uid else 2
+            elif self.table.table_type == TABLE_H:
+                user_gf.exp += 8 if user_gf.uid == winner.uid else 4
+            else:
+                user_gf.exp += 16 if user_gf.uid == winner.uid else 8
+            
+            achievement = GameAchievement(session,user_gf.id)
+            achievement.finish_game(user_gf,row_gambler.win_gold)   
+            if gambler.pokers.is_baozi():
+                achievement.finish_baozi_pokers()
+            if gambler.pokers.is_352() and gambler.uid == winner.uid:
+                achievement.finish_235_win_baozi()
 
         dbhelper.recycle_gold(session,game_id=row_game.id,gold=fee_gold)
-
         winner.player.modify_gold(session,win_gold)
+
+        DailyTaskManager(self.table.redis).finish_game(winner,[gambler.uid for gambler in self.gamblers.values()])
+        broadcast.send_win_game(winner.uid,winner.nick,win_gold - winner.bet_gold)
+        broadcast.send_good_pokers(winner.uid,winner.nick,winner.pokers)
 
     def bet(self,uid,action,gold,other):
         if action == GIVE_UP:
-            self.bet_giveup(uid)
+            result = self.bet_giveup(uid)
             if self.round.current_gambler.uid == uid:
                 self.round.finish_turn(uid)
             else:  
                 self.check_result()
 
-            return 0
+            return result
             
         if self.round.current_gambler.uid != uid or self.round.current_gambler.is_fail:
             return RESULT_FAILED_INVALID_TURN
@@ -618,7 +645,8 @@ class GoldFlower:
         gambler = self.gamblers.get(uid)
         if gambler == None:
             raise Exception("it should not happen")
- 	if gambler.is_fail:
+
+        if gambler.is_fail:
             return RESULT_FAILED_INVALID_GAMBLER
 
         not_fails = [x  for x in self.gamblers.values() if not x.is_fail]
@@ -666,6 +694,9 @@ class GoldFlower:
 
         current_gambler.is_show_hand = True
         self.round.is_show_hand = True
+        
+        DailyTaskManager(self.table.redis).bet_show_hand(uid)
+        
         self.sender.send_show_hand(current_gambler,uid,my_gold)
         return 0
 
@@ -709,8 +740,16 @@ class GoldFlower:
 
     def start_game(self):
         self.sender.send_game_ready(WAIT_SECONDS)
-        gevent.sleep(WAIT_SECONDS)
-
+        
+        for i in xrange(WAIT_SECONDS):
+            self.table.lock.acquire()
+            try :
+                if len(self.gamblers) >= 3:
+                    break
+            finally:
+                self.table.lock.release()
+            gevent.sleep(1)
+        
         self.table.lock.acquire()
         try :
             if len(self.gamblers) < 2:
@@ -718,7 +757,11 @@ class GoldFlower:
                 self.process_started = False
                 return
             self.start_time = int(time.time())
-            self.dealer = random.choice(self.gamblers.values())
+            if self.table.dealer > 0 and self.table.dealer in self.gamblers:
+            	self.dealer = self.gamblers[self.table.dealer]
+            else:
+            	self.dealer = random.choice(self.gamblers.values())
+            		
             self.dealer.is_dealer = True
             self.deal()
             self.round.start_game()

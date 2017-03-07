@@ -4,7 +4,7 @@ __author__ = 'Administrator'
 # import Flask Script object
 from flask_script import Manager, Server
 import sys,os
-sys.path.append(os.path.dirname(__file__) + os.sep + '..//')
+sys.path.append(os.path.dirname(__file__) + os.sep + '..'+ os.sep)
 import main
 
 

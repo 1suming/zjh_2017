@@ -69,6 +69,9 @@ class Player:
         pb_brief.seat = self.seat
         pb_brief.nick = self.user.nick
         pb_brief.vip = self.user.vip
+        if self.user.sex:
+        	pb_brief.sex = self.user.sex
+       
         return pb_brief
 
 
@@ -79,6 +82,8 @@ class Table:
         self.table_type = type
         self.manager = manager
         self.players = {}
+        self.dealer = -1
+        
         self.restart_game()
         self.redis = manager.redis
         self.table_key = "table_" + str(manager.service.serviceId) + "_" + str(table_id)
@@ -120,6 +125,9 @@ class Table:
 
 
     def remove_player(self,uid, is_kicked = False):
+    	if uid == self.dealer:
+    		self.dealer = -1
+    	
         player = self.get_player(uid)
         if player == None:
             return False
@@ -163,7 +171,7 @@ class Table:
         
     
     def restart_game(self):
-        self.game = None
+        #self.game = None
         config = TABLE_GAME_CONFIG[self.table_type]
 
         for player in self.players.values():
@@ -201,12 +209,13 @@ class Table:
         if pb_table == None:
             pb_table = pb2.Table()
 
-        self.game.get_proto_struct(pb_table)
+        pb_table.table_type = self.table_type
 
         for player in self.players.values():
             player.get_brief_proto_struct(pb_table.players.add())
 
-        pb_table.table_type = self.table_type
+        if self.game != None:
+            self.game.get_proto_struct(pb_table)
         return pb_table    
 
 class TableManager:
@@ -250,40 +259,44 @@ class TableManager:
                 return table    
         return None
 
+    def get_players_by_access_services(self,access_services):
+        players = []
+        for table in self.tables.values():
+            for player in table.players.values():
+                if player.access_service in access_services:
+                    players.append(player)
+        return players
 
-    def sit_table(self,change_table,uid,access_service,not_table_ids,table_type):
+    def check_table_type(self,table_type,gold):
+        config = TABLE_GAME_CONFIG[table_type]
+        if config[0] >= 0 and gold < config[0]:
+            return RESULT_FAILED_LESS_GOLD
+        if config[1] >= 0 and gold > config[1]:
+            return RESULT_FAILED_MORE_GOLD
+        return 0    
+           
+    def find_suitable_table_type(self,gold):
+        for k,v in TABLE_GAME_CONFIG.items():
+            if v[0] >=0 and gold < v[0]:
+                continue
+            if v[1] >=0 and gold > v[1]:
+                continue
+            return k
+        return -1
+
+    def sit_table(self,target_table_id,uid,access_service,not_table_ids,table_type):
         user = self.dal.get_user(uid)
         if user == None:
             return RESULT_FAILED_INVALID_USER,None
 
         if table_type < 0:
-            for k,v in TABLE_GAME_CONFIG.items():
-                if v[0] >=0 and user.gold < v[0]:
-                    continue
-                if v[1] >=0 and user.gold > v[1]:
-                    continue
-                table_type = k
-        if table_type < 0:
-            return RESULT_FAILED_INVALID_GOLD,None
-        config = TABLE_GAME_CONFIG[table_type]
-        if config[0] >= 0 and user.gold < config[0]:
-            return RESULT_FAILED_INVALID_GOLD_LESS,None
-        if config[1] >= 0 and user.gold > config[1]:
-            return RESULT_FAILED_INVALID_GOLD_MORE,None
+            table_type = self.find_suitable_table_type(user.gold)
+            if table_type < 0:
+                return RESULT_FAILED_LESS_GOLD,None
 
         old_table = self.get_player_table(uid)
-
-        table = None
-        for t in self.tables.values():
-            if old_table != None and old_table.id == t.id :
-                continue
-            if t.id in not_table_ids or t.table_type != table_type:
-                continue
-            if t.is_full():
-                continue
-            table = t
-            break
-
+        change_table = old_table != None and old_table.id != target_table_id
+        # clean old table info if change table, otherwise it means re-join table
         if old_table != None:
             if not change_table:
                 old_table.lock.acquire()
@@ -301,13 +314,37 @@ class TableManager:
                     old_table.remove_player(uid)
                 finally:
                     old_table.lock.release()
+        
+        # if player want to sit specific table,then check table info,such as countof players,table_type and so on
+        if target_table_id >= 0:
+            table = self.get_table(target_table_id)
+            print "------>, table_id ",table
+            if table == None or table.is_full():
+                return RESULT_FAILED_INVALID_TABLE,None
+        else:
+            table = None
+            for t in self.tables.values():
+                if old_table != None and old_table.id == t.id :
+                    continue
+                if t.id in not_table_ids or t.table_type != table_type:
+                    continue
+                if t.is_full():
+                    continue
+                table = t
+                break
 
-        if table == None:
-            table = self.new_table(table_type)
+            if table == None:
+                table = self.new_table(table_type)
 
         table.lock.acquire()
         try :
-            table.add_player(uid,user, access_service)
+            check_result = self.check_table_type(table.table_type,user.gold)
+            if check_result < 0:
+                return check_result,None
+                
+            player = table.add_player(uid,user, access_service)
+            if player == None:
+                return RESULT_FAILED_TABLE_IS_FULL,None
         finally:
             table.lock.release()
         return 0,table

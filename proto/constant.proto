@@ -46,6 +46,7 @@ enum TableType {
 	TABLE_L = 1;//低级场
 	TABLE_M = 2;//中级场
 	TABLE_H = 3;//高级场
+	TABLE_H2 = 4; // 大师场
 }
 
 //牌型

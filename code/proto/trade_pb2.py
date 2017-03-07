@@ -20,7 +20,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='trade.proto',
   package='cardgame',
-  serialized_pb=_b('\n\x0btrade.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"\x1e\n\x0cQueryShopReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xb8\x17\"B\n\rQueryShopResp\x12!\n\x05items\x18\x01 \x03(\x0b\x32\x12.cardgame.ShopItem\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xb9\x17\"A\n\nBuyItemReq\x12\x14\n\x0cshop_item_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xba\x17\"?\n\x0b\x42uyItemResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbb\x17\"Q\n\rQueryTradeReq\x12\x0c\n\x04page\x18\x01 \x02(\x05\x12\x11\n\tpage_size\x18\x02 \x02(\x05\x12\x0f\n\x07\x63\x61n_buy\x18\x03 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbc\x17\"P\n\x0eQueryTradeResp\x12\x1f\n\x06trades\x18\x01 \x03(\x0b\x32\x0f.cardgame.Trade\x12\r\n\x05total\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbd\x17\"/\n\x0b\x42uyTradeReq\x12\x10\n\x08trade_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbe\x17\"@\n\x0c\x42uyTradeResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbf\x17\"<\n\x0bSellGoldReq\x12\x0c\n\x04gold\x18\x01 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc0\x17\"@\n\x0cSellGoldResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc1\x17\".\n\nOutGoldReq\x12\x10\n\x08trade_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc2\x17\"?\n\x0bOutGoldResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc3\x17\x42#\n\x18\x63om.zhili.cardgame.protoB\x05TradeH\x03')
+  serialized_pb=_b('\n\x0btrade.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"\x1e\n\x0cQueryShopReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xb8\x17\"B\n\rQueryShopResp\x12!\n\x05items\x18\x01 \x03(\x0b\x32\x12.cardgame.ShopItem\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xb9\x17\"A\n\nBuyItemReq\x12\x14\n\x0cshop_item_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xba\x17\"?\n\x0b\x42uyItemResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbb\x17\"b\n\rQueryTradeReq\x12\x0c\n\x04page\x18\x01 \x02(\x05\x12\x11\n\tpage_size\x18\x02 \x02(\x05\x12\x0f\n\x07\x63\x61n_buy\x18\x03 \x02(\x08\x12\x0f\n\x07my_sell\x18\x04 \x02(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbc\x17\"P\n\x0eQueryTradeResp\x12\x1f\n\x06trades\x18\x01 \x03(\x0b\x32\x0f.cardgame.Trade\x12\r\n\x05total\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbd\x17\"/\n\x0b\x42uyTradeReq\x12\x10\n\x08trade_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbe\x17\"@\n\x0c\x42uyTradeResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xbf\x17\"<\n\x0bSellGoldReq\x12\x0c\n\x04gold\x18\x01 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc0\x17\"@\n\x0cSellGoldResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc1\x17\".\n\nOutGoldReq\x12\x10\n\x08trade_id\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc2\x17\"?\n\x0bOutGoldResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xc3\x17\x42#\n\x18\x63om.zhili.cardgame.protoB\x05TradeH\x03')
   ,
   dependencies=[constant_pb2.DESCRIPTOR,struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -112,8 +112,8 @@ _QUERYTRADEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=354,
-  serialized_end=368,
+  serialized_start=371,
+  serialized_end=385,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYTRADEREQ_DEF)
 
@@ -130,8 +130,8 @@ _QUERYTRADERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=436,
-  serialized_end=450,
+  serialized_start=453,
+  serialized_end=467,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYTRADERESP_DEF)
 
@@ -148,8 +148,8 @@ _BUYTRADEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=485,
-  serialized_end=499,
+  serialized_start=502,
+  serialized_end=516,
 )
 _sym_db.RegisterEnumDescriptor(_BUYTRADEREQ_DEF)
 
@@ -166,8 +166,8 @@ _BUYTRADERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=551,
-  serialized_end=565,
+  serialized_start=568,
+  serialized_end=582,
 )
 _sym_db.RegisterEnumDescriptor(_BUYTRADERESP_DEF)
 
@@ -184,8 +184,8 @@ _SELLGOLDREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=613,
-  serialized_end=627,
+  serialized_start=630,
+  serialized_end=644,
 )
 _sym_db.RegisterEnumDescriptor(_SELLGOLDREQ_DEF)
 
@@ -202,8 +202,8 @@ _SELLGOLDRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=679,
-  serialized_end=693,
+  serialized_start=696,
+  serialized_end=710,
 )
 _sym_db.RegisterEnumDescriptor(_SELLGOLDRESP_DEF)
 
@@ -220,8 +220,8 @@ _OUTGOLDREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=727,
-  serialized_end=741,
+  serialized_start=744,
+  serialized_end=758,
 )
 _sym_db.RegisterEnumDescriptor(_OUTGOLDREQ_DEF)
 
@@ -238,8 +238,8 @@ _OUTGOLDRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=792,
-  serialized_end=806,
+  serialized_start=809,
+  serialized_end=823,
 )
 _sym_db.RegisterEnumDescriptor(_OUTGOLDRESP_DEF)
 
@@ -396,6 +396,13 @@ _QUERYTRADEREQ = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='my_sell', full_name='cardgame.QueryTradeReq.my_sell', index=3,
+      number=4, type=8, cpp_type=7, label=2,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -409,7 +416,7 @@ _QUERYTRADEREQ = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=287,
-  serialized_end=368,
+  serialized_end=385,
 )
 
 
@@ -446,8 +453,8 @@ _QUERYTRADERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=370,
-  serialized_end=450,
+  serialized_start=387,
+  serialized_end=467,
 )
 
 
@@ -477,8 +484,8 @@ _BUYTRADEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=452,
-  serialized_end=499,
+  serialized_start=469,
+  serialized_end=516,
 )
 
 
@@ -508,8 +515,8 @@ _BUYTRADERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=501,
-  serialized_end=565,
+  serialized_start=518,
+  serialized_end=582,
 )
 
 
@@ -546,8 +553,8 @@ _SELLGOLDREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=567,
-  serialized_end=627,
+  serialized_start=584,
+  serialized_end=644,
 )
 
 
@@ -577,8 +584,8 @@ _SELLGOLDRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=629,
-  serialized_end=693,
+  serialized_start=646,
+  serialized_end=710,
 )
 
 
@@ -608,8 +615,8 @@ _OUTGOLDREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=695,
-  serialized_end=741,
+  serialized_start=712,
+  serialized_end=758,
 )
 
 
@@ -639,8 +646,8 @@ _OUTGOLDRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=743,
-  serialized_end=806,
+  serialized_start=760,
+  serialized_end=823,
 )
 
 _QUERYSHOPREQ_DEF.containing_type = _QUERYSHOPREQ

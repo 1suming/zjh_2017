@@ -2,7 +2,9 @@
 __author__ = 'Administrator'
 
 RANK_WEALTH_TOP = 20
+
 RANK_CHARGE_TOP = 20
+
 RANK_MAKE_MONEY_TOP = 20
 
 RANK_FAKE_LEN = 20

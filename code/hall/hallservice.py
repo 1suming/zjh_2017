@@ -45,6 +45,8 @@ from db.order import *
 from db.charge_item import *
 from db.charge_record import *
 from db.customer_service_log import *
+from db.system_achievement import *
+from db.game_achievement import *
 
 from proto.hall_pb2 import *
 from proto.access_pb2 import *
@@ -73,6 +75,8 @@ from helper import datehelper
 from dal.core import *
 from hall.hallobject import *
 from hall.eventsender import *
+from task.achievementtask import *
+from task.dailytask import *
 
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -85,8 +89,8 @@ class HallService(GameService):
         self.manager = Manager(self)
         self.sender = EventSender(self.manager)
         gevent.spawn(self.queue_notification)
-        gevent.spawn(self.say_hello)
-        gevent.spawn_later(10, self.say_hello_2)
+        #gevent.spawn(self.say_hello)
+        #gevent.spawn_later(10, self.say_hello_2)
         # gevent.spawn(self.queue_charge)
 
         self.bag = BagObject(self)
@@ -101,17 +105,19 @@ class HallService(GameService):
         self.userobj = UserObject(self)
         self.vip = VIPObject(self)
         self.broke = BrokeObject(self)
+        self.trade = TradeObject(self)
+        self.profile = Profile(self)
 
 
     # 系统自定义广播，定时发送
     def say_hello(self):
         while True:
-            MessageObject.push_message(self, self.redis.hkeys('online'), 5,{'message':BORADCAST_CONF['sys']} )
+            MessageObject.push_message(self, self.redis.hkeys('online'), PUSH_TYPE['sys_broadcast'],{'message':BORADCAST_CONF['sys']} )
             gevent.sleep(NOTI_TIME)
 
     def say_hello_2(self):
         while True:
-            MessageObject.push_message(self, self.redis.hkeys('online'), 5,{'message':BORADCAST_CONF['sys2']} )
+            MessageObject.push_message(self, self.redis.hkeys('online'), PUSH_TYPE['sys_broadcast'],{'message':BORADCAST_CONF['sys2']} )
             gevent.sleep(NOTI_TIME_2)
 
     def queue_charge(self):
@@ -137,7 +143,7 @@ class HallService(GameService):
             event.body.param1 = 10
             event.body.param2 = json.dumps({'money':order.charge,'gold':charge['gold'],'diamond':charge['diamond']})
             if self.manager.offline(order.uid) != 0:
-                MessageObject.push_message(self, [order.uid], 10, {'money':str(order.charge),'diamond':0,'gold':''})
+                MessageObject.push_message(self, [order.uid], PUSH_TYPE['charge_success'], {'money':str(order.charge),'diamond':0,'gold':''})
 
 
     def setup_route(self):
@@ -209,6 +215,12 @@ class HallService(GameService):
         # 快速补币
         self.registe_command(QueryQuickBuyGoldReq,QueryQuickBuyGoldResp,self.handle_quick_charge)
 
+        # 首冲
+        self.registe_command(QueryFirstTimeChargeReq,QueryFirstTimeChargeResp,self.handle_first_charge)
+
+        # 注册、修改手机
+        self.registe_command(BindMobileReq,BindMobileResp,self.handle_bind_mobile)
+
     # 破产补助查询
     @USE_TRANSACTION
     def handle_query_bankcrupt(self, session, req, resp, event):
@@ -221,7 +233,7 @@ class HallService(GameService):
     def handle_receive_bankcrupt(self, session, req, resp, event):
         user_info = self.da.get_user(req.header.user)
 
-        resp.header.result,resp.body.gold = BrokeObject.receive_broke(self,session,user, VIP_CONF[self.vip.to_level(user_info.vip_exp)])
+        resp.header.result,resp.body.gold = BrokeObject.receive_broke(self,session,user_info, VIP_CONF[self.vip.to_level(user_info.vip_exp)])
 
     # 排名查询
     @USE_TRANSACTION
@@ -262,8 +274,6 @@ class HallService(GameService):
         resp.header.result = 0
 
 
-        # self.rank.set_pb( resp, self.rank.get_lists(session ,req.body.rank_type, req.body.rank_time) )
-        # rank.set_pb( resp, rank.get_lists(req.body.rank_type, req.body.rank_time) )
         resp.header.result = 0
 
 
@@ -284,7 +294,8 @@ class HallService(GameService):
             pb.uid = friend_user.id
             pb.nick = friend_user.nick
             pb.type = friend.type
-            pb.is_online = False if self.redis.hget('online',friend.id) == None else True
+
+            pb.is_online = False if self.redis.hexists('online',friend_user.id) == False else True
             protohelper.set_room_table(pb,friend_user.id,self.redis)
 
         countof_applies = session.query(TFriendApply).filter(and_(TFriendApply.to_uid == req.header.user, TFriendApply.state == 1)).count()
@@ -342,9 +353,18 @@ class HallService(GameService):
             resp.header.result = RESULT_FAILED_INVALID_FRIEND
             return
 
+        # 不能+客服
+        if req.body.target == 10000:
+            resp.header.result = RESULT_FAILED_INVALID_FRIEND
+            return
+
         # vip验证好友数限制
-        firend_count = self.friend.get_friends_count(session, user_info.id)
-        if self.vip.over_friend_max( self.vip.to_level(user_info.vip_exp), firend_count ):
+        my_firend_count = self.friend.get_friends_count(session, user_info.id)
+        if self.vip.over_friend_max( self.vip.to_level(user_info.vip_exp), my_firend_count ):
+            resp.header.result = RESULT_FAILED_FRIEND_MAX
+            return
+        target_firend_count = self.friend.get_friends_count(session, friend_info.id)
+        if self.vip.over_friend_max( self.vip.to_level(friend_info.vip_exp), target_firend_count ):
             resp.header.result = RESULT_FAILED_FRIEND_MAX
             return
 
@@ -356,13 +376,16 @@ class HallService(GameService):
     # 同意/拒绝好友申请
     @USE_TRANSACTION
     def handle_friends_apply(self,session,req,resp,event):
-        user_info = self.da.get_user(req.header.user)
+        friend_info = self.da.get_user(req.header.user)
         apply_record = self.friend.get_friend_apply(session, req.body.apply_id)
-        friend_info = self.da.get_user(apply_record.to_uid)
+
+        if apply_record.state == 0:
+            resp.header.result = RESULT_FAILED_HAS_FRIEND
+            return
+
+        user_info = self.da.get_user(apply_record.apply_uid)
 
         self.friend.make_friend_apply(session, req.body.apply_id, req.body.accept, user_info, friend_info)
-
-
 
         resp.header.result = 0
 
@@ -375,6 +398,11 @@ class HallService(GameService):
     # 删除好友
     @USE_TRANSACTION
     def handle_remove_friends(self,session,req,resp,event):
+        # 不能删除客服
+        if req.body.friend_id == 10000:
+            resp.header.result = RESULT_FAILED_INVALID_FRIEND
+            return
+
         # 自己删除好友
         session.query(TFriend).filter(and_(TFriend.apply_uid == req.header.user,TFriend.to_uid == req.body.friend_id)).delete()
         # 从好友中删除自己
@@ -515,14 +543,15 @@ class HallService(GameService):
         if total_days < 0  or signin_days < 0:
             resp.header.result = RESULT_FAILED_TODAY_SIGNED
             return
-
+        print '---------------->1',total_days,signin_days, sign_luck_max
         # 签到奖励，需要判断vip等级
         incr_gold = 0
-        if self.vip.to_level(user_info.vip_exp) <= 0:
-            incr_gold = self.sign.sign_reward(session, user_info, sign_luck_max)
-        else:
-            incr_gold = self.sign.sign_reward_vip(session, user_info, sign_luck_max)
-
+        incr_gold = self.sign.sign_reward(session, user_info, sign_luck_max)
+        print '---------------->2',incr_gold
+        print incr_gold
+        if self.vip.to_level(user_info.vip_exp) >= 1:
+            incr_gold += self.sign.sign_reward_vip(session, user_info, sign_luck_max, incr_gold)
+        print '---------------->3',incr_gold
         # 累计签到，幸运日发送奖品
         item,count = self.sign.sign_luck_day(session, total_days, sign_log.id)
         if item is not None and count > 0:
@@ -550,7 +579,8 @@ class HallService(GameService):
             self.user_gf.add_user_gf(session, user_info.id, user_info.channel)
             self.bag.user_init(session, req.header.user)
             self.sign.sign_init(session, req.header.user)
-            self.reward.task_first_login(session, req.header.user)
+            # self.reward.task_first_login(session, req.header.user)
+            SystemAchievement(session, req.header.user).finish_first_login()
             self.userobj.new_user_broadcast(user_info)
 
         protohelper.set_brief_hall(resp.body.brief, user_info)
@@ -587,6 +617,12 @@ class HallService(GameService):
         account = session.query(TAccount).filter(TAccount.id == req.body.uid).first()
         if account is not  None and account.mobile is not None:
             resp.body.player.mobile = account.mobile
+
+        is_friend = session.query(TFriend).filter(and_(TFriend.apply_uid == req.header.user, TFriend.to_uid == req.body.uid)).count()
+        if is_friend > 0:
+            resp.body.player.is_friend = True
+        else:
+            resp.body.player.is_friend = False
 
         protohelper.set_player(resp.body.player,user_info,user_gf)
         resp.header.result = 0
@@ -632,8 +668,10 @@ class HallService(GameService):
     # 查询奖励
     @USE_TRANSACTION
     def handle_rewards(self,session,req,resp,event):
-        rewards = session.query(TRewardTask).filter(TRewardTask.id <= 10).all()
+        rewards = session.query(TRewardTask).all()
         reward_logs = session.query(TRewardUserLog).filter(TRewardUserLog.uid == req.header.user).all()
+
+
         if len(rewards) <= 0:
             resp.header.result = -1
             return
@@ -789,20 +827,15 @@ class HallService(GameService):
         page = req.body.page
         page_size = req.body.page_size
         can_buy = req.body.can_buy
+        user_info = self.da.get_user(req.header.user)
 
-        if can_buy:
-            user_info = self.da.get_user(req.header.user)
-            trades_count = session.query(TTrade).filter(and_(TTrade.diamond <= user_info.diamond,TTrade.status == 0)).count()
-            trades = session.query(TTrade).filter(and_(TTrade.diamond <= user_info.diamond,TTrade.status == 0)).order_by(desc(TTrade.id)).offset((int(page) - 1) * page_size).limit(page_size)
-        else:
-            trades_count = session.query(TTrade).filter(TTrade.status == 0).count()
-            trades = session.query(TTrade).filter(TTrade.status == 0).order_by(desc(TTrade.id)).offset((int(page) - 1) * page_size).limit(page_size)
 
+        data_count, items = self.shop.get_lists(session, req.body.page, req.body.page_size,user_info, req.body.can_buy, req.body.my_sell)
 
         # other data
-        for item in trades:
+        for item in items:
             protohelper.set_trades(resp.body.trades.add(), item,self.da.get_user(item.seller))
-        resp.body.total = trades_count
+        resp.body.total = data_count
         resp.header.user = 0
 
     # 购买交易
@@ -900,8 +933,9 @@ class HallService(GameService):
         self.da.save_user(session,user_info)
 
         # 广播，当前用户挂售金币成功
-        content = BORADCAST_CONF['trade_sell'] % (user_info.nick.decode('utf-8'), trade.gold, trade.diamond)
-        MessageObject.push_message(self, self.redis.hgetall('online').keys(),5,{'message':content} )
+        # content = BORADCAST_CONF['trade_sell'] % (user_info.nick.decode('utf-8'), trade.gold, trade.diamond)
+        # MessageObject.push_message(self, self.redis.hgetall('online').keys(),5,{'message':content} )
+        self.shop.sell_gold_brodacast(user_info, req.body.gold, req.body.diamond)
 
         resp.body.result.gold = user_info.gold
         resp.body.result.diamond = user_info.diamond
@@ -964,12 +998,19 @@ class HallService(GameService):
         # 加vip经验
         user_info = self.da.get_user(req.header.user)
         user_info.vip_exp = 0 if user_info.vip_exp <= 0 else user_info.vip_exp
+        old_vip_level = self.vip.to_level(user_info.vip_exp)
         for times in range(req.body.count):
             user_info.vip_exp = user_info.vip_exp + ItemObject.get_item_conf(req.body.item_id)[0]
-
         self.da.save_user(session, user_info)
 
+        new_vip_level = self.vip.to_level(user_info.vip_exp)
+        # vip升级广播
+        if old_vip_level < new_vip_level:
+            self.vip.level_up_broadcast(user_info.nick, 'VIP'+str(new_vip_level))
+
+
         # 返回数据
+        resp.body.result.vip_exp = user_info.vip_exp
         item = ItemObject.get_item(session, req.body.item_id)
         pb = resp.body.result.items_removed.add()
         pb.id = item.id
@@ -1100,9 +1141,21 @@ class HallService(GameService):
                 return
             item = ItemObject.get_item(session, req.body.shop_id)
             money = charge_item.money
+            real_money = charge_item.real_money
             name = item.name
+        elif req.body.shop_id == 0 :
+            user_info = self.da.get_user(req.header.user)
+            if user_info.is_charge:
+                resp.header.result = -1
+                return
+            money = decimal.Decimal((FRIST_CHARGE['money'])) / 100
+            real_money = decimal.Decimal((FRIST_CHARGE['real_money'])) / 100
+            name = FRIST_CHARGE['title']
         else:
-            money,name,name = QUICK_CHARGE[abs(req.body.shop_id)-1]
+            money,gold_w,name,real_money = QUICK_CHARGE[abs(req.body.shop_id)-1]
+            real_money = decimal.Decimal(real_money) / 100
+
+        print '---->',money,real_money,name
 
         order = TOrder()
         order.order_sn = order_sn
@@ -1115,7 +1168,7 @@ class HallService(GameService):
         session.add(order)
 
         resp.body.name = name
-        resp.body.money = int(money * decimal.Decimal(100))
+        resp.body.money = int(real_money * decimal.Decimal(100))
         resp.body.order_sn = str(order_sn)
         resp.body.callback = PAY_RESULT_URL
         resp.header.result=0
@@ -1165,6 +1218,44 @@ class HallService(GameService):
             protohelper.set_charge(resp.body.items.add(), item)
         resp.header.result = 0
 
+    @USE_TRANSACTION
+    def handle_bind_mobile(self,session,req,resp,event):
+        # todo ... 上线需修改
+        code = 0
+        if int(req.body.verify_code) != 0:
+            code = self.redis.get('sms_'+req.body.mobile)
+            verify_code = req.body.verify_code
+        else:
+            verify_code = 0
+
+        # 验证不正确
+        if code is None or code is not verify_code:
+            resp.header.result = RESULT_FAILED_VERIFY_ERROR
+            return
+
+        # 绑定类型：1：新用户绑定（password必传）设置密码,  2：绑定新手机号（password不传）, 3：解绑旧手机资格校验（password不传）
+        if req.body.bind_type == 1:
+            if req.body.password is None:
+                resp.header.result = RESULT_FAILED_PASSWORD_EMPTY
+                return
+            self.profile.bind_mobile(session, req.body.uid, req.body.mobile, req.body.password)
+        elif req.body.bind_type == 2:
+            self.profile.bind_mobile(session, req.body.uid, req.body.mobile)
+        elif req.body.bind_type == 3:
+            pass
+
+        resp.header.result = 0
+
+    @USE_TRANSACTION
+    def handle_first_charge(self,session,req,resp,event):
+
+        resp.body.money = FRIST_CHARGE['money']
+        resp.body.diamond = FRIST_CHARGE['diamond']
+        resp.body.hore = FRIST_CHARGE['hore']
+        resp.body.gold = FRIST_CHARGE['gold']
+        resp.body.kicking_card = FRIST_CHARGE['kicking_card']
+        resp.body.vip_card = FRIST_CHARGE['vip_card']
+        resp.header.result = 0
 
     # 获取通用result结果
     def get_result(self,user,resp):

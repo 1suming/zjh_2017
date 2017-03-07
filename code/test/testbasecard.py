@@ -24,10 +24,10 @@ logging.basicConfig(level=logging.DEBUG,
                         filemode='a')
 
 
-# HOST = "192.168.2.75"
+HOST = "192.168.2.75"
 #HOST = "192.168.1.105"
-#HOST = "127.0.0.1"
-HOST = "121.201.29.89"
+# HOST = "127.0.0.1"
+# HOST = "121.201.29.89"
 LOGIN_PORT = 20014
 ACCESS_PORT = 18004
 

@@ -23,6 +23,7 @@ tab_rank_charge_top = Table("rank_charge_top", metadata,
                  Column("gold",BigInteger),
                  Column("add_date",Date, primary_key=True),
                  Column("vip",SMALLINT),
+                 Column("charge_money", DECIMAL(11,2))
                  )
                  
 

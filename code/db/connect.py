@@ -112,9 +112,10 @@ def create_tables(drop = False):
             tab = getattr(m,"tab_" + name)
             if drop :
                 tab.drop(engine)
+            tab.create(engine)
         except:
             traceback.print_exc()
-        tab.create(engine)
+
         #print dir(m)
 
 
@@ -129,7 +130,7 @@ if __name__=="__main__":
 
     """
     import sys
-    if sys.argv[1] == "-drop":
+    if len(sys.argv) >= 2 and sys.argv[1] == "-drop":
         drop = True
     else:
         drop = False

@@ -31,9 +31,11 @@ message Player {
 	optional int32 sex = 18;
 	optional string birthday = 19;
 	optional string address = 20;
+
 	
 	repeated Gift gifts = 21;
 	repeated Poker best = 22;
+	optional bool is_friend = 23;
 }
 
 //玩家信息摘要
@@ -46,6 +48,7 @@ message PlayerBrief {
 	required int32 vip = 6;
 	optional int64 diamond = 7;
 	optional int32 vip_exp = 8;
+	optional int32 sex = 9;
 }
 
 
@@ -99,7 +102,7 @@ message Reward {
 	repeated Item items = 7;
 	repeated Gift gifts = 8;
 	required int32 state = 9; // 0 = done(已领奖)， 1 = success（去领奖），其它则是去完成
-	required string action = 10; // table=牌桌,send_world_chat=世界喇叭界面,profile=个人中心,charge=充值
+	required string action = 10; // table=牌桌,send_world_chat=世界喇叭界面,profile=个人中心,charge=充值,shop=商城,no=无去向
 	optional int32 icon = 11;
 }
 

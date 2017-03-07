@@ -23,6 +23,7 @@ tab_charge_item = Table("charge_item", metadata,
                  Column("gold",Integer),
                  Column("icon",String(20)),
                  Column("money",DECIMAL(18,2)),
+                 Column("real_money",DECIMAL(18,2)),
                  Column("description",String(140),nullable =False),
                  Column("extra_diamond",Integer,default=0),
                  Column("extra_items",String(100),default=""), # 赠送道具列表,格式如下:"item_id-count,item_id-count....."

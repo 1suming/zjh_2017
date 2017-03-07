@@ -17,7 +17,7 @@ import os,sys
 import random
 from datetime import date
 from systemconfig import *
-
+from sqlalchemy.sql import select, update, delete, insert, and_, subquery, not_, null, func, text,exists,or_
 from proto.access_pb2 import *
 from message.base import *
 from message.resultdef import *
@@ -29,8 +29,9 @@ from db.account import *
 from db.user import *
 from util.asyncsocket import *
 from helper.smshelper import SMS
-from config.broadcast import *
-from hall.hallobject import *
+# from config.broadcast import *
+# from hall.hallobject import *
+from helper import encryhelper
 
 
 pool = Pool(50)
@@ -52,7 +53,7 @@ class VersionManager:
         
     def load_version(self):        
         with open("../version/VERSION") as f:
-            self.version = int(f.readline())                
+            self.version = int(f.readline())
         gevent.sleep(60)
         
     def get_upgrade_info(self,old_version):
@@ -85,7 +86,7 @@ class AccountValidate:
         if device_id == None:
             return False
         device_id = device_id.strip()
-        if len(device_id) == 0 or len(device_id) > 15:
+        if len(device_id) == 0 or len(device_id) > 20:
             return False
         return True
 
@@ -210,6 +211,7 @@ class LoginServer:
                 # 曾经快速登录过，现在注册手机号
                 account.mobile = message.body.mobile
                 account.password = message.body.password
+                # account.password = encryhelper.md5_encry(message.body.password+PASS_ENCRY_STR)
                 account.imei = message.body.imei
                 account.imsi = message.body.imsi
                 account.state = STATE_ENABLE # 0=通过验证，-1=未通过验证
@@ -246,11 +248,57 @@ class LoginServer:
     def handle_fast_login(self,message,resp):
         session = UserSession()
         try :
-            account = session.query(TAccount).with_lockmode("update").filter(TAccount.device_id == message.body.device_id).first()
-            if account == None:
+            accounts = session.query(TAccount).with_lockmode("update").filter(TAccount.imei == message.body.imei).all()
+            print 'accounts',accounts
+            if len(accounts) > 1:
+                # imei相同，验证安卓id
+                devices = session.query(TAccount).with_lockmode("update").filter(and_(TAccount.imei == message.body.imei, TAccount.device_id == message.body.device_id)).all()
+
+                if len(devices) > 1:
+                    # 多条安卓id，返回错误
+                    resp.header.result = resp.header.result = 1
+                    return
+                elif len(devices) == 1:
+                    # 单条安卓id，通过
+                    if self.av.check_state(accounts[0].state) == False:
+                        resp.header.result = 2
+                        return
+                    account = devices[0]
+                else:
+                    # imei相同，没有安卓id，就新建
+                    session.begin()
+                    # if self.av.check_device_id(message.body.device_id) == False:
+                    #     resp.header.result = 3
+                    #     return
+                    account = self.add_account(message)
+                    session.add(account)
+                    session.flush()
+                    user_info = self.add_user(account.id)
+                    session.add(user_info)
+                    session.commit()
+            elif len(accounts) == 1:
+                # 安卓id相同，同一台手机
+                account = accounts[0]
+                if account.device_id == message.body.device_id:
+                    if self.av.check_state(account.state) == False:
+                        resp.header.result = 4
+                        return
+                else:
+                    # 同一个imei，不同安卓id就新建账号
+                    session.begin()
+                    if self.av.check_device_id(message.body.device_id) == False:
+                        resp.header.result = 5
+                        return
+                    account = self.add_account(message)
+                    session.add(account)
+                    session.flush()
+                    user_info = self.add_user(account.id)
+                    session.add(user_info)
+                    session.commit()
+            else:
                 session.begin()
                 if self.av.check_device_id(message.body.device_id) == False:
-                    resp.header.result = RESULT_FAILED_ACCOUNT_INVALID
+                    resp.header.result = 6
                     return
                 account = self.add_account(message)
                 session.add(account)
@@ -258,10 +306,24 @@ class LoginServer:
                 user_info = self.add_user(account.id)
                 session.add(user_info)
                 session.commit()
-            else:
-                if self.av.check_state(account.state) == False:
-                    resp.header.result = RESULT_FAILED_ACCOUNT_INVALID
-                    return
+
+            print '------------------------------>hahahahah'
+            # account = session.query(TAccount).with_lockmode("update").filter(TAccount.device_id == message.body.device_id).first()
+            # if account == None:
+            #     session.begin()
+            #     if self.av.check_device_id(message.body.device_id) == False:
+            #         resp.header.result = RESULT_FAILED_ACCOUNT_INVALID
+            #         return
+            #     account = self.add_account(message)
+            #     session.add(account)
+            #     session.flush()
+            #     user_info = self.add_user(account.id)
+            #     session.add(user_info)
+            #     session.commit()
+            # else:
+            #     if self.av.check_state(account.state) == False:
+            #         resp.header.result = RESULT_FAILED_ACCOUNT_INVALID
+            #         return
 
 
             # 用户数据返回
@@ -300,6 +362,8 @@ class LoginServer:
             return False
 
         result,json,code = SMS().send_code(message.body.mobile)
+        print '---------------->'
+        print resp,json,code
         if result == False:
             resp.header.result = RESULT_FAILED_SMS_SEND_FAILED
             return False
@@ -408,6 +472,8 @@ class LoginServer:
         account.state = STATE_DISABLED # 0=通过验证，-1=未通过验证
         account.create_time = time.strftime("%Y-%m-%d %H:%M:%S")
         account.channel = message.body.channel
+        account.imei = message.body.imei
+        account.imsi = message.body.imsi
         return account
 
     # 更新
