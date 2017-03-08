@@ -411,9 +411,9 @@ class LoginServer:
         if self.av.check_mobile_password(message.body.mobile,message.body.password) == False:
             resp.header.result = RESULT_FAILED_ACCOUNT_OR_PASSWORD_INVALID
             return
-        if self.av.check_device_id(message.body.device_id) == False:
-            resp.header.result = RESULT_FAILED_ACCOUNT_INVALID
-            return
+        # if self.av.check_device_id(message.body.device_id) == False:
+        #     resp.header.result = RESULT_FAILED_ACCOUNT_INVALID
+        #     return
 
         session = UserSession()
         try :
@@ -497,6 +497,7 @@ class LoginServer:
         user.gold = DEFAULT_USER['gold']
         user.diamond = DEFAULT_USER['diamond']
         user.vip = DEFAULT_USER['vip']
+        user.vip_exp = DEFAULT_USER['vip_exp']
         user.money = DEFAULT_USER['money']
         user.charm = DEFAULT_USER['charm']
         user.birthday = DEFAULT_USER['birthday']

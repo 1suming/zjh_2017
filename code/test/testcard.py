@@ -47,12 +47,12 @@ def fast_login_game(client,device_id,imei,imsi,token):
         resp2 = client.get_message()
         print '1111111111111111111111111111111111111111111'
 
-        # req2 = create_client_message(QueryHallReq)
-        # req2.header.user = resp.header.user
-        # req2.body.max_mail_id = 0
-        # req2.body.max_announcement_id = 0
-        # client.socket.send(req2.encode())
-        # client.get_message()
+        req2 = create_client_message(QueryHallReq)
+        req2.header.user = resp.header.user
+        req2.body.max_mail_id = 0
+        req2.body.max_announcement_id = 0
+        client.socket.send(req2.encode())
+        client.get_message()
         # req2 = create_client_message(QueryUserReq)
         # req2.header.user = resp2.header.user
         # req2.body.uid = resp2.header.user
@@ -365,7 +365,7 @@ def revice_rewards(client,mobile,password,device_id):
 
         req2 = create_client_message(ReceiveRewardReq)
         req2.header.user = result.header.user
-        req2.body.reward_id = 9
+        req2.body.reward_id = 75
         client.socket.send(req2.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -439,7 +439,7 @@ def query_player(client,mobile = '13412341777',password= '123456',device_id='d_9
 
         req = create_client_message(QueryUserReq)
         req.header.user = result.header.user
-        req.body.uid = result.header.user
+        req.body.uid = 11183
         client.socket.send(req.encode())
 
       # client.socket.send(req.encode())
@@ -520,7 +520,8 @@ def get_signs(client,mobile = '13412341777',password= '123456',device_id='d_9444
 def today_sign(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
     try:
         MessageMapping.init()
-        resp = client.normal_test_enter_server(mobile,password,device_id)
+        # resp = client.normal_test_enter_server(mobile,password,device_id)
+        resp = client.fast_test_enter_server('209707aeb43af5f5','865372020475361','','')
 
         print '1111111111111111111'
         print resp.header.user,'=',resp.header.result
@@ -533,17 +534,17 @@ def today_sign(client,mobile = '13412341777',password= '123456',device_id='d_944
         print result.body
 
         print '3333333333333333333333333333333333'
-        # req = create_client_message(QueryHallReq)
-        # req.header.user = result.header.user
-        # req.body.max_mail_id = 0
-        # req.body.max_announcement_id = 0
-        # client.socket.send(req.encode())
+        req = create_client_message(QueryHallReq)
+        req.header.user = result.header.user
+        req.body.max_mail_id = 0
+        req.body.max_announcement_id = 0
+        client.socket.send(req.encode())
         print '444444444444444444444444444444444444444444'
         time.sleep(1)
-        #req = create_client_message(QuerySigninRewardReq)
-        # req.header.user = result.header.user
-        # client.socket.send(req.encode())
-        # time.sleep(3)
+        req = create_client_message(QuerySigninRewardReq)
+        req.header.user = result.header.user
+        client.socket.send(req.encode())
+        time.sleep(3)
         print '5555555555555555555555555555555555555555555'
         req = create_client_message(SigninReq)
         req.header.user = result.header.user
@@ -1652,7 +1653,7 @@ def test_card(imei,imsi,token,need_idle,*args):
         # make_friends_apply(client, '15919430507','wang0000', '359901057716157')
         # remove_friends_apply(client, '13412311111','123456', 'device_id_333')
         # receive_friend_message(client, '13412345678','123456','000000000000000')
-        # receive_mails(client, '13412345678','123456', '000000000000000')
+        # receive_mails(client, '13466557799','123456', '865372020475361')
         # handle_friend(client, 'lxk','123456', '359901057716157')
         # get_friends_apply(client, 'lxk','123456', '359901057716157')
         # get_friends(client, 'lxk','123456', '359901057716157')
@@ -1668,8 +1669,8 @@ def test_card(imei,imsi,token,need_idle,*args):
         # trade_out(client, '13488889999','123456', '865372020475361')
         # query_user_bag(client, '13488889999','123456', '865372020475361')
         # use_user_bag(client, '13412311111','123456', '351702077470363')
-        # query_player(client, '13412311111','123456', 'device_id_333')
-        # fast_login_game(client,'','865647020556892','imsi_2020', '865647020556892')
+        # query_player(client, '13466557799','123456', '865372020475361')
+        fast_login_game(client,'F_01','865647020556892','imsi_2020', '865647020556892')
         # register_game(client, '13422556628','123456','0','imei_1111','imsi_2222','asdjxxx574515','LT333')
         # get_hall_query(client,'15919430507','wang0000','359901057716157')
         # bind_mobile(client, '')
@@ -1681,11 +1682,11 @@ def test_card(imei,imsi,token,need_idle,*args):
        #  use_code(client, '13412311111', '123456', 'device_id_333')
 
         # get_signs(client, '13512359876', '123456', '862596034397830')
-        # today_sign(client, 'lxk', '123456', '359901057716157')
+        # today_sign(client, '209707aeb43af5f5', '123456', '359901057716157')
         # send_chat_world(client,'13488889999', '123456', '865372020475361')
         # send_chat_room(client,'13412311111', '123456', 'device_id_333')
-        # get_rewards(client, '13412311111','123456', '351702077470363')
-        # revice_rewards(client, '13412311111','123456', '351702077470363')
+        # get_rewards(client, '13466557799','123456', '865372020475361')
+        # revice_rewards(client, '13466557799','123456', '865372020475361')
         # get_shop_item(client, '13412311111','123456', 'device_id_333')
         # get_register_code(client,'13412311111', '123456', 'device_id_333')
 

@@ -96,8 +96,8 @@ class BaseAchievement(object):
 		self.data = session.query(table).filter(table.uid == uid).first()
 		
 		if self.data is not None:
-			self.achievements = json.loads(self.data.achievements)
-			self.values = json.loads(self.data.values)
+			self.achievements = json.loads(str(self.data.achievements))
+			self.values = json.loads(str(self.data.values))
 		else:
 			self.achievements = {}
 			self.values = {}
@@ -137,7 +137,7 @@ class BaseAchievement(object):
 				log.uid = self.uid
 				log.task_id = int(task_id)
 				log.state = 1 # 1= 已完成，待领取
-				log.finish_date = time.strftime('%Y-%m-%d')
+				log.create_time = time.strftime('%Y-%m-%d')
 				self.session.merge(log)
 		self.session.flush()
 
@@ -189,7 +189,7 @@ class SystemAchievement(BaseAchievement):
 		self.save()
 
 
-class GameAchievement(SystemAchievement):
+class GameAchievement(BaseAchievement):
 	def __init__(self,session,uid):
 		super(GameAchievement,self).__init__(session,uid,TGameAchievement)
 
@@ -205,7 +205,7 @@ class GameAchievement(SystemAchievement):
 			self.save()
 		
 	
-	def finish_play_game(self,user_gf,win_gold):
+	def finish_game(self,user_gf,win_gold):
 		need_update = False
 		
 		total_exp = user_gf.exp

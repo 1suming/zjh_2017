@@ -361,11 +361,24 @@ class SignObject:
         incr_gold = 0
         # vip额外加钱
         incr_gold = VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]['sign_reward'] * sign_gold
-        print '------------->2.5',VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]['sign_reward']
-        print '--------------->2.6',VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]['sign_reward'] * sign_gold
+        print '------------->vip_reward,2.5',VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]['sign_reward']
+        print '--------------->vip_reward, 2.6',VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]['sign_reward'] * sign_gold
         user_info.gold = user_info.gold +incr_gold
         self.service.da.save_user(session,user_info)
         return incr_gold
+
+    def sign_reward_vip_item(self,session,user_info,index):
+        vip_item = {}
+        vip_item = VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]
+        print '----------->vip_item::::::::::::',vip_item
+        # 1	horn	大喇叭	可以公开喊话	2017-02-14 15:33:01
+        # 2	kick	踢人卡	奖玩家踢出房间	2017-02-14 15:35:02
+        # 3	exp_1	经验卡1点	使用后获得1点VIP经验	2017-02-15 10:43:51
+        # 4	exp_10	经验卡10点	使用后获得10点VIP经验	2017-02-15 11:15:49
+        # 5	tgold	金币名称	金币介绍	2017-02-15 16:57:49
+        self.service.bag.save_user_item(session, user_info.id,int(vip_item['horn_card'][0]),int(vip_item['horn_card'][2]))
+        self.service.bag.save_user_item(session, user_info.id,int(vip_item['kick_card'][0]),int(vip_item['kick_card'][2]))
+        return vip_item
 
 
     # 签到log，便于后期计算
@@ -689,32 +702,44 @@ class RewardObject:
         return False
 
     def edit_reward_state(self, session, user, task_id):
-        session.query(TRewardUserLog).with_lockmode("update").filter(and_(TRewardUserLog.uid == user, TRewardUserLog.task_id == task_id,TRewardUserLog.state == 1)).update({
+        result = session.query(TRewardUserLog).with_lockmode("update").filter(and_(TRewardUserLog.uid == user, TRewardUserLog.task_id == task_id,TRewardUserLog.state == 1)).update({
             TRewardUserLog.state: 0,
             TRewardUserLog.finish_date: datehelper.get_date_str()
         })
+
+        print '=================!@!@#>',str(result)
+        return result
 
 
 
     # 领取奖励
     def give_user_reward(self, session, user_info, task_id):
-        task = self.get_reward_conf_by_id(task_id)
-        if task is None:
-            return False
+        # task = self.get_reward_conf_by_id(task_id)
+        # if task is None:
+        #     return False
+        task_log = session.query(TRewardUserLog).filter(and_(TRewardUserLog.uid == user_info.id, TRewardUserLog.task_id == task_id,TRewardUserLog.state == 1))
+        if task_log is None:
+            return
 
-        if task.get('gold', 0) > 0:
-            user_info.gold = user_info.gold + task.get('gold')
-            self.result['incr_gold'] = task.get('gold')
-        if task.get('diamond', 0) > 0:
-            user_info.diamond = user_info.diamond + task.get('diamond')
-            self.result['incr_diamond'] = task.get('diamond')
-        if task.get('items') is not None and task.get('items') != '':
-            self.result['items_add'] = []
-            for item in task.get('items').split(','):
+        task = session.query(TRewardTask).filter(TRewardTask.id == task_id).first()
+
+        rs = {}
+        items_add = []
+        if task.gold > 0:
+            user_info.gold = user_info.gold + task.gold
+            rs['incr_gold'] = task.gold
+        if task.diamond > 0:
+            user_info.diamond = user_info.diamond + task.diamond
+            rs['incr_diamond'] = task.diamond
+        if task.items is not None and task.items != '':
+            items_add = []
+            for item in task.items.split(','):
                 self.service.bag.save_user_item(session, user_info.id, item[0], item[2])
-                self.result['items_add'].append(self.service.item.format_item(session, item[0], item[2]) )
+                items_add.append(self.service.item.format_item(session, item[0], item[2]))
+        rs['items_add'] = items_add
         self.service.da.save_user(session, user_info)
-        return True
+        self.edit_reward_state(session, user_info.id, task_id)
+        return rs
 
     @staticmethod
     def task_edit_avatar(service, session, user_info, avatar):
@@ -918,7 +943,7 @@ class BagObject:
         return False
 
     def send_horn_item(self, users,user_info, content):
-        MessageObject.push_message(self.service, users, PUSH_TYPE['world_horn'], {'message':content,'nick_id':user_info.id,'nick':user_info.nick,'vip_exp':self.service.vip.to_level(user_info.vip_exp)})
+        MessageObject.push_message(self.service, users, PUSH_TYPE['world_horn'], {'message':content,'nick_id':user_info.id,'nick':user_info.nick,'vip_exp':user_info.vip_exp})
 
     def save_user_gift(self, user,gift_id,countof):
         self.save_countof({'table_name':'bag_gift','stuff_id':gift_id,'uid':user,'countof':countof,'stuff_field':'gift_id'})
@@ -1101,9 +1126,9 @@ class VIPObject:
 
 
     # vip用户升级，需要广播
-    def level_up_broadcast(self, nick, vip_level):
-        content = BORADCAST_CONF['vip_up'] % (nick, vip_level)
-        MessageObject.push_message(self.service,self.service.redis.hkeys('online'),PUSH_TYPE['vip_upgrade'],{'nick':nick, 'vip_exp':vip_level})
+    def level_up_broadcast(self, nick, vip_exp):
+        content = BORADCAST_CONF['vip_up'] % (nick, vip_exp)
+        MessageObject.push_message(self.service,self.service.redis.hkeys('online'),PUSH_TYPE['vip_upgrade'],{'nick':nick, 'vip_exp':vip_exp})
 
 
     def denied_buy_gold(self, vip):
@@ -1190,6 +1215,9 @@ class ItemObject:
 
     def __init__(self, service):
         self.service = service
+
+    def get_itme_by_all(self, session):
+        return session.query(TItem).all()
 
     def get_item_by_id(self, session, item_id):
         return session.query(TItem).filter(TItem.id == item_id).first()

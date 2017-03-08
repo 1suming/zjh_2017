@@ -223,7 +223,7 @@ class Gambler:
         try :
             if self.game.start_time > 0 and self.game.round.current_gambler.uid == self.uid \
                     and self.game.round.count == turn_count:
-                print "==== Timeout GIVE UP =>",self.uid,self.game.round.count
+                #print "==== Timeout GIVE UP =>",self.uid,self.game.round.count
                 self.game.bet(self.player.uid,GIVE_UP,0,0)
         finally:
             self.game.table.lock.release()
@@ -309,7 +309,7 @@ class GameRound:
         gevent.sleep(3)
         self.turn_start_time = int(time.time())
         self.game.sender.send_current_turn(self.count,self.current_gambler)
-        gevent.spawn_later(TURN_TIMEOUT,self.current_gambler.turn_timeout,self.count)
+        gevent.spawn_later(self.game.round_seconds,self.current_gambler.turn_timeout,self.count)
 
     def finish_turn(self,uid):
         self.turn_uids.append(self.current_gambler.uid)
@@ -323,7 +323,7 @@ class GameRound:
         self.current_gambler = self.next_notlose_gambler(self.current_gambler.uid)
         self.turn_start_time = int(time.time())
         self.game.sender.send_current_turn(self.count,self.current_gambler)
-        gevent.spawn_later(TURN_TIMEOUT,self.current_gambler.turn_timeout,self.count)
+        gevent.spawn_later(self.game.round_seconds,self.current_gambler.turn_timeout,self.count)
 
     def finish_round(self):
         self.count += 1
@@ -369,13 +369,14 @@ class GameRound:
 
 
 class GoldFlower:
-    def __init__(self,table,required_gold,max_gold,required_round,max_round,fee_rate):
+    def __init__(self,table,required_gold,max_gold,required_round,max_round,fee_rate,round_seconds):
         self.required_gold = required_gold
         self.max_gold = max_gold
         self.required_round = required_round
         self.max_round = max_round
         
         self.fee_rate = fee_rate
+        self.round_seconds = round_seconds
 
         self.table = table
 
@@ -390,6 +391,9 @@ class GoldFlower:
 
         self.sender = GameEventSender(table, self)
         self.process_started = False
+
+    def is_gambler(self,uid):
+        return uid in self.gamblers
 
     def is_started(self):
         return self.start_time > 0
@@ -459,7 +463,7 @@ class GoldFlower:
 
         self.winner = winner
 
-        fee_gold = int(self.total_gold * self.fee_rate)
+        fee_gold = int((self.total_gold - winner.bet_gold) * self.fee_rate)
         win_gold = self.total_gold - fee_gold
 
         session = get_context("session")
@@ -531,13 +535,13 @@ class GoldFlower:
                 user_gf.win_games += 1
                 
             if self.table.table_type == TABLE_L:
-                user_gf.exp += 2 if user_gf.uid == winner.uid else 1
+                user_gf.exp += 2 if user_gf.id == winner.uid else 1
             elif self.table.table_type == TABLE_M:
-                user_gf.exp += 4 if user_gf.uid == winner.uid else 2
+                user_gf.exp += 4 if user_gf.id == winner.uid else 2
             elif self.table.table_type == TABLE_H:
-                user_gf.exp += 8 if user_gf.uid == winner.uid else 4
+                user_gf.exp += 8 if user_gf.id == winner.uid else 4
             else:
-                user_gf.exp += 16 if user_gf.uid == winner.uid else 8
+                user_gf.exp += 16 if user_gf.id == winner.uid else 8
             
             achievement = GameAchievement(session,user_gf.id)
             achievement.finish_game(user_gf,row_gambler.win_gold)   
@@ -550,8 +554,8 @@ class GoldFlower:
         winner.player.modify_gold(session,win_gold)
 
         DailyTaskManager(self.table.redis).finish_game(winner,[gambler.uid for gambler in self.gamblers.values()])
-        broadcast.send_win_game(winner.uid,winner.nick,win_gold - winner.bet_gold)
-        broadcast.send_good_pokers(winner.uid,winner.nick,winner.pokers)
+        broadcast.send_win_game(self.table.redis,winner.uid,winner.player.nick,self.table.table_type,win_gold - winner.bet_gold)
+        broadcast.send_good_pokers(self.table.redis,winner.uid,winner.player.nick,self.table.table_type,winner.pokers)
 
     def bet(self,uid,action,gold,other):
         if action == GIVE_UP:
@@ -794,6 +798,7 @@ class GoldFlower:
         pb_game.max_gold = self.max_gold
         pb_game.required_round = self.required_round
         pb_game.max_round = self.max_round
+        pb_game.round_seconds = self.round_seconds
         return pb_table
 if __name__ == '__main__':
     pass

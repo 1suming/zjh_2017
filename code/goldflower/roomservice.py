@@ -99,9 +99,9 @@ class RoomService(GameService):
         uid = req.header.user
         room_id = self.room_manager.get_user_room(uid)
         if room_id > 0:
-            new_req = create_client_message(LeaveTableInternalReq)
+            new_req = create_client_message(OfflineReq)
             new_req.header.user = uid
-            new_req.header.transaction = req.header.transaction
+            new_req.body.uid = uid
             self.forward_proxy_message(event.srcId,room_id,new_req.header.command, \
                             req.header.user,req.header.transaction,new_req.encode()) 
 

@@ -13,6 +13,7 @@ def set_player(pb,user,user_gf,gifts = None):
     if user.birthday != None:
         pb.birthday = user.birthday.strftime('%Y-%m-%d')
     pb.uid = user.id
+    pb.vip_exp = 0 if user.vip_exp is None else user.vip_exp
 
     if user_gf.best != None and user_gf.best.strip() != "":
         pks = user_gf.best.split(",")
@@ -136,7 +137,7 @@ def set_top(pb, rank_player, index):
 
 
 def set_item(pb, item):
-    copy_simple_field(pb,item,not_fields = ["birthday","best"])
+    copy_simple_field(pb,item)
 
 def set_item_add(pb, item, count):
     if type(item) == dict:

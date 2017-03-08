@@ -32,7 +32,7 @@ tab_user = Table("user", metadata,
                  Column("address",String(140)),
                  Column("channel",String(10),default="test"),
                  Column("create_time",DateTime,nullable =False),
-                 Column("vip_exp",Integer),
+                 Column("vip_exp",Integer,default=0),
                  Column("is_charge", SMALLINT)
                  )
                  

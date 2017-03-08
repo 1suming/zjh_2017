@@ -38,9 +38,21 @@ class Player:
         self.access_service = access_service
         self.seat = seat
         self.gold = 10000
-        self.disconnected = False
+        self.is_connected = True
         self.nick = user.nick
         self.avatar = user.avatar
+
+    def update_by_reconnected(self,user,access_service):
+        self.user = user
+        self.access_service = access_service
+        self.nick = user.nick
+        self.avatar = user.avatar
+        self.gold = self.user.get_gold()
+        self.is_connected = True
+
+    def update_by_disconnected(self):
+        self.access_service = -1
+        self.is_connected = False
 
     def has_gold(self,gold):
         return self.user.gold >= gold
@@ -50,11 +62,7 @@ class Player:
 
     def modify_gold(self,session,gold):
         gold = self.user.modify_gold(session,gold)
-        return gold 
-
-    def leave_table(self):
-        if self.disconnected:
-            self.table.remove_player(self.uid)  
+        return gold
 
     def __repr__(self):
         return "Player[%d/%d]" % (self.uid,self.seat)
@@ -69,8 +77,9 @@ class Player:
         pb_brief.seat = self.seat
         pb_brief.nick = self.user.nick
         pb_brief.vip = self.user.vip
-        if self.user.sex:
-        	pb_brief.sex = self.user.sex
+        pb_brief.vip_exp = 0 if self.user.vip_exp is None else self.user.vip_exp
+        pb_brief.sex = 0 if self.user.sex == 0 else 1
+
        
         return pb_brief
 
@@ -91,11 +100,11 @@ class Table:
         self.sender = TableEventSender(self)
         self.lock = lock.DummySemaphore()
 
-    def update_player(self,uid,user,access_service):
+    def player_reconnected(self,uid,user,access_service):
         player = self.get_player(uid)
-        player.user = user
-        player.access_service = access_service
-        player.disconnected = False
+        if player == None:
+            return
+        player.update_by_reconnected(user,access_service)
 
         self.redis.hset(self.table_key,uid,access_service)
         self.redis.hset(self.manager.room_key,uid,self.id)
@@ -103,10 +112,14 @@ class Table:
 
     def player_disconnected(self,uid):
         player = self.get_player(uid)
-        player.disconnected = True
+        if player == None:
+            return
 
-        gevent.spawn_later(20,self.remove_player,uid)
-        self.sender.send_player_connect(player,False)
+        if self.game != None and self.game.is_gambler(uid):
+            player.update_by_disconnected()
+            self.sender.send_player_connect(player,False)
+        else:
+            self.remove_player(uid)
 
     def add_player(self,uid,user,access_service):
         if self.is_full() or self.has_player(uid):
@@ -145,7 +158,7 @@ class Table:
 
     def kick_player(self,kicker,uid):
         if kicker < 0:
-             kicker_player = None
+            kicker_player = None
         else:
             kicker_player = self.get_player(kicker)
 
@@ -171,27 +184,33 @@ class Table:
         
     
     def restart_game(self):
-        #self.game = None
         config = TABLE_GAME_CONFIG[self.table_type]
 
         for player in self.players.values():
-            gold = player.get_gold()
-            if config[0] >= 0 and gold < config[0]:
-                self.kick_player(-1,player.uid)
+            if not player.is_connected:
+                self.remove_player(player.uid)
                 continue
+            gold = player.get_gold()
+            #if config[0] >= 0 and gold < config[0]:
+            #    self.kick_player(-1,player.uid)
+            #    continue
             if config[1] >= 0 and gold > config[1]:
                 self.kick_player(-1,player.uid)
                 continue
-        self.game = GoldFlower(self,config[2],config[3],config[4],config[5],config[6])
+        self.game = GoldFlower(self,config[2],config[3],config[4],config[5],config[6],config[7])
 
     def notify_event(self,event):
         event_type = event.header.command
         event_data = event.encode()
         service = self.manager.service
         for player in self.players.values():
+            if player.access_service < 0:
+                continue
             service.send_client_event(player.access_service,player.uid,event_type,event_data)
 
     def notify_event_player(self,event,player):
+        if player.access_service < 0:
+            return
         event_type = event.header.command
         event_data = event.encode()
         service = self.manager.service
@@ -227,7 +246,6 @@ class TableManager:
             self.redis = None
 
         self.tables = {}
-        self.table_id = 0
         self.room_id = service.serviceId
 
         self.session = Session()
@@ -284,6 +302,26 @@ class TableManager:
             return k
         return -1
 
+    def reconnect_table_player(self,table,uid,user,access_service):
+        if table == None:
+            return
+        table.lock.acquire()
+        try:
+            table.player_reconnected(uid,user,access_service)
+        finally:
+            table.lock.release()
+
+    def remove_table_player(self,table,uid):
+        if table == None:
+            return
+        table.lock.acquire()
+        try:
+            table.remove_player(uid)
+        finally:
+            table.lock.release()
+
+
+
     def sit_table(self,target_table_id,uid,access_service,not_table_ids,table_type):
         user = self.dal.get_user(uid)
         if user == None:
@@ -293,36 +331,14 @@ class TableManager:
             table_type = self.find_suitable_table_type(user.gold)
             if table_type < 0:
                 return RESULT_FAILED_LESS_GOLD,None
+        table = None
 
         old_table = self.get_player_table(uid)
-        change_table = old_table != None and old_table.id != target_table_id
-        # clean old table info if change table, otherwise it means re-join table
-        if old_table != None:
-            if not change_table:
-                old_table.lock.acquire()
-                try:
-                    old_table.update_player(uid,user,access_service)
-                finally:
-                    old_table.lock.release()
+        if target_table_id < 0:
+            if old_table != None and not old_table.get_player(uid).is_connected :
+                self.reconnect_table_player(old_table,uid,user,access_service)
                 return 0, old_table
-            else:
-                if len(old_table.players) == 1 and table == None:
-                    table = old_table
-                    return 0,table
-                old_table.lock.acquire()
-                try :
-                    old_table.remove_player(uid)
-                finally:
-                    old_table.lock.release()
-        
-        # if player want to sit specific table,then check table info,such as countof players,table_type and so on
-        if target_table_id >= 0:
-            table = self.get_table(target_table_id)
-            print "------>, table_id ",table
-            if table == None or table.is_full():
-                return RESULT_FAILED_INVALID_TABLE,None
-        else:
-            table = None
+
             for t in self.tables.values():
                 if old_table != None and old_table.id == t.id :
                     continue
@@ -332,9 +348,21 @@ class TableManager:
                     continue
                 table = t
                 break
+            if table == None and old_table != None and len(old_table.players) == 1:
+                # no new tables ,so does not change table
+                return 0,old_table
 
+            self.remove_table_player(old_table,uid)
             if table == None:
                 table = self.new_table(table_type)
+        else:
+            if old_table != None and target_table_id == old_table.id:
+                return 0,old_table
+
+            self.remove_table_player(old_table,uid)
+            table = self.get_table(target_table_id)
+            if table == None or table.is_full():
+                return RESULT_FAILED_INVALID_TABLE,None
 
         table.lock.acquire()
         try :

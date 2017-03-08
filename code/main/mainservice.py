@@ -28,6 +28,8 @@ from util.handlerutil import *
 
 from config.var import *
 from hall.hallobject import *
+from dal.core import DataAccess
+
 
 class MainService(GameService):
     def setup_route(self):
@@ -51,6 +53,9 @@ class MainService(GameService):
         self.redis.hset("online",req.header.user,event.srcId)
         resp.header.result = 0
         logging.info("====> User Connect Now: %d", req.header.user)
+
+        da = DataAccess(self.redis)
+        da.get_user(req.header.user,must_update=True)
 
         # 财富榜人物上线了，广播
         RankObject.gold_top_online_broadcast(self, session, req.header.user)

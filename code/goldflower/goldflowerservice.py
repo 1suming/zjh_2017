@@ -37,15 +37,17 @@ from dal.core import *
 class GoldFlowerService(GameService):
     def setup_route(self):
         self.registe_command(LeaveTableReq,LeaveTableResp,self.handle_leave_table)
-
         self.registe_command(SetPlayerReadyReq,SetPlayerReadyResp,self.handle_set_player_ready)
         self.registe_command(BetActionReq,BetActionResp,self.handle_bet_action)
-
         self.registe_command(KickOtherReq,KickOtherResp,self.handle_kick_other)
+
     
     def init(self):
         self.registe_handler(SitTableReq,SitTableResp,self.handle_sit_table)
         self.registe_handler(LeaveTableInternalReq,LeaveTableInternalResp,self.handle_leave_table_internal)
+        self.registe_handler(OfflineReq,OfflineResp,self.handle_offline)
+
+
 
         self.room_id = self.serviceId
         self.table_manager = TableManager(self)
@@ -106,6 +108,21 @@ class GoldFlowerService(GameService):
         finally:
             table.lock.release()
         return False
+
+    @USE_TRANSACTION
+    def handle_offline(self,session,req,resp,event):
+        table = self.get_table(req.header.user)
+        if table == None:
+            resp.header.result = RESULT_FAILED_INVALID_TABLE
+            return False
+
+        table.lock.acquire()
+        try:
+            table.player_disconnected(req.body.uid)
+        finally:
+            table.lock.release()
+        return False
+
 
     @USE_TRANSACTION
     def handle_set_player_ready(self,session,req,resp,event):

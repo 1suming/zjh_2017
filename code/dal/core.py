@@ -20,10 +20,14 @@ class DataAccess:
     def __init__(self,redis):
         self.redis = redis
 
-    def get_user(self,uid):
+    def get_user(self,uid,must_update = False):
         dal_user = DalUser(self,uid)
-        if dal_user.load():
-            return dal_user
+        if must_update:
+            if dal_user.load_from_database():
+                return dal_user
+        else:
+            if dal_user.load():
+                return dal_user
         return None
 
     def save_user(self,session,dal_user):

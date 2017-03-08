@@ -36,6 +36,7 @@ message Player {
 	repeated Gift gifts = 21;
 	repeated Poker best = 22;
 	optional bool is_friend = 23;
+	optional int32 vip_exp = 24;
 }
 
 //玩家信息摘要
@@ -207,6 +208,7 @@ message GoldFlower {
 	required int32 max_gold = 6;
 	required int32 required_round = 7;
 	required int32 max_round = 8;
+	required int32 round_seconds = 9;
 }
 
 //玩家金币信息

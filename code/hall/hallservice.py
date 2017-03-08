@@ -360,12 +360,14 @@ class HallService(GameService):
 
         # vip验证好友数限制
         my_firend_count = self.friend.get_friends_count(session, user_info.id)
-        if self.vip.over_friend_max( self.vip.to_level(user_info.vip_exp), my_firend_count ):
+        print '------>',my_firend_count
+        if self.vip.over_friend_max( self.vip.to_level(user_info.vip_exp), my_firend_count + 1 ):
             resp.header.result = RESULT_FAILED_FRIEND_MAX
             return
-        
+
         target_firend_count = self.friend.get_friends_count(session, friend_info.id)
-        if self.vip.over_friend_max( self.vip.to_level(friend_info.vip_exp), target_firend_count ):
+        print '=======>',target_firend_count
+        if self.vip.over_friend_max( self.vip.to_level(friend_info.vip_exp), target_firend_count + 1 ):
             resp.header.result = RESULT_FAILED_FRIEND_MAX
             return
 
@@ -544,19 +546,43 @@ class HallService(GameService):
         if total_days < 0  or signin_days < 0:
             resp.header.result = RESULT_FAILED_TODAY_SIGNED
             return
-        print '---------------->1',total_days,signin_days, sign_luck_max
+        print 'vip======>',self.vip.to_level(user_info.vip_exp),user_info.vip_exp
+        print '---------------->11111|',total_days,signin_days, sign_luck_max
         # 签到奖励，需要判断vip等级
         incr_gold = 0
         incr_gold = self.sign.sign_reward(session, user_info, sign_luck_max)
-        print '---------------->2',incr_gold
+        print '---------------->222222|',incr_gold
         print incr_gold
-        if self.vip.to_level(user_info.vip_exp) >= 1:
-            incr_gold += self.sign.sign_reward_vip(session, user_info, sign_luck_max, incr_gold)
-        print '---------------->3',incr_gold
+        add_item = {}
+        # if self.vip.to_level(user_info.vip_exp) >= 1:
+        incr_gold += self.sign.sign_reward_vip(session, user_info, sign_luck_max, incr_gold)
+        add_item = self.sign.sign_reward_vip_item(session,user_info,sign_luck_max)
+
+        if add_item is not None and len(add_item) >0:
+            horn_item = self.item.get_item_by_id(session, add_item['horn_card'][0])
+            print '---------->,send item 1',horn_item
+            if int(add_item['horn_card'][2]) > 0:
+                protohelper.set_item_add(resp.body.result.items_added.add() ,{
+                    'id':horn_item.id,
+                    'icon':horn_item.icon,
+                    'name':horn_item.name,
+                    'description':horn_item.description,
+                }, add_item['horn_card'][2])
+            kick_item = self.item.get_item_by_id(session, add_item['kick_card'][0])
+            print '---------->,send item 2',kick_item
+            if int(add_item['kick_card'][2]) > 0:
+                protohelper.set_item_add(resp.body.result.items_added.add() ,{
+                   'id':kick_item.id,
+                    'icon':kick_item.icon,
+                    'name':kick_item.name,
+                    'description':kick_item.description,
+                }, add_item['kick_card'][2])
+        print '---------------->333333|',incr_gold
         # 累计签到，幸运日发送奖品
         item,count = self.sign.sign_luck_day(session, total_days, sign_log.id)
         if item is not None and count > 0:
             protohelper.set_item_add(resp.body.result.items_added.add() ,item, count)
+
 
         protohelper.set_result(resp.body.result, gold=user_info.gold, diamond=user_info.diamond, incr_gold=incr_gold)
 
@@ -672,32 +698,47 @@ class HallService(GameService):
         rewards = session.query(TRewardTask).all()
         reward_logs = session.query(TRewardUserLog).filter(TRewardUserLog.uid == req.header.user).all()
 
-
+        items = self.item.get_itme_by_all(session)
         if len(rewards) <= 0:
             resp.header.result = -1
             return
 
-        for item in rewards:
-            protohelper.set_reward(resp.body.rewards.add(), item, reward_logs)
+        for reward in rewards:
+            pb_reward = resp.body.rewards.add()
+            protohelper.set_reward(pb_reward, reward, reward_logs)
+            if reward.items is None or reward.items == '':
+                continue
+            for split_item in reward.items.split(','):
+                for item in items:
+                    if item.id == int(split_item[0]):
+                        protohelper.set_item_add(pb_reward.items.add(), {
+                            'id':item.id,
+                            'name':item.name,
+                            'icon':item.icon,
+                            'description':item.description,
+                        }, split_item[2])
+
+
         resp.header.result = 0
     # 接收奖励
     @USE_TRANSACTION
     def handle_rewards_receive(self,session,req,resp,event):
         user_info = self.da.get_user(req.header.user)
-
-        if self.reward.is_undone(session, user_info.id,req.body.reward_id):
+        print '=====>before',user_info.gold,user_info.diamond
+        # 给用户奖励
+        result = self.reward.give_user_reward(session, user_info, req.body.reward_id)
+        if result is None or len(result) <= 0:
             resp.header.result = RESULT_FAILED_INVALID_REWARD
             return
 
-        if self.reward.give_user_reward(session, user_info, req.body.reward_id):
-            self.reward.edit_reward_state(session, user_info.id, req.body.reward_id)
-
+        print '=====>after',user_info.gold,user_info.diamond
+        print '====>result',result
         # 返回result标准格式
         protohelper.set_result(resp.body.result, gold = user_info.gold,
                            diamond = user_info.diamond,
-                           incr_gold = self.reward.result['incr_gold'],
-                           incr_diamond = self.reward.result['incr_diamond'])
-        for item in self.reward.result['items_add']:
+                           incr_gold = result.get('incr_gold',0),
+                           incr_diamond = result.get('incr_diamond', 0))
+        for item in result['items_add']:
             protohelper.set_item_add(resp.body.result.items_added.add(), item, item['count'])
 
         resp.header.result = 0
@@ -715,7 +756,10 @@ class HallService(GameService):
                  return
 
              if self.bag.use_horn_item(session,req.header.user, 1) > 0:
-                self.bag.send_horn_item(self.redis.hkeys('online'), user_info,  req.body.message)
+                 self.bag.send_horn_item(self.redis.hkeys('online'), user_info,  req.body.message)
+
+             # 完成喊话任务
+             # DailyTaskManager(self.redis).use_horn(req.header.user)
 
          elif req.body.table_id > 0:
              keys = self.redis.keys("table_*_" + str(req.body.table_id))
@@ -833,6 +877,8 @@ class HallService(GameService):
 
         data_count, items = self.shop.get_lists(session, req.body.page, req.body.page_size,user_info, req.body.can_buy, req.body.my_sell)
 
+
+
         # other data
         for item in items:
             protohelper.set_trades(resp.body.trades.add(), item,self.da.get_user(item.seller))
@@ -846,6 +892,7 @@ class HallService(GameService):
 
         # 权限验证，vip1及以上等级可在金币交易中购买金币交易
         # if VIPObject.check_vip_auth(self.vip.to_level(user_info.vip_exp), sys._getframe().f_code.co_name) == False:
+        print '------------>',self.vip.to_level(user_info.vip_exp),BUY_GOLD_LEVEL
         if self.vip.denied_buy_gold( self.vip.to_level(user_info.vip_exp) ):
             resp.header.result = RESULT_FAILED_INVALID_AUTH
             return
@@ -1005,7 +1052,9 @@ class HallService(GameService):
         new_vip_level = self.vip.to_level(user_info.vip_exp)
         # vip升级广播
         if old_vip_level < new_vip_level:
-            self.vip.level_up_broadcast(user_info.nick, 'VIP'+str(new_vip_level))
+            self.vip.level_up_broadcast(user_info.nick, user_info.vip_exp)
+            # 完成vip任务
+            SystemAchievement(session, user_info.id).finish_upgrade_vip(new_vip_level)
 
 
         # 返回数据
@@ -1036,27 +1085,28 @@ class HallService(GameService):
     def handle_bank_save(self,session,req,resp,event):
         user_info = self.da.get_user(req.header.user)
 
+        print '---->1'
         # vip 银行存款限制
         if self.vip.over_bank_max(self.vip.to_level(user_info.vip_exp), req.body.gold):
             resp.header.result = RESULT_FAILED_BANK_MAX
             return
-
+        print '---->2'
         if req.body.gold > 0 and user_info.gold < req.body.gold:
             resp.header.result = RESULT_FAILED_INVALID_GOLD
             return
-
+        print '---->3'
         if VIP_CONF[self.vip.to_level(user_info.vip_exp)]['bank_max'] > 0:
             bank_account = session.query(TBankAccount).filter(TBankAccount.uid == req.header.user).first()
             if bank_account == None:
                 bank_account = TBankAccount()
                 bank_account.uid = req.header.user
-                bank_account.gold = req.body.gold
+                bank_account.gold = int(req.body.gold)
                 bank_account.diamond = 0
                 bank_account.update_time = datehelper.get_today_str()
                 bank_account.create_time = datehelper.get_today_str()
                 session.add(bank_account)
         # if bank_account == None or VIP_CONF[user_info.vip]['bank_max'] <= 0:
-
+        print '----->4'
         if req.body.gold < 0:
             if bank_account.gold < abs(req.body.gold):
                 resp.header.result = RESULT_FAILED_INVALID_GOLD
@@ -1069,12 +1119,12 @@ class HallService(GameService):
         session.query(TBankAccount).filter(TBankAccount.uid == req.header.user).update({
             TBankAccount.gold: TBankAccount.gold + req.body.gold
         })
-
+        print '----->5',user_info.gold,type(user_info.gold),req.body.gold,type(req.body.gold)
         if req.body.gold > 0:
-            user_info.gold = user_info.gold - req.body.gold
+            user_info.gold = user_info.gold - int(req.body.gold)
         elif req.body.gold < 0:
-            user_info.gold = user_info.gold + abs(req.body.gold)
-
+            user_info.gold = user_info.gold + int(abs(req.body.gold))
+        print '----->6',user_info.gold,type(user_info.gold),req.body.gold,type(req.body.gold)
         self.da.save_user(session, user_info)
         resp.body.result.gold = user_info.gold
         resp.body.result.diamond = user_info.diamond
@@ -1174,7 +1224,7 @@ class HallService(GameService):
 
     @USE_TRANSACTION
     def handle_quick_charge(self,session,req,resp,event):
-        money,gold,name = QUICK_CHARGE[abs(req.body.table_type)-1]
+        money,gold,name,real_money = QUICK_CHARGE[abs(req.body.table_type)-1]
         print '===================>'
         print money,gold,name
         resp.body.money = money

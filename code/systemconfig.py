@@ -22,7 +22,7 @@ class SystemConfig:
         host = system_config.get(name,"host")
         port = system_config.getint(name,"port")
         db = system_config.getint(name,"db")
-	password = system_config.get(name,'password') if system_config.get(name,'password') else None
+        password = system_config.get(name,'password') if system_config.has_option(name,'password') else None
         return host,port,db,password
         
     def get_database_config(self,db_name):

@@ -3,7 +3,7 @@
 import json
 
 DT_LOGIN 		= 0
-DT_HORN			= 1
+DT_HORN			= 87
 DT_GAMES_3 		= 2
 DT_GAMES_30 	= 3
 DT_WIN_3		= 4
@@ -11,7 +11,7 @@ DT_WIN_30		= 5
 DT_BET_10		= 6
 DT_SHOW_HAND	= 7
 DT_DIAMOND		= 8
-DT_ALL			= 100
+DT_ALL			= 94
 
 ALL_TASKS = (DT_LOGIN,DT_HORN,DT_GAMES_3,DT_GAMES_30,DT_WIN_3,DT_WIN_30,DT_BET_10,DT_SHOW_HAND,DT_DIAMOND)
 
@@ -22,8 +22,8 @@ TASK_STATE_ONGOING  = 2
 class DailyTask:
 	def __init__(self,data):
 		if data == None: 
-			self.tasks = tasks
-			self.values = values
+			self.tasks = {}
+			self.values = {}
 		else:
 			self.tasks,self.values = json.loads(data)
 	
@@ -55,7 +55,7 @@ class DailyTask:
 		task_id = str(task_id)
 		self.tasks[task_id] = TASK_STATE_FINISHED
 		for tid in ALL_TASKS:
-			if not self.is_task_finished():
+			if not self.is_task_finished(tid):
 				return
 		self.tasks[DT_ALL] = TASK_STATE_FINISHED
 		

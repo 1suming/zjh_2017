@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import json
 from proto.constant_pb2 import *
-
+import var
 
 BORADCAST_CONF = {
-    'reg':u'欢迎新人玩家%s加入天天炸翻天，开启快乐的游戏之旅，预祝早日成为人生赢家！ ',
-    'good_pokers':u'恭喜玩家%s在%s场拿到%s，通杀全场！', # （场次）（顺金或者豹子牌型）
-    'win_game':u'玩家%s 在%s场（游戏场地）赢得%d万金币，恭喜发财！小赌养家糊口，大赌发家至富！',
+    'reg':u'欢迎新人玩家%s加入全民炸翻天，开启快乐的游戏之旅，预祝早日成为人生赢家！ ',
+    'good_pokers':u'恭喜玩家%s在%s拿到%s，通杀全场！', # （场次）（顺金或者豹子牌型）
+    'win_game':u'玩家%s 在%s 赢得%d万金币，恭喜发财！小赌养家糊口，大赌发家至富！',
 
     #------------ 未实现 -----------
 
@@ -32,16 +33,16 @@ def send_register(uid,name):
     message = BORADCAST_CONF["reg"] % (name)
     send_broadcast(message)
 
-def send_win_game(uid,name,table_type,gold):
-    if gold < 1000000:
+def send_win_game(redis, uid,name,table_type,gold):
+    if gold < 1:#1000000:
         return
 
     place = PLACES[table_type]
     gold = gold / 10000
     message = BORADCAST_CONF["win_game"] % (name,place,gold)
-    send_broadcast(message)
+    send_broadcast(redis, message)
 
-def send_good_pokers(uid,name,table_type,pokers):
+def send_good_pokers(redis, uid,name,table_type,pokers):
     pokers_str = None
     if pokers.is_baozi():
         pokers_str = u"豹子"
@@ -52,10 +53,15 @@ def send_good_pokers(uid,name,table_type,pokers):
 
     place = PLACES[table_type]
     message = BORADCAST_CONF["good_pokers"] % (name,place,pokers_str)
-    send_broadcast(message)
+    send_broadcast(redis, message)
 
 
-def send_broadcast(message):
-    print "======> broadcast message : ",message
+def send_broadcast(redis, message):
     # TBD
-    pass
+    users = redis.hkeys('online')
+    p1 = var.PUSH_TYPE['sys_broadcast']
+    p2 = message
+    notifi_type = N_BROADCAST
+
+    item = {'users':users,'param1':p1,'param2':p2,'notifi_type':notifi_type}
+    redis.lpush('notification_queue', json.dumps(item))
