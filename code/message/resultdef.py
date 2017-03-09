@@ -77,6 +77,7 @@ RESULT_FAILED_TODAY_SIGNED          = -20110       # 今日已签到
 # 好友
 RESULT_FAILED_INVALID_FRIEND        = -20200       # 添加好友失败
 RESULT_FAILED_FRIEND_MAX            = -20201       # 超过好友上线
+RESULT_FAILED_FRIEND_TARGET_MAX     = -20204       # 对方好友超过上限
 RESULT_FAILED_HAS_FRIEND        = -20202       # 重复添加好友
 RESULT_FAILED_MAKE_APPLY        = -20203       # 好友申请中
 

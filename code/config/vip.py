@@ -3,7 +3,7 @@ __author__ = 'Administrator'
 
 
 VIP_CONF = [
-    {'id':0,'level':0,'friend_max':5, 'charge':0,'sign_reward':0,'kick_card':'2-0','horn_card':'1-1','relief_time':2,'relief_good':10000, 'bank_max':0,'nick_color':'white','auth':[]},
+    {'id':0,'level':0,'friend_max':5, 'charge':0,'sign_reward':0,'kick_card':'2-0','horn_card':'1-1','relief_time':2,'relief_good':10000, 'bank_max':100000,'nick_color':'white','auth':[]},
     {'id':76,'level':1,'friend_max':10, 'charge':20,'sign_reward':0.5,'kick_card':'2-0','horn_card':'1-2','relief_time':3,'relief_good':10000, 'bank_max':500000,'nick_color':'green','auth':['handle_trade_buy']},
     {'id':77,'level':2,'friend_max':20, 'charge':60,'sign_reward':1,'kick_card':'2-0','horn_card':'1-3','relief_time':4,'relief_good':10000, 'bank_max':2000000,'nick_color':'green','auth':['handle_trade_buy','handle_sell_gold']},
     {'id':78,'level':3,'friend_max':30, 'charge':100,'sign_reward':2,'kick_card':'2-3','horn_card':'1-5','relief_time':4,'relief_good':10000, 'bank_max':5000000,'nick_color':'blue','auth':['handle_kick_other','handle_trade_buy','handle_sell_gold']},

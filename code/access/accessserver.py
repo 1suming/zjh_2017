@@ -172,9 +172,10 @@ class AccessClientConnection(object):
             self.close()    
     
     def on_message(self,client_message):
-    	request,idx = get_request(client_message.data)
+    	#request,idx = get_request(client_message.data)
 
         if var.DEBUG:
+            request,idx = get_request(client_message.data)
             logging.info("receive a message : cmd=%d | user=%d | route=%d " %(client_message.header.command, \
                                                     client_message.header.user,client_message.header.route))
             logging.info("message body:\n" + str(request.body))

@@ -30,6 +30,8 @@ from eventsender import *
 
 from task.dailytask import *
 from task.achievementtask import *
+from rank.makemoneytop import *
+
 
 from helper import dbhelper
 from config import broadcast
@@ -409,8 +411,10 @@ class GoldFlower:
         if player == None:
             raise Exception("player is not exist")
 
-        if not player.has_gold(self.required_gold):
-            return RESULT_FAILED_NO_ENOUGH_GOLD
+        table_config = TABLE_GAME_CONFIG[self.table.table_type]
+        if table_config[0] > 0:
+            if not player.has_gold(table_config[0]):
+                return RESULT_FAILED_NO_ENOUGH_GOLD
 
         gambler = Gambler(self,player)
 
@@ -533,15 +537,17 @@ class GoldFlower:
             user_gf.total_games += 1
             if user_gf.id == winner.uid :
                 user_gf.win_games += 1
-                
+                # 周赚金榜
+                MakeMoneyTop.save_rank(session, user_gf.id, win_gold)
+
             if self.table.table_type == TABLE_L:
-                user_gf.exp += 2 if user_gf.id == winner.uid else 1
+                user_gf.exp += 5 if user_gf.id == winner.uid else 1
             elif self.table.table_type == TABLE_M:
-                user_gf.exp += 4 if user_gf.id == winner.uid else 2
+                user_gf.exp += 10 if user_gf.id == winner.uid else 2
             elif self.table.table_type == TABLE_H:
-                user_gf.exp += 8 if user_gf.id == winner.uid else 4
+                user_gf.exp += 15 if user_gf.id == winner.uid else 3
             else:
-                user_gf.exp += 16 if user_gf.id == winner.uid else 8
+                user_gf.exp += 20 if user_gf.id == winner.uid else 4
             
             achievement = GameAchievement(session,user_gf.id)
             achievement.finish_game(user_gf,row_gambler.win_gold)   
@@ -748,7 +754,7 @@ class GoldFlower:
         for i in xrange(WAIT_SECONDS):
             self.table.lock.acquire()
             try :
-                if len(self.gamblers) >= 3:
+                if len(self.gamblers) == self.table.countof_players() and len(self.gamblers) >= 2:
                     break
             finally:
                 self.table.lock.release()

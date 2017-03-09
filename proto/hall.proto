@@ -39,6 +39,7 @@ message QueryUserResp {
         ID = 1003;
     }
     optional Player player = 1;
+    optional string update_avatar_url = 2;
 }
 
 message UpdateUserReq {

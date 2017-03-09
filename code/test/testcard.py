@@ -238,12 +238,12 @@ def send_chat_world(client,mobile = '13412341235',password= '123456',token='d_94
         print result.body
 
 
-        req = create_client_message(QueryHallReq)
-        req.header.user = result.header.user
-        req.body.max_mail_id =  0
-        req.body.max_announcement_id =  0
-        client.socket.send(req.encode())
-        time.sleep(2)
+        # req = create_client_message(QueryHallReq)
+        # req.header.user = result.header.user
+        # req.body.max_mail_id =  0
+        # req.body.max_announcement_id =  0
+        # client.socket.send(req.encode())
+        # time.sleep(2)
         req2 = create_client_message(SendChatReq)
         req2.header.user = result.header.user
         req2.body.table_id = 0
@@ -1078,8 +1078,8 @@ def send_mail(client,mobile = '13412341777',password= '123456',device_id='d_9444
 def get_friends(client,mobile = '13412341777',password= '123456',device_id='d_9444'):
     try:
         MessageMapping.init()
-        # resp = client.normal_test_enter_server(mobile,password,device_id)
-        resp = client.fast_test_enter_server('A00000568CD11','','','')
+        resp = client.normal_test_enter_server(mobile,password,device_id)
+        # resp = client.fast_test_enter_server('A00000568CD11','','','')
         print '1111111111111111111'
         print resp.header.user,'=',resp.header.result
         print resp.body
@@ -1094,7 +1094,7 @@ def get_friends(client,mobile = '13412341777',password= '123456',device_id='d_94
         req = create_client_message(GetFriendsReq)
         req.header.user = result.header.user
         req.body.page = 1
-        req.body.page_size = 10
+        req.body.page_size = 1000
         client.socket.send(req.encode())
 
         # req = create_client_message(QueryUserReq)
@@ -1656,7 +1656,7 @@ def test_card(imei,imsi,token,need_idle,*args):
         # receive_mails(client, '13466557799','123456', '865372020475361')
         # handle_friend(client, 'lxk','123456', '359901057716157')
         # get_friends_apply(client, 'lxk','123456', '359901057716157')
-        # get_friends(client, 'lxk','123456', '359901057716157')
+        get_friends(client, '13466557799','123456', '209707aeb43af5f5')
         # query_bank(client, '13488889999','123456', '865372020475361')
 
         # active_bank_gold(client, '13488889999','123456', '865372020475361')
@@ -1670,7 +1670,7 @@ def test_card(imei,imsi,token,need_idle,*args):
         # query_user_bag(client, '13488889999','123456', '865372020475361')
         # use_user_bag(client, '13412311111','123456', '351702077470363')
         # query_player(client, '13466557799','123456', '865372020475361')
-        fast_login_game(client,'F_01','865647020556892','imsi_2020', '865647020556892')
+        # fast_login_game(client,'F_01','865647020556892','imsi_2020', '865647020556892')
         # register_game(client, '13422556628','123456','0','imei_1111','imsi_2222','asdjxxx574515','LT333')
         # get_hall_query(client,'15919430507','wang0000','359901057716157')
         # bind_mobile(client, '')
@@ -1683,7 +1683,7 @@ def test_card(imei,imsi,token,need_idle,*args):
 
         # get_signs(client, '13512359876', '123456', '862596034397830')
         # today_sign(client, '209707aeb43af5f5', '123456', '359901057716157')
-        # send_chat_world(client,'13488889999', '123456', '865372020475361')
+        # send_chat_world(client,'15815052843', '987654', '865647020556892')
         # send_chat_room(client,'13412311111', '123456', 'device_id_333')
         # get_rewards(client, '13466557799','123456', '865372020475361')
         # revice_rewards(client, '13466557799','123456', '865372020475361')

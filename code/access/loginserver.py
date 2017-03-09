@@ -362,8 +362,6 @@ class LoginServer:
             return False
 
         result,json,code = SMS().send_code(message.body.mobile)
-        print '---------------->'
-        print resp,json,code
         if result == False:
             resp.header.result = RESULT_FAILED_SMS_SEND_FAILED
             return False

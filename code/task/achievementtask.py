@@ -9,19 +9,20 @@ from db.reward_user_log import *
 AT_FIRST_LOGIN 		= 8
 AT_BAOZI			= 18
 AT_235_WIN_BAOZI	= 19
+AT_CHANGE_NICK      = 9
 
 AT_EXP_CONFIG = {
 	# id : exp
-	36:10000,
-    37:20000,
-    38:40000,
-    39:80000,
-    40:160000,
-    41:320000,
-    42:640000,
-    43:1280000,
-    44:2560000,
-    45:5120000,
+	36:0,
+	37:31,
+    38:201,
+    39:1001,
+    40:3001,
+    41:8001,
+    42:15000,
+    43:30001,
+    44:50001,
+    45:100000,
 }
 
 AT_PLAY_CONFIG = {
@@ -84,8 +85,8 @@ AT_VIP_CONFIG = {
 
 
 
-ACHIEVEMENT_FINISHED = 0
-ACHIEVEMENT_RECEIVED = 1
+ACHIEVEMENT_FINISHED = 1
+ACHIEVEMENT_RECEIVED = 0
 ACHIEVEMENT_NOT_FINISHED = 2
 
 class BaseAchievement(object):
@@ -152,7 +153,9 @@ class BaseAchievement(object):
 		# 	self.data.achievements = json.dumps(self.achievements)
 		# 	self.data.values = json.dumps(self.values)
 
-		
+	def get_task_state(self, achievement_id):
+		achievement_id = str(achievement_id)
+		return self.achievements[achievement_id] if achievement_id in self.achievements else ACHIEVEMENT_NOT_FINISHED
 
 	def is_achievement_finished(self,achievement_id):
 		achievement_id = str(achievement_id)
@@ -178,6 +181,11 @@ class SystemAchievement(BaseAchievement):
 	def finish_first_login(self):
 		if self.is_achievement_finished(AT_FIRST_LOGIN) is False:
 			self.set_achievement_finished(AT_FIRST_LOGIN)
+			self.save()
+
+	def finish_change_nick(self):
+		if self.is_achievement_finished(AT_CHANGE_NICK) is False:
+			self.set_achievement_finished(AT_CHANGE_NICK)
 			self.save()
 		
 	def finish_upgrade_vip(self,vip):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Administrator'
 
-import time,json,sys,os
+import time,json,sys,os,random
 
 from config.rank import *
 from config.vip import *
@@ -371,13 +371,12 @@ class SignObject:
         vip_item = {}
         vip_item = VIP_CONF[self.service.vip.to_level(user_info.vip_exp)]
         print '----------->vip_item::::::::::::',vip_item
-        # 1	horn	大喇叭	可以公开喊话	2017-02-14 15:33:01
-        # 2	kick	踢人卡	奖玩家踢出房间	2017-02-14 15:35:02
-        # 3	exp_1	经验卡1点	使用后获得1点VIP经验	2017-02-15 10:43:51
-        # 4	exp_10	经验卡10点	使用后获得10点VIP经验	2017-02-15 11:15:49
-        # 5	tgold	金币名称	金币介绍	2017-02-15 16:57:49
-        self.service.bag.save_user_item(session, user_info.id,int(vip_item['horn_card'][0]),int(vip_item['horn_card'][2]))
-        self.service.bag.save_user_item(session, user_info.id,int(vip_item['kick_card'][0]),int(vip_item['kick_card'][2]))
+
+        horn_card = vip_item['horn_card'].split('-')
+        kick_card = vip_item['kick_card'].split('-')
+        print '----------->horn,kick:::::::::',horn_card,kick_card
+        self.service.bag.save_user_item(session, user_info.id,int(horn_card[0]),int(horn_card[1]))
+        self.service.bag.save_user_item(session, user_info.id,int(kick_card[0]),int(kick_card[1]))
         return vip_item
 
 
@@ -641,6 +640,8 @@ class RankObject:
 
 class RewardObject:
 
+
+
     def __init__(self, service):
         self.service = service
         self.conf = REWARD_CONF
@@ -714,14 +715,29 @@ class RewardObject:
 
     # 领取奖励
     def give_user_reward(self, session, user_info, task_id):
-        # task = self.get_reward_conf_by_id(task_id)
-        # if task is None:
-        #     return False
-        task_log = session.query(TRewardUserLog).filter(and_(TRewardUserLog.uid == user_info.id, TRewardUserLog.task_id == task_id,TRewardUserLog.state == 1))
-        if task_log is None:
-            return
-
         task = session.query(TRewardTask).filter(TRewardTask.id == task_id).first()
+        if task.is_daily == 1:
+            dt = DailyTaskManager(self.service.redis)
+
+            daily_task = dt.get_daily_task(user_info.id)
+            task_state = daily_task.get_task_state(task_id)
+            if task_state in (TASK_STATE_RECEIVED, TASK_STATE_ONGOING):
+                return
+            daily_task.set_task_received(task_id)
+            dt.update_daily_task(user_info.id,daily_task)
+        else:
+            achievement_task= SystemAchievement(session, user_info.id)
+            task_state = achievement_task.get_task_state(task_id)
+            if task_state in (ACHIEVEMENT_RECEIVED,ACHIEVEMENT_NOT_FINISHED):
+                return
+            achievement_task.set_achievement_received(task_id)
+            achievement_task.save()
+
+        if task_id == DT_ALL:
+            random_diamond = random.randint(DT_ALL_DIAMOND[0], DT_ALL_DIAMOND[1])
+            user_info.diamond = user_info.diamond + random_diamond
+            self.service.da.save_user(session, user_info)
+            return {'incr_gold':0,'incr_diamond':random_diamond,'items_add':[]}
 
         rs = {}
         items_add = []
@@ -738,7 +754,7 @@ class RewardObject:
                 items_add.append(self.service.item.format_item(session, item[0], item[2]))
         rs['items_add'] = items_add
         self.service.da.save_user(session, user_info)
-        self.edit_reward_state(session, user_info.id, task_id)
+
         return rs
 
     @staticmethod

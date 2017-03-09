@@ -12,7 +12,7 @@ BORADCAST_CONF = {
 
     'vip_up':u'玩家%s一掷千金，成功升级为%s，成为人生赢家！',
     'sys':u'【系统提醒】：本游戏不提供任何形式的游戏外充值，请勿上当受骗！',
-    'sys2':u'【系统提醒】：为了感谢您对游戏的支持和热爱，从即日起到3月31日，特进行首充大礼包超值放送，数量有限，先到先得！',
+    'sys2':u'【系统提醒】：首充大礼包超值放送，数量有限，先到先得！',
     'trade_sell':u'玩家%s在金币交易所挂售%d金币，仅需要%d钻石，快去看看吧！',
     'gold_top_online':u'财富榜排名第%d位的玩家%s上线了!',
 
@@ -62,6 +62,5 @@ def send_broadcast(redis, message):
     p1 = var.PUSH_TYPE['sys_broadcast']
     p2 = message
     notifi_type = N_BROADCAST
-
     item = {'users':users,'param1':p1,'param2':p2,'notifi_type':notifi_type}
     redis.lpush('notification_queue', json.dumps(item))

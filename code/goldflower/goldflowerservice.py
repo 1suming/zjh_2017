@@ -53,6 +53,8 @@ class GoldFlowerService(GameService):
         self.table_manager = TableManager(self)
         self.redis = self.server.redis
 
+
+
         keys = self.redis.keys("u1*")
         for k in keys:
             self.redis.delete(k)
@@ -171,8 +173,8 @@ class GoldFlowerService(GameService):
     def handle_kick_other(self,session,req,resp,event):
 
         # 踢走某人，游戏中不可以踢人
-        table = self.get_table(req.header.user)
-        if table.game == None or table.game <= 0:
+        table = self.get_table(req.body.other)
+        if table.game != None and table.game.is_gambler(req.body.other):
             resp.header.result = RESULT_FAILED_NO_KICK
             return
 
@@ -183,15 +185,14 @@ class GoldFlowerService(GameService):
             return
 
         # 权限验证，被踢的人在vip6及以上等级有免踢权限
-        other_user = self.redis.get('u'+str(req.body.other))
+        other_user = session.query(TUser).filter(TUser.id == req.body.other).first()
         vip = VIPObject(self)
         if vip.to_level(other_user.vip_exp) >= NO_KICK_LEVEL:
-        # if 'no_kick' in VIP_CONF[other_user.vip]['auth']:
             resp.header.result = RESULT_FAILED_NO_KICK
             return
 
         # 使用道具
-        result = bag.use_user_item(req.header.user, ITEM_MAP['kick'][0])
+        result = bag.use_user_item(session, req.header.user, ITEM_MAP['kick'][0])
         if result <= 0:
             resp.header.result = RESULT_FAILED_INVALID_BAG
             return
@@ -199,7 +200,7 @@ class GoldFlowerService(GameService):
         # 踢走某人操作
         if table == None:
             resp.header.result = RESULT_FAILED_INVALID_TABLE
-            return False
+            return
         table.lock.acquire()
         try :
             table.kick_player(req.header.user, req.body.other)
@@ -215,6 +216,4 @@ class GoldFlowerService(GameService):
         pb.description = item.description
         pb.count = result
         resp.header.result = 0
-
-
-        resp.body.other = req.body.other
+        resp.body.other = other_user.id

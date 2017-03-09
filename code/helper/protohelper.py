@@ -31,13 +31,8 @@ def set_player(pb,user,user_gf,gifts = None):
 def set_announcement(pb,announcement):
     copy_simple_field(pb,announcement)
 
-def set_reward(pb,reward,reward_logs):
+def set_reward(pb,reward):
     copy_simple_field(pb,reward, not_fields = ["is_daily","params"])
-    pb.state = -1
-    for item in reward_logs:
-        if reward.id == item.task_id:
-            pb.state = item.state
-            break
 
 def set_signs(pb, sign):
     copy_simple_field(pb,sign)

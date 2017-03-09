@@ -26,56 +26,32 @@ from helper import datehelper
 from sqlalchemy import and_
 from sqlalchemy.sql import desc
 
+from web.upload import *
+from web.avatar import *
+
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
-session = Session()
+
 app = Flask(__name__)
 app.config.from_object(DevConfig)
 
+session = Session()
 r = redis.Redis(host='121.201.29.89',port=26379,db=0,password='Wgc@123456')
+STATIC_PATH = 'web/static/'
+uploader = Uploader(STATIC_PATH)
+
+
+
+
 
 # CPID：jjcq20170223_141_312
 # CPKEY：d5ff856beccf4c472831c3f16c376e28
-CALLBACK = 'http://121.201.29.89:18000/pay_result'
 # CP_KEY = 'd5ff856beccf4c472831c3f16c376e28'
-CHARGE_KEY = 'cqkj2017'
-CP_KEY = 'bde25760c1556899efc0dff13bf41b4e'
-QUICK_CHARGE = [
-    # 分，万，商品名称
-    (500, 15, u'新手场', 1),
-    (3000, 90, u'普通场', 1),
-    (15000, 450, u'高级场', 1),
-    (60000, 1800, u'大师场', 1),
-]
 
-# 首冲
-FRIST_CHARGE = {
-    'title':u'首充',
-    'money' : 6100,
-    'real_money':1,
-    'diamond' : 10,
-    'gold' : 30, # 单位w
-    'hore' : 10,
-    'kicking_card':10,
-    'vip_card' :1,
-}
-VIP_CONF = [
-        {'id':0,'level':0,'friend_max':5, 'charge':0,'sign_reward':0,'kick_card':0,'horn_card':1,'relief_time':2,'relief_good':10000, 'bank_max':0,'nick_color':'white','auth':[]},
-        {'id':76,'level':1,'friend_max':10, 'charge':20,'sign_reward':0.5,'kick_card':0,'horn_card':2,'relief_time':3,'relief_good':10000, 'bank_max':500000,'nick_color':'green','auth':['handle_trade_buy']},
-        {'id':77,'level':2,'friend_max':20, 'charge':60,'sign_reward':1,'kick_card':0,'horn_card':3,'relief_time':4,'relief_good':10000, 'bank_max':2000000,'nick_color':'green','auth':['handle_trade_buy','handle_sell_gold']},
-        {'id':78,'level':3,'friend_max':30, 'charge':100,'sign_reward':2,'kick_card':3,'horn_card':5,'relief_time':4,'relief_good':10000, 'bank_max':5000000,'nick_color':'blue','auth':['handle_kick_other','handle_trade_buy','handle_sell_gold']},
-        {'id':79,'level':4,'friend_max':40, 'charge':200,'sign_reward':3,'kick_card':4,'horn_card':10,'relief_time':5,'relief_good':10000, 'bank_max':20000000,'nick_color':'blue','auth':['handle_kick_other','handle_trade_buy','handle_sell_gold']},
-        {'id':80,'level':5,'friend_max':50, 'charge':500,'sign_reward':4,'kick_card':5,'horn_card':15,'relief_time':5,'relief_good':10000, 'bank_max':50000000,'nick_color':'yellow','auth':['handle_kick_other','handle_trade_buy','handle_sell_gold']},
-        {'id':81,'level':6,'friend_max':60, 'charge':1000,'sign_reward':5,'kick_card':6,'horn_card':20,'relief_time':6,'relief_good':10000, 'bank_max':100000000,'nick_color':'yellow','auth':['handle_kick_other','handle_trade_buy','handle_sell_gold''handle_trade_buy','handle_sell_gold','no_kick']},
-        {'id':82,'level':7,'friend_max':70, 'charge':2000,'sign_reward':6,'kick_card':7,'horn_card':25,'relief_time':6,'relief_good':10000, 'bank_max':200000000,'nick_color':'red','auth':['handle_kick_other','handle_trade_buy','handle_sell_gold''handle_trade_buy','handle_sell_gold','no_kick']},
-        {'id':83,'level':8,'friend_max':80, 'charge':5000,'sign_reward':7,'kick_card':8,'horn_card':30,'relief_time':8,'relief_good':10000, 'bank_max':500000000,'nick_color':'red','auth':['handle_kick_other','handle_trade_buy','handle_sell_gold''handle_trade_buy','handle_sell_gold','no_kick']},
-        {'id':84,'level':9,'friend_max':90, 'charge':10000,'sign_reward':8,'kick_card':9,'horn_card':35,'relief_time':8,'relief_good':10000, 'bank_max':1000000000,'nick_color':'purple','auth':['handle_kick_other','handle_trade_buy','handle_sell_gold''handle_trade_buy','handle_sell_gold','no_kick']},
-        {'id':85,'level':10,'friend_max':100, 'charge':20000,'sign_reward':9,'kick_card':10,'horn_card':40,'relief_time':10,'relief_good':10000, 'bank_max':2000000000,'nick_color':'purple','auth':['handle_kick_other','handle_trade_buy','handle_sell_gold''handle_trade_buy','handle_sell_gold','no_kick']},
-    ]
 VIP_UP=u'玩家%s一掷千金，成功升级为%s，成为人生赢家！(VIP1+)'
-UPLOAD_FOLDER = 'static/upload'
-UPGRADE_FOLDER = 'static/upgrade'
+UPLOAD_FOLDER = 'web/static/upload'
+UPGRADE_FOLDER = 'web/static/upgrade'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','zip'])
 REAL_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static/upload')
 UPGRADE_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static/upgrade')
@@ -84,11 +60,18 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+
+@app.route('/demo', methods=['GET', 'POST'])
+def demo():
+    return CALLBACK
+
+@app.route('/avatar', methods=['GET','POST'])
+def avatar():
+    if request.method == 'GET':
+        avatar_uploader.get_lists()
+
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    from hall.hallobject import *
-    print sys.path
-    # print '--------------------------->',TAX_NUM
 
     if request.method == 'POST':
 

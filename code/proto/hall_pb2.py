@@ -20,7 +20,7 @@ import struct_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='hall.proto',
   package='cardgame',
-  serialized_pb=_b('\n\nhall.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"P\n\x0cQueryHallReq\x12\x13\n\x0bmax_mail_id\x18\x01 \x02(\x05\x12\x1b\n\x13max_announcement_id\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8\x07\"\xc8\x01\n\rQueryHallResp\x12$\n\x05\x62rief\x18\x01 \x01(\x0b\x32\x15.cardgame.PlayerBrief\x12,\n\x0cnotification\x18\x02 \x01(\x0b\x32\x16.cardgame.Notification\x12-\n\rannouncements\x18\x03 \x03(\x0b\x32\x16.cardgame.Announcement\x12\x11\n\tis_signin\x18\x04 \x01(\x08\x12\x11\n\tis_charge\x18\x05 \x01(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9\x07\"+\n\x0cQueryUserReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xea\x07\"A\n\rQueryUserResp\x12 \n\x06player\x18\x01 \x01(\x0b\x32\x10.cardgame.Player\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xeb\x07\"\x8c\x01\n\rUpdateUserReq\x12\x10\n\x08\x62irthday\x18\x01 \x01(\t\x12\x0c\n\x04sign\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontact\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0c\n\x04nick\x18\x05 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x06 \x01(\t\x12\x0b\n\x03sex\x18\x07 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xec\x07\"B\n\x0eUpdateUserResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xed\x07\"\'\n\x15QueryAnnouncementsReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xee\x07\"W\n\x16QueryAnnouncementsResp\x12-\n\rannouncements\x18\x01 \x03(\x0b\x32\x16.cardgame.Announcement\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xef\x07\"L\n\x0bSendGiftReq\x12\x0f\n\x07gift_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\x12\r\n\x05other\x18\x03 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf0\x07\"@\n\x0cSendGiftResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf1\x07\"m\n\x11NotificationEvent\x12(\n\x04type\x18\x01 \x02(\x0e\x32\x1a.cardgame.NotificationType\x12\x0e\n\x06param1\x18\x02 \x01(\x05\x12\x0e\n\x06param2\x18\x03 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xcc\x08\"?\n\x0b\x46\x65\x65\x64\x42\x61\x63kReq\x12\x0f\n\x07message\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontact\x18\x02 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe0\x08\"\x1e\n\x0c\x46\x65\x65\x64\x42\x61\x63kResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe1\x08\"B\n\x0e\x43reateOrderReq\x12\x0f\n\x07shop_id\x18\x01 \x02(\x05\x12\x0f\n\x07\x63omment\x18\x02 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xfe\x08\"b\n\x0f\x43reateOrderResp\x12\x10\n\x08order_sn\x18\x01 \x02(\t\x12\r\n\x05money\x18\x02 \x02(\x05\x12\x10\n\x08\x63\x61llback\x18\x03 \x02(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xff\x08\" \n\x0eQueryChargeReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x80\t\"F\n\x0fQueryChargeResp\x12#\n\x05items\x18\x01 \x03(\x0b\x32\x14.cardgame.ChargeItem\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x81\t\":\n\x14QueryQuickBuyGoldReq\x12\x12\n\ntable_type\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x82\t\"D\n\x15QueryQuickBuyGoldResp\x12\r\n\x05money\x18\x01 \x02(\x05\x12\x0c\n\x04gold\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x83\t\")\n\x17QueryFirstTimeChargeReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x84\t\"\x8e\x01\n\x18QueryFirstTimeChargeResp\x12\r\n\x05money\x18\x01 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x02 \x02(\x05\x12\x0c\n\x04gold\x18\x03 \x02(\x05\x12\x0c\n\x04hore\x18\x04 \x02(\x05\x12\x14\n\x0ckicking_card\x18\x05 \x02(\x05\x12\x10\n\x08vip_card\x18\x06 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x85\t\"v\n\rBindMobileReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0e\n\x06mobile\x18\x02 \x02(\t\x12\x13\n\x0bverify_code\x18\x03 \x02(\t\x12\x11\n\tbind_type\x18\x04 \x02(\x05\x12\x10\n\x08password\x18\x05 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x86\t\" \n\x0e\x42indMobileResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x87\tB\"\n\x18\x63om.zhili.cardgame.protoB\x04HallH\x03')
+  serialized_pb=_b('\n\nhall.proto\x12\x08\x63\x61rdgame\x1a\x0e\x63onstant.proto\x1a\x0cstruct.proto\"P\n\x0cQueryHallReq\x12\x13\n\x0bmax_mail_id\x18\x01 \x02(\x05\x12\x1b\n\x13max_announcement_id\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe8\x07\"\xc8\x01\n\rQueryHallResp\x12$\n\x05\x62rief\x18\x01 \x01(\x0b\x32\x15.cardgame.PlayerBrief\x12,\n\x0cnotification\x18\x02 \x01(\x0b\x32\x16.cardgame.Notification\x12-\n\rannouncements\x18\x03 \x03(\x0b\x32\x16.cardgame.Announcement\x12\x11\n\tis_signin\x18\x04 \x01(\x08\x12\x11\n\tis_charge\x18\x05 \x01(\x08\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe9\x07\"+\n\x0cQueryUserReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xea\x07\"\\\n\rQueryUserResp\x12 \n\x06player\x18\x01 \x01(\x0b\x32\x10.cardgame.Player\x12\x19\n\x11update_avatar_url\x18\x02 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xeb\x07\"\x8c\x01\n\rUpdateUserReq\x12\x10\n\x08\x62irthday\x18\x01 \x01(\t\x12\x0c\n\x04sign\x18\x02 \x01(\t\x12\x0f\n\x07\x63ontact\x18\x03 \x01(\t\x12\x0f\n\x07\x61\x64\x64ress\x18\x04 \x01(\t\x12\x0c\n\x04nick\x18\x05 \x01(\t\x12\x0e\n\x06\x61vatar\x18\x06 \x01(\t\x12\x0b\n\x03sex\x18\x07 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xec\x07\"B\n\x0eUpdateUserResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xed\x07\"\'\n\x15QueryAnnouncementsReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xee\x07\"W\n\x16QueryAnnouncementsResp\x12-\n\rannouncements\x18\x01 \x03(\x0b\x32\x16.cardgame.Announcement\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xef\x07\"L\n\x0bSendGiftReq\x12\x0f\n\x07gift_id\x18\x01 \x02(\x05\x12\r\n\x05\x63ount\x18\x02 \x02(\x05\x12\r\n\x05other\x18\x03 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf0\x07\"@\n\x0cSendGiftResp\x12 \n\x06result\x18\x01 \x01(\x0b\x32\x10.cardgame.Result\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xf1\x07\"m\n\x11NotificationEvent\x12(\n\x04type\x18\x01 \x02(\x0e\x32\x1a.cardgame.NotificationType\x12\x0e\n\x06param1\x18\x02 \x01(\x05\x12\x0e\n\x06param2\x18\x03 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xcc\x08\"?\n\x0b\x46\x65\x65\x64\x42\x61\x63kReq\x12\x0f\n\x07message\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontact\x18\x02 \x02(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe0\x08\"\x1e\n\x0c\x46\x65\x65\x64\x42\x61\x63kResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xe1\x08\"B\n\x0e\x43reateOrderReq\x12\x0f\n\x07shop_id\x18\x01 \x02(\x05\x12\x0f\n\x07\x63omment\x18\x02 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xfe\x08\"b\n\x0f\x43reateOrderResp\x12\x10\n\x08order_sn\x18\x01 \x02(\t\x12\r\n\x05money\x18\x02 \x02(\x05\x12\x10\n\x08\x63\x61llback\x18\x03 \x02(\t\x12\x0c\n\x04name\x18\x04 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\xff\x08\" \n\x0eQueryChargeReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x80\t\"F\n\x0fQueryChargeResp\x12#\n\x05items\x18\x01 \x03(\x0b\x32\x14.cardgame.ChargeItem\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x81\t\":\n\x14QueryQuickBuyGoldReq\x12\x12\n\ntable_type\x18\x01 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x82\t\"D\n\x15QueryQuickBuyGoldResp\x12\r\n\x05money\x18\x01 \x02(\x05\x12\x0c\n\x04gold\x18\x02 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x83\t\")\n\x17QueryFirstTimeChargeReq\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x84\t\"\x8e\x01\n\x18QueryFirstTimeChargeResp\x12\r\n\x05money\x18\x01 \x02(\x05\x12\x0f\n\x07\x64iamond\x18\x02 \x02(\x05\x12\x0c\n\x04gold\x18\x03 \x02(\x05\x12\x0c\n\x04hore\x18\x04 \x02(\x05\x12\x14\n\x0ckicking_card\x18\x05 \x02(\x05\x12\x10\n\x08vip_card\x18\x06 \x02(\x05\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x85\t\"v\n\rBindMobileReq\x12\x0b\n\x03uid\x18\x01 \x02(\x05\x12\x0e\n\x06mobile\x18\x02 \x02(\t\x12\x13\n\x0bverify_code\x18\x03 \x02(\t\x12\x11\n\tbind_type\x18\x04 \x02(\x05\x12\x10\n\x08password\x18\x05 \x01(\t\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x86\t\" \n\x0e\x42indMobileResp\"\x0e\n\x03\x44\x45\x46\x12\x07\n\x02ID\x10\x87\tB\"\n\x18\x63om.zhili.cardgame.protoB\x04HallH\x03')
   ,
   dependencies=[constant_pb2.DESCRIPTOR,struct_pb2.DESCRIPTOR,])
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -94,8 +94,8 @@ _QUERYUSERRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=435,
-  serialized_end=449,
+  serialized_start=462,
+  serialized_end=476,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYUSERRESP_DEF)
 
@@ -112,8 +112,8 @@ _UPDATEUSERREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=578,
-  serialized_end=592,
+  serialized_start=605,
+  serialized_end=619,
 )
 _sym_db.RegisterEnumDescriptor(_UPDATEUSERREQ_DEF)
 
@@ -130,8 +130,8 @@ _UPDATEUSERRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=646,
-  serialized_end=660,
+  serialized_start=673,
+  serialized_end=687,
 )
 _sym_db.RegisterEnumDescriptor(_UPDATEUSERRESP_DEF)
 
@@ -148,8 +148,8 @@ _QUERYANNOUNCEMENTSREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=687,
-  serialized_end=701,
+  serialized_start=714,
+  serialized_end=728,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYANNOUNCEMENTSREQ_DEF)
 
@@ -166,8 +166,8 @@ _QUERYANNOUNCEMENTSRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=776,
-  serialized_end=790,
+  serialized_start=803,
+  serialized_end=817,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYANNOUNCEMENTSRESP_DEF)
 
@@ -184,8 +184,8 @@ _SENDGIFTREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=854,
-  serialized_end=868,
+  serialized_start=881,
+  serialized_end=895,
 )
 _sym_db.RegisterEnumDescriptor(_SENDGIFTREQ_DEF)
 
@@ -202,8 +202,8 @@ _SENDGIFTRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=920,
-  serialized_end=934,
+  serialized_start=947,
+  serialized_end=961,
 )
 _sym_db.RegisterEnumDescriptor(_SENDGIFTRESP_DEF)
 
@@ -220,8 +220,8 @@ _NOTIFICATIONEVENT_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1031,
-  serialized_end=1045,
+  serialized_start=1058,
+  serialized_end=1072,
 )
 _sym_db.RegisterEnumDescriptor(_NOTIFICATIONEVENT_DEF)
 
@@ -238,8 +238,8 @@ _FEEDBACKREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1096,
-  serialized_end=1110,
+  serialized_start=1123,
+  serialized_end=1137,
 )
 _sym_db.RegisterEnumDescriptor(_FEEDBACKREQ_DEF)
 
@@ -256,8 +256,8 @@ _FEEDBACKRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1128,
-  serialized_end=1142,
+  serialized_start=1155,
+  serialized_end=1169,
 )
 _sym_db.RegisterEnumDescriptor(_FEEDBACKRESP_DEF)
 
@@ -274,8 +274,8 @@ _CREATEORDERREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1196,
-  serialized_end=1210,
+  serialized_start=1223,
+  serialized_end=1237,
 )
 _sym_db.RegisterEnumDescriptor(_CREATEORDERREQ_DEF)
 
@@ -292,8 +292,8 @@ _CREATEORDERRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1296,
-  serialized_end=1310,
+  serialized_start=1323,
+  serialized_end=1337,
 )
 _sym_db.RegisterEnumDescriptor(_CREATEORDERRESP_DEF)
 
@@ -310,8 +310,8 @@ _QUERYCHARGEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1330,
-  serialized_end=1344,
+  serialized_start=1357,
+  serialized_end=1371,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYCHARGEREQ_DEF)
 
@@ -328,8 +328,8 @@ _QUERYCHARGERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1402,
-  serialized_end=1416,
+  serialized_start=1429,
+  serialized_end=1443,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYCHARGERESP_DEF)
 
@@ -346,8 +346,8 @@ _QUERYQUICKBUYGOLDREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1462,
-  serialized_end=1476,
+  serialized_start=1489,
+  serialized_end=1503,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYQUICKBUYGOLDREQ_DEF)
 
@@ -364,8 +364,8 @@ _QUERYQUICKBUYGOLDRESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1532,
-  serialized_end=1546,
+  serialized_start=1559,
+  serialized_end=1573,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYQUICKBUYGOLDRESP_DEF)
 
@@ -382,8 +382,8 @@ _QUERYFIRSTTIMECHARGEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1575,
-  serialized_end=1589,
+  serialized_start=1602,
+  serialized_end=1616,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYFIRSTTIMECHARGEREQ_DEF)
 
@@ -400,8 +400,8 @@ _QUERYFIRSTTIMECHARGERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1720,
-  serialized_end=1734,
+  serialized_start=1747,
+  serialized_end=1761,
 )
 _sym_db.RegisterEnumDescriptor(_QUERYFIRSTTIMECHARGERESP_DEF)
 
@@ -418,8 +418,8 @@ _BINDMOBILEREQ_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1840,
-  serialized_end=1854,
+  serialized_start=1867,
+  serialized_end=1881,
 )
 _sym_db.RegisterEnumDescriptor(_BINDMOBILEREQ_DEF)
 
@@ -436,8 +436,8 @@ _BINDMOBILERESP_DEF = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=1874,
-  serialized_end=1888,
+  serialized_start=1901,
+  serialized_end=1915,
 )
 _sym_db.RegisterEnumDescriptor(_BINDMOBILERESP_DEF)
 
@@ -584,6 +584,13 @@ _QUERYUSERRESP = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='update_avatar_url', full_name='cardgame.QueryUserResp.update_avatar_url', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -597,7 +604,7 @@ _QUERYUSERRESP = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=384,
-  serialized_end=449,
+  serialized_end=476,
 )
 
 
@@ -669,8 +676,8 @@ _UPDATEUSERREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=452,
-  serialized_end=592,
+  serialized_start=479,
+  serialized_end=619,
 )
 
 
@@ -700,8 +707,8 @@ _UPDATEUSERRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=594,
-  serialized_end=660,
+  serialized_start=621,
+  serialized_end=687,
 )
 
 
@@ -724,8 +731,8 @@ _QUERYANNOUNCEMENTSREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=662,
-  serialized_end=701,
+  serialized_start=689,
+  serialized_end=728,
 )
 
 
@@ -755,8 +762,8 @@ _QUERYANNOUNCEMENTSRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=703,
-  serialized_end=790,
+  serialized_start=730,
+  serialized_end=817,
 )
 
 
@@ -800,8 +807,8 @@ _SENDGIFTREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=792,
-  serialized_end=868,
+  serialized_start=819,
+  serialized_end=895,
 )
 
 
@@ -831,8 +838,8 @@ _SENDGIFTRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=870,
-  serialized_end=934,
+  serialized_start=897,
+  serialized_end=961,
 )
 
 
@@ -876,8 +883,8 @@ _NOTIFICATIONEVENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=936,
-  serialized_end=1045,
+  serialized_start=963,
+  serialized_end=1072,
 )
 
 
@@ -914,8 +921,8 @@ _FEEDBACKREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1047,
-  serialized_end=1110,
+  serialized_start=1074,
+  serialized_end=1137,
 )
 
 
@@ -938,8 +945,8 @@ _FEEDBACKRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1112,
-  serialized_end=1142,
+  serialized_start=1139,
+  serialized_end=1169,
 )
 
 
@@ -976,8 +983,8 @@ _CREATEORDERREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1144,
-  serialized_end=1210,
+  serialized_start=1171,
+  serialized_end=1237,
 )
 
 
@@ -1028,8 +1035,8 @@ _CREATEORDERRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1212,
-  serialized_end=1310,
+  serialized_start=1239,
+  serialized_end=1337,
 )
 
 
@@ -1052,8 +1059,8 @@ _QUERYCHARGEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1312,
-  serialized_end=1344,
+  serialized_start=1339,
+  serialized_end=1371,
 )
 
 
@@ -1083,8 +1090,8 @@ _QUERYCHARGERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1346,
-  serialized_end=1416,
+  serialized_start=1373,
+  serialized_end=1443,
 )
 
 
@@ -1114,8 +1121,8 @@ _QUERYQUICKBUYGOLDREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1418,
-  serialized_end=1476,
+  serialized_start=1445,
+  serialized_end=1503,
 )
 
 
@@ -1152,8 +1159,8 @@ _QUERYQUICKBUYGOLDRESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1478,
-  serialized_end=1546,
+  serialized_start=1505,
+  serialized_end=1573,
 )
 
 
@@ -1176,8 +1183,8 @@ _QUERYFIRSTTIMECHARGEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1548,
-  serialized_end=1589,
+  serialized_start=1575,
+  serialized_end=1616,
 )
 
 
@@ -1242,8 +1249,8 @@ _QUERYFIRSTTIMECHARGERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1592,
-  serialized_end=1734,
+  serialized_start=1619,
+  serialized_end=1761,
 )
 
 
@@ -1301,8 +1308,8 @@ _BINDMOBILEREQ = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1736,
-  serialized_end=1854,
+  serialized_start=1763,
+  serialized_end=1881,
 )
 
 
@@ -1325,8 +1332,8 @@ _BINDMOBILERESP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1856,
-  serialized_end=1888,
+  serialized_start=1883,
+  serialized_end=1915,
 )
 
 _QUERYHALLREQ_DEF.containing_type = _QUERYHALLREQ

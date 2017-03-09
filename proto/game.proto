@@ -14,7 +14,7 @@ message SitTableReq {
         ID = 5000;
     }
 	required int32 table_id = 1;//如果是快速开始则为-1;如果是换房间则为当前房间号
-	required int32 table_type = 2;//类型：初级场|高级场
+	required int32 table_type = 2;	// 类型：初级场|高级场,如果是快速开始则为-1;
 	repeated int32 not_tables = 3;//历史房间号房间号：记录最近的三个
 }
 
@@ -64,7 +64,7 @@ message KickOtherResp {
 	enum DEF {
 		ID = 5007;
 	}
-	required int32 other = 1;
+	optional int32 other = 1;
 	optional Result results = 2;
 
 }

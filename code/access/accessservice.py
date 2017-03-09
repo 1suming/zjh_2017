@@ -28,7 +28,7 @@ class AccessService(IService):
 
     # �����������������AccessService���¼�
     def onEvent(self,event):
-        logging.info("access service OnEvent User=%d event_type=%d", event.param1, event.eventType)
+        #logging.info("access service OnEvent User=%d event_type=%d", event.param1, event.eventType)
 
         # ������Ϣת�����ͻ���
         # event.param1 ����û�id������Ϣ����С�ڵ���0��������

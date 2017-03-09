@@ -89,8 +89,8 @@ class HallService(GameService):
         self.manager = Manager(self)
         self.sender = EventSender(self.manager)
         gevent.spawn(self.queue_notification)
-        #gevent.spawn(self.say_hello)
-        #gevent.spawn_later(10, self.say_hello_2)
+        gevent.spawn(self.say_hello)
+        gevent.spawn_later(10, self.say_hello_2)
         # gevent.spawn(self.queue_charge)
 
         self.bag = BagObject(self)
@@ -107,6 +107,8 @@ class HallService(GameService):
         self.broke = BrokeObject(self)
         self.trade = TradeObject(self)
         self.profile = Profile(self)
+
+        self.daliy_task = DailyTaskManager(self.redis)
 
 
     # 系统自定义广播，定时发送
@@ -283,23 +285,32 @@ class HallService(GameService):
         page_size = req.body.page_size
         friends = session.query(TFriend).filter(TFriend.apply_uid == req.header.user).order_by(TFriend.id).offset((int(page) - 1) * page_size).limit(page_size)
 
+        orderby_friends = []
         for friend in friends:
             friend_user = self.da.get_user(friend.to_uid)
             if friend_user == None:
                 continue
+            print '========>',friend_user.id,friend_user.nick
+            if self.redis.hexists('online', friend_user.id):
+                orderby_friends.insert(0, friend_user)
+            else:
+                orderby_friends.append(friend_user)
 
+        for orderby_friend in orderby_friends:
+            print '=========>orderBy',orderby_friend.id,orderby_friend.nick
             pb = resp.body.friends.add()
-            pb.avatar = friend_user.avatar
-            pb.gold = friend_user.gold
-            pb.uid = friend_user.id
-            pb.nick = friend_user.nick
-            pb.type = friend.type
+            pb.avatar = orderby_friend.avatar
+            pb.gold = orderby_friend.gold
+            pb.uid = orderby_friend.id
+            pb.nick = orderby_friend.nick
+            pb.type = orderby_friend.type
 
-            pb.is_online = False if self.redis.hexists('online',friend_user.id) == False else True
-            protohelper.set_room_table(pb,friend_user.id,self.redis)
+            pb.is_online = False if self.redis.hexists('online',orderby_friend.id) == False else True
+            protohelper.set_room_table(pb,orderby_friend.id,self.redis)
 
-        countof_applies = session.query(TFriendApply).filter(and_(TFriendApply.to_uid == req.header.user, TFriendApply.state == 1)).count()
-        resp.body.countof_applies = countof_applies
+        #countof_applies = session.query(TFriendApply).filter(and_(TFriendApply.to_uid == req.header.user, TFriendApply.state == 1)).count()
+        # resp.body.countof_applies = countof_applies
+        resp.body.countof_applies = len(orderby_friends)
         resp.header.result = 0
     @USE_TRANSACTION
     def handle_get_friends_applies(self,session,req,resp,event):
@@ -368,13 +379,11 @@ class HallService(GameService):
         target_firend_count = self.friend.get_friends_count(session, friend_info.id)
         print '=======>',target_firend_count
         if self.vip.over_friend_max( self.vip.to_level(friend_info.vip_exp), target_firend_count + 1 ):
-            resp.header.result = RESULT_FAILED_FRIEND_MAX
+            resp.header.result = RESULT_FAILED_FRIEND_TARGET_MAX
             return
 
 
         resp.header.result = self.friend.make_friend(session, user_info, friend_info, req.body.message)
-
-
 
     # 同意/拒绝好友申请
     @USE_TRANSACTION
@@ -560,23 +569,24 @@ class HallService(GameService):
 
         if add_item is not None and len(add_item) >0:
             horn_item = self.item.get_item_by_id(session, add_item['horn_card'][0])
-            print '---------->,send item 1',horn_item
-            if int(add_item['horn_card'][2]) > 0:
+            horn_card = add_item['horn_card'].split('-')
+            if int(horn_card[1]) > 0:
                 protohelper.set_item_add(resp.body.result.items_added.add() ,{
                     'id':horn_item.id,
                     'icon':horn_item.icon,
                     'name':horn_item.name,
                     'description':horn_item.description,
-                }, add_item['horn_card'][2])
+                }, horn_card[1])
             kick_item = self.item.get_item_by_id(session, add_item['kick_card'][0])
             print '---------->,send item 2',kick_item
-            if int(add_item['kick_card'][2]) > 0:
+            kick_card = add_item['kick_card'].split('-')
+            if int(kick_card[1]) > 0:
                 protohelper.set_item_add(resp.body.result.items_added.add() ,{
                    'id':kick_item.id,
                     'icon':kick_item.icon,
                     'name':kick_item.name,
                     'description':kick_item.description,
-                }, add_item['kick_card'][2])
+                },kick_card[1])
         print '---------------->333333|',incr_gold
         # 累计签到，幸运日发送奖品
         item,count = self.sign.sign_luck_day(session, total_days, sign_log.id)
@@ -652,6 +662,7 @@ class HallService(GameService):
             resp.body.player.is_friend = False
 
         protohelper.set_player(resp.body.player,user_info,user_gf)
+        resp.body.update_avatar_url = UPDATE_AVATAR_URL
         resp.header.result = 0
     # 更新用户
     @USE_TRANSACTION
@@ -660,7 +671,9 @@ class HallService(GameService):
 
         if len(req.body.nick) > 0:
             # 任务-成就任务：修改昵称
-            self.reward.task_change_nick(session, user_info, req.body.nick)
+            # self.reward.task_change_nick(session, user_info, req.body.nick)
+            if req.body.nick is not user_info.nick:
+                SystemAchievement(session, user_info.id).finish_change_nick()
             user_info.nick = req.body.nick
         if len(req.body.birthday) > 0:
             user_info.birthday = req.body.birthday
@@ -695,7 +708,7 @@ class HallService(GameService):
     # 查询奖励
     @USE_TRANSACTION
     def handle_rewards(self,session,req,resp,event):
-        rewards = session.query(TRewardTask).all()
+        rewards = session.query(TRewardTask).order_by(desc(TRewardTask.is_daily)).all()
         reward_logs = session.query(TRewardUserLog).filter(TRewardUserLog.uid == req.header.user).all()
 
         items = self.item.get_itme_by_all(session)
@@ -703,9 +716,21 @@ class HallService(GameService):
             resp.header.result = -1
             return
 
+        daily_task = self.daliy_task.get_daily_task(req.header.user)
+        achievement_taks = SystemAchievement(session, req.header.user)
         for reward in rewards:
             pb_reward = resp.body.rewards.add()
-            protohelper.set_reward(pb_reward, reward, reward_logs)
+            protohelper.set_reward(pb_reward, reward)
+            if reward.is_daily == 1:
+                pb_reward.state = daily_task.get_task_state(reward.id)
+                if reward.id == 9:
+                    print daily_task
+            else:
+                pb_reward.state = achievement_taks.get_task_state(reward.id)
+                if reward.id == 9:
+                    print achievement_taks.get_task_state(reward.id)
+
+
             if reward.items is None or reward.items == '':
                 continue
             for split_item in reward.items.split(','):
@@ -750,6 +775,12 @@ class HallService(GameService):
          if user_info == None:
              return
          if req.body.table_id <= 0:
+             print '=======>1'
+             # 完成喊话任务
+             DailyTaskManager(self.redis).use_horn(req.header.user)
+             print '=======>2'
+
+
              # 世界聊天，需要具有聊天道具卡
              if self.bag.has_item(session, req.header.user, ITEM_MAP['horn'][0]) == False:
                  resp.header.result = RESULT_FAILED_INVALID_BAG
@@ -758,8 +789,7 @@ class HallService(GameService):
              if self.bag.use_horn_item(session,req.header.user, 1) > 0:
                  self.bag.send_horn_item(self.redis.hkeys('online'), user_info,  req.body.message)
 
-             # 完成喊话任务
-             # DailyTaskManager(self.redis).use_horn(req.header.user)
+
 
          elif req.body.table_id > 0:
              keys = self.redis.keys("table_*_" + str(req.body.table_id))
@@ -855,6 +885,9 @@ class HallService(GameService):
             resp.header.result = RESULT_FAILED_SHOP
             return
 
+        # 每日任务
+        DailyTaskManager(self.redis).buy_diamond(req.header.user)
+
         # type,1=金币，2=道具
         protohelper.set_result(resp.body.result, gold = user_info.gold, diamond = user_info.diamond,
                            incr_gold =self.shop.shop_item.gold, incr_diamond = -(self.shop.shop_item.total))
@@ -891,8 +924,6 @@ class HallService(GameService):
         user_info = self.da.get_user(req.header.user)
 
         # 权限验证，vip1及以上等级可在金币交易中购买金币交易
-        # if VIPObject.check_vip_auth(self.vip.to_level(user_info.vip_exp), sys._getframe().f_code.co_name) == False:
-        print '------------>',self.vip.to_level(user_info.vip_exp),BUY_GOLD_LEVEL
         if self.vip.denied_buy_gold( self.vip.to_level(user_info.vip_exp) ):
             resp.header.result = RESULT_FAILED_INVALID_AUTH
             return
@@ -942,7 +973,7 @@ class HallService(GameService):
                                 title=u'领取钻石',
                                 content=content,
                                 type=1, # 带附件
-                                diamond=trade.diamond,)
+                                diamond=trade.diamond)
 
         resp.body.result.gold = user_info.gold
         resp.body.result.diamond = user_info.diamond

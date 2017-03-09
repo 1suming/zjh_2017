@@ -21,16 +21,16 @@ RANK_REWARD = {
     'rank_gold_top':(10000,1000,1000,[(1,12),(2,24)],),
     'rank_make_money_top':(10000,1000,1000,[(1,12),(2,24)],),
 }
-redis_conf = {
-    # 'host':'192.168.2.75','port':6379,'db':0,'password':'Wgc@123456',
+REDIS_CONF = {
     'host':'127.0.0.1','port':6379,'db':0,'password':'Wgc@123456',
 }
 
+DAILY_KEY = 'DailyTasks'
 session = Session()
 class CrondServer:
 
     def __init__(self):
-        self.redis = redis.Redis(**redis_conf)
+        self.redis = redis.Redis(**REDIS_CONF)
 
         # self.da = DataAccess(self.redis)
 
@@ -66,6 +66,7 @@ class CrondServer:
         bag = BagObject(self)
         for item in RANK_REWARD[rank_type][3]:
             bag.save_user_item(session, user,item[0],item[1])
+            print '         item:',item[0],item[1   ]
     def save_rank_gold_top(self, rank_type, args):
         self.save_rank_charge_top(rank_type,args)
 
@@ -79,9 +80,19 @@ class CrondServer:
         for item in items:
             self.save_data(func_name, item)
 
-
+    def remove_daily_task(self):
+        self.redis.delete(daily_key)
 if __name__ == '__main__':
+    func_name = sys.argv[1]
+    param_name = sys.argv[2]
     crond = CrondServer()
-    # crond.run('rank_charge_top')
-    crond.run('rank_gold_top')
-    # crond.run('rank_make_money_top')
+    if param_name is not None or param_name is not '':
+        print func
+        getattr(crond, func_name)(param_name)
+    else:
+        getattr(crond, func_name)()
+
+    # python -m crond.rank run rank_gold_top
+    # python -m crond.rank run rank_charge_top
+    # python -m crond.rank run rank_make_money_top
+    #  python -m crond.rank remove_daily_task

@@ -2,21 +2,21 @@
 
 import json
 
-DT_LOGIN 		= 0
+DT_LOGIN 		= 8
 DT_HORN			= 87
-DT_GAMES_3 		= 2
-DT_GAMES_30 	= 3
-DT_WIN_3		= 4
-DT_WIN_30		= 5
-DT_BET_10		= 6
-DT_SHOW_HAND	= 7
-DT_DIAMOND		= 8
+DT_GAMES_3 		= 86
+DT_GAMES_30 	= 88
+DT_WIN_3		= 89
+DT_WIN_30		= 90
+DT_BET_10		= 91
+DT_SHOW_HAND	= 92
+DT_DIAMOND		= 93
 DT_ALL			= 94
 
-ALL_TASKS = (DT_LOGIN,DT_HORN,DT_GAMES_3,DT_GAMES_30,DT_WIN_3,DT_WIN_30,DT_BET_10,DT_SHOW_HAND,DT_DIAMOND)
+ALL_TASKS = (DT_HORN,DT_GAMES_3,DT_GAMES_30,DT_WIN_3,DT_WIN_30,DT_BET_10,DT_SHOW_HAND,DT_DIAMOND)
 
-TASK_STATE_FINISHED = 0
-TASK_STATE_RECEIVED = 1
+TASK_STATE_FINISHED = 1
+TASK_STATE_RECEIVED = 0
 TASK_STATE_ONGOING  = 2
 
 class DailyTask:
@@ -103,7 +103,7 @@ class DailyTaskManager:
 			if not daily_task.is_task_finished(DT_GAMES_30) and games >= 30:
 				daily_task.set_task_finished(DT_GAMES_30)
 			
-			if uid == winner:
+			if uid == winner.uid:
 				win_games = daily_task.inc_value("win_games")
 				if not daily_task.is_task_finished(DT_WIN_3) and win_games >= 3:
 					daily_task.set_task_finished(DT_WIN_3)
