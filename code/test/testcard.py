@@ -1392,9 +1392,9 @@ def upgrade_check(client,device_id,imei,imsi):
 
 
         client.setup_socket()
-        req = create_client_message(CheckUpgradeReq)
+        req = create_client_message(GameResUpgradeReq)
         req.header.user = -1
-        req.body.version = 1
+        req.body.ver = 1
 
         client.login_socket.send(req.encode())
         resp = client.get_message(client.login_socket)
@@ -1646,7 +1646,7 @@ def test_card(imei,imsi,token,need_idle,*args):
 
         # get_broke(client, '13488889999','123456', '865372020475361')
         # receive_broke(client, '13488889999','123456', '865372020475361')
-        # upgrade_check(client, '13488889999','123456', '865372020475361')
+        upgrade_check(client, '13488889999','123456', '865372020475361')
         # get_rank(client, '13422223333','123456', '867356020226898')
 
         # send_friends_message(client, '15919430507','wang0000', '865372020475361')
@@ -1656,7 +1656,7 @@ def test_card(imei,imsi,token,need_idle,*args):
         # receive_mails(client, '13466557799','123456', '865372020475361')
         # handle_friend(client, 'lxk','123456', '359901057716157')
         # get_friends_apply(client, 'lxk','123456', '359901057716157')
-        get_friends(client, '13466557799','123456', '209707aeb43af5f5')
+        # get_friends(client, '13466557799','123456', '209707aeb43af5f5')
         # query_bank(client, '13488889999','123456', '865372020475361')
 
         # active_bank_gold(client, '13488889999','123456', '865372020475361')

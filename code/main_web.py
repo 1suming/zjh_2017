@@ -21,26 +21,32 @@ from db.reward_user_log import *
 from db.customer_service_log import *
 from db.user import *
 from config.var import *
+from config.rank import *
 
 from helper import datehelper
 from sqlalchemy import and_
 from sqlalchemy.sql import desc
 
-from web.upload import *
-from web.avatar import *
+# from web.upload import *
+# from web.avatar import *
 
+# from config.var import *
+# from config.vip import *
+from hall.hallobject import *
+from task.achievementtask import *
+from rank.chargetop import *
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-app = Flask(__name__)
+app = Flask(__name__, static_path='',static_folder='')
 app.config.from_object(DevConfig)
 
 session = Session()
 r = redis.Redis(host='121.201.29.89',port=26379,db=0,password='Wgc@123456')
 STATIC_PATH = 'web/static/'
-uploader = Uploader(STATIC_PATH)
-
+# uploader = Uploader(STATIC_PATH)
+vip = VIPObject(None)
 
 
 
@@ -49,13 +55,13 @@ uploader = Uploader(STATIC_PATH)
 # CPKEY：d5ff856beccf4c472831c3f16c376e28
 # CP_KEY = 'd5ff856beccf4c472831c3f16c376e28'
 
-VIP_UP=u'玩家%s一掷千金，成功升级为%s，成为人生赢家！(VIP1+)'
-UPLOAD_FOLDER = 'web/static/upload'
+# VIP_UP=u'玩家%s一掷千金，成功升级为%s，成为人生赢家！(VIP1+)'
+UPLOAD_FOLDER = 'web/static/avatar'
 UPGRADE_FOLDER = 'web/static/upgrade'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','zip'])
-REAL_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static/upload')
-UPGRADE_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'static/upgrade')
-BACK_UP = os.sep+'back_up'+os.sep
+REAL_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'web/static/avatar')
+UPGRADE_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'web/static/upgrade')
+BACK_UP = os.sep+'backup'+os.sep
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
@@ -65,13 +71,9 @@ def allowed_file(filename):
 def demo():
     return CALLBACK
 
-@app.route('/avatar', methods=['GET','POST'])
-def avatar():
-    if request.method == 'GET':
-        avatar_uploader.get_lists()
 
-@app.route('/', methods=['GET', 'POST'])
-def upload_file():
+@app.route('/avatar', methods=['GET', 'POST'])
+def upload_avatar():
 
     if request.method == 'POST':
 
@@ -84,10 +86,14 @@ def upload_file():
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(REAL_PATH, uid+'_'+device_id+'_'+filename))
+            savefolder = time.strftime('%Y-%m-%d')
+            savepath = REAL_PATH+os.sep+time.strftime('%Y-%m-%d')
+            if not os.path.isdir(savepath):
+                os.mkdir(savepath)
+            file.save(os.path.join(savepath, uid+'_'+device_id+'_'+filename))
             # return redirect(url_for('uploaded_file', filename=filename))
             full_filename ='/'+uid+'_'+device_id+'_'+filename
-            path_url = request.url_root+app.config['UPLOAD_FOLDER']+full_filename
+            path_url = request.url_root+UPLOAD_FOLDER+'/'+savefolder+full_filename
 
             result = session.query(TUser).filter(TUser.id == uid).filter(TUser.id == int(uid)).update({
                 TUser.avatar:path_url
@@ -99,15 +105,7 @@ def upload_file():
                 if r.exists('u'+str(uid)):
                     r.hset('u'+str(uid), 'avatar', path_url)
 
-                # 记录完成头像任务
-                task_log = session.query(TRewardUserLog).filter(and_(TRewardUserLog.uid == uid,TRewardUserLog.task_id == 10)).first()
-                if task_log is None:
-                    task_log = TRewardUserLog()
-                    task_log.uid = uid
-                    task_log.task_id = 10 # 修改任务头像id
-                    task_log.state = 1 # 1=已完成，未领取 。 0 = 已完成，已领取。 其他 = 未完成
-                    task_log.create_time = datehelper.get_today_str()
-                    session.add(task_log)
+                SystemAchievement(session,uid).finish_upload_avatar()
 
                 return jsonify(result=0,message='success,message:'+full_filename+',path:'+path_url,url=path_url)
             return jsonify(result=-1,message='error:upload return false')
@@ -124,7 +122,7 @@ def upload_file():
     return '''
     <!doctype html>
     <title>Upload new File</title>
-    <h1>Upload new File</h1>
+    <h1>Upload new <span style='color:green;'>avatar</span></h1>
     <form action="" method=post enctype=multipart/form-data>
       <p><input type=file name=file>
       <input type=text name=uid placeholder=uid>
@@ -138,8 +136,8 @@ def upload_file():
 # ''' % "<br>".join(os.listdir(app.config['UPLOAD_FOLDER'],))
 
 
-@app.route('/upgrade_game', methods=['GET', 'POST'])
-def upgrade_game():
+@app.route('/upgrade', methods=['GET', 'POST'])
+def upgrade():
 
 
     if request.method == 'POST':
@@ -169,7 +167,7 @@ def upgrade_game():
     return '''
     <!doctype html>
     <title>Upload new File</title>
-    <h1>Upload new File</h1>
+    <h1>Upload new <span style='color:red;'>App</span></h1>
     <form action="" method=post enctype=multipart/form-data>
       <p><input type=file name=file>
          <input type=submit value=Upload>
@@ -199,7 +197,9 @@ def customer():
 
 @app.route('/pay_result', methods=['POST'])
 def pay_result():
-
+    print 'init---->'
+    print request.form
+    print 'init_end---->'
     data = json.loads(request.form['data'])
     sign = request.form['sign']
 
@@ -265,11 +265,14 @@ def pay_result():
         if shop_item.type is not None and shop_item.type == 'diamond':
             mail.content += u'，购买 %d 个钻石' % (shop_item.diamond)
     elif order.shop_id == 0:
-        mail.content = u'首冲成功 %.2f 元，获得30万金币，10个张喇叭卡，10张踢人卡，1张vip经验卡' % (decimal.Decimal(FRIST_CHARGE['money']) * 100)
+        mail.content = u'首冲成功 %.2f 元，获得%d万金币，%d个张喇叭卡，%d张踢人卡，%d张vip经验卡' %\
+                       (decimal.Decimal(FRIST_CHARGE['money']) / 100,FRIST_CHARGE['gold'],FRIST_CHARGE['hore'],FRIST_CHARGE['kicking_card'],FRIST_CHARGE['vip_card'])
         item_price = FRIST_CHARGE['money']
     else:
-        mail.content = u'快充成功 %.2f 元，获得万金币' % (decimal.Decimal(QUICK_CHARGE[abs(order.shop_id)-1][0]) * 100)
-        item_price = QUICK_CHARGE[abs(order.shop_id)-1][3]
+        quick_charge = QUICK_CHARGE[abs(order.shop_id)-1]
+        item_price = quick_charge[3]
+        mail.content = u'快充成功 %.2f 元，获得%d万金币' % (decimal.Decimal(quick_charge[1]) * 100,quick_charge[1] )
+
 
     print 'shop_id--->',order.shop_id
     session.add(mail)
@@ -278,80 +281,56 @@ def pay_result():
     user_info = session.query(TUser).filter(TUser.id == order.uid, TUser.is_charge == 0).first()
 
 
-    # vip = VIPObject('tets')
-    # reward = RewardObject('test')
+
     # 加vip经验
     user_info.vip_exp = 0 if user_info.vip_exp <= 0 else user_info.vip_exp
-    old_vip_level = to_level(user_info.vip_exp)['level']
+    old_vip_level = vip.to_level(user_info.vip_exp)
     user_info.vip_exp = user_info.vip_exp + item_price
     session.query(TUser).filter(TUser.id == user_info.id).update({
         TUser.vip_exp:user_info.vip_exp
     })
-    new_vip_level = to_level(user_info.vip_exp)['level']
+    new_vip_level = vip.to_level(user_info.vip_exp)
     # vip升级送金币、道具、发广播
     if old_vip_level < new_vip_level:
         diff_level = new_vip_level - old_vip_level
         if diff_level > 0:
-            up_level_conf = VIP_CONF[old_vip_level:new_vip_level+1]
-            for conf in up_level_conf:
-                # 发广播
-                # vip.level_up_broadcast(user_info.nick, 'VIP'+str(conf['level']))
-                push_message(r,[],5,{'message':VIP_UP % (user_info.nick, to_level(user_info.vip_exp)['level'])})
-                # 记录任务完成
-                # reward.reward_log(session, user_info.id, conf['id'])
-                task_log = TRewardUserLog()
-                task_log.uid = user_info.id
-                task_log.task_id = conf['id']
-                task_log.state = 1 # 1=已完成，未领取 。 0 = 已完成，已领取。 其他 = 未完成
-                task_log.create_time = datehelper.get_today_str()
-                session.merge(task_log)
-                session.flush()
+            push_message(r,r.keys('online'),2,{'nick':user_info.nick,'vip_exp':user_info.vip_exp})
+            SystemAchievement(session,user_info.id).finish_upgrade_vip(vip.to_level(user_info.vip_exp))
 
-    # 充值榜记录
-    save_charge_top(session, {
-        'uid':order.uid,
-        'charge_money':charge_money
-    })
+    # 通知用户充值成功
+    push_message(r,[user_info.id],0,'',N_CHARGE)
 
     if r.exists('u'+str(order.uid)):
         r.delete('u'+str(order.uid))
 
+
+
     user_info = session.query(TUser).filter(TUser.id == order.uid, TUser.is_charge == 0).first()
-    if user_info.is_charge == 0:
+    if order.shop_id == 0 and user_info.is_charge == 0:
         session.query(TUser).with_lockmode("update").filter(TUser.id == order.uid, TUser.is_charge == 0).update({
             TUser.is_charge:1,
-            TUser.gold:TUser.gold+300000,
-            TUser.gold:TUser.diamond+10
-        })
-    # 1	horn	大喇叭	可以公开喊话	2017-02-14 15:33:01
-    # 2	kick	踢人卡	奖玩家踢出房间	2017-02-14 15:35:02
-    # 3	exp_1	经验卡1点	使用后获得1点VIP经验	2017-02-15 10:43:51
-    # 4	exp_10	经验卡10点	使用后获得10点VIP经验	2017-02-15 11:15:49
-    # 5	tgold	金币名称	金币介绍	2017-02-15 16:57:49
-    # 大喇叭 10
-        save_countof(session, {
-            'uid':order.uid,
-            'stuff_id':1,
-            'countof':10,
-        })
-        # 踢人卡 10
-        save_countof(session, {
-            'uid':order.uid,
-            'stuff_id':2,
-            'countof':10,
-        })
-        # 经验卡10点
-        save_countof(session, {
-            'uid':order.uid,
-            'stuff_id':4,
-            'countof':1,
+            TUser.gold:TUser.gold+(FRIST_CHARGE['gold'] * 10000),
+            TUser.diamond:TUser.diamond+FRIST_CHARGE['diamond']
         })
 
+        for item in FRIST_CHARGE['items'].split(','):
+            arr_item = item.split('-')
+            save_countof(session, {
+                'uid':order.uid,
+                'stuff_id':arr_item[0],
+                'countof':arr_item[1],
+            })
+    elif order.shop_id < 0:
+        session.query(TUser).with_lockmode("update").filter(TUser.id == order.uid).update({
+            TUser.gold:TUser.gold+quick_charge[1] * 10000,
+        })
+    else:
+        session.query(TUser).with_lockmode("update").filter(TUser.id == order.uid).update({
+            TUser.gold:TUser.gold+shop_item.gold,
+            TUser.diamond:TUser.diamond+shop_item.diamond,
+        })
 
-
-    # r = redis.Redis(host='121.201.29.89',port=26379,db=0,password='Wgc@123456')
-    # r.lpush('queue_charge', {'order_sn':data['private']['order'],'gold':shop_item.gold,'diamond':shop_item.diamond})
-
+    ChargeTop.save_rank(session, user_info.id, 0, charge_money)
 
     print 'status, success'
     return json.dumps({
@@ -384,22 +363,14 @@ def save_charge_top(session, fields):
     session.flush()
 
 
-def to_level(charge):
-
-    lst_len = len(VIP_CONF)
-    for index in range(lst_len):
-        if index + 1 == lst_len:
-            if charge >= VIP_CONF[index].get('charge'):
-                return VIP_CONF[index]
-            else:
-                return VIP_CONF[index - 1]
-
-        if charge >= VIP_CONF[index].get('charge') and charge < VIP_CONF[index + 1].get('charge'):
-            return VIP_CONF[index]
 
 def push_message(r,users,p1,p2,notifi_type = 1):
-    users = r.keys('online')
-    item = {'users':users,'param1':p1,'param2':p2,'notifi_type':notifi_type}
+    item = {'users':users,'notifi_type':notifi_type}
+    if p1 is not None:
+        item['param1'] = p1
+    if p2 is not None:
+        item['param2'] = p2
+
     r.lpush('notification_queue', json.dumps(item))
 
 def unzip_file(zipfilename, unziptodir):

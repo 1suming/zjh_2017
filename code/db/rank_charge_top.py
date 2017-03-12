@@ -18,12 +18,9 @@ from sqlalchemy.ext.declarative import declarative_base
 
 tab_rank_charge_top = Table("rank_charge_top", metadata,
                  Column("uid", Integer, primary_key=True),
-                 Column("nick",String(40)),
-                 Column("avatar", String(255)),
                  Column("gold",BigInteger),
                  Column("add_date",Date, primary_key=True),
-                 Column("vip",SMALLINT),
-                 Column("charge_money", DECIMAL(11,2))
+                 Column("charge_money", DECIMAL(11,2)),
                  )
                  
 

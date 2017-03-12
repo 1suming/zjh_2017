@@ -46,15 +46,16 @@ BUFFER_SIZE = 1024
 
 class VersionManager:
     def __init__(self):
-        with open("../version/VERSION") as f:
-            self.version = float(f.readline())
+        with open("web/static/upgrade/version.txt") as f:
+            self.version = int(f.readline())
         self.upgrade_info = {}
         gevent.spawn(self.load_version)
         
-    def load_version(self):        
-        with open("../version/VERSION") as f:
-            self.version = int(f.readline())
-        gevent.sleep(60)
+    def load_version(self):
+        while True:
+            with open("web/static/upgrade/version.txt") as f:
+                self.version = int(f.readline())
+            gevent.sleep(60)
         
     def get_upgrade_info(self,old_version):
         if self.version <= old_version:
@@ -175,7 +176,7 @@ class LoginServer:
         # return True
 
         resp.body.is_upgrade = False
-
+        print '------------->',message.body.ver,float(message.body.ver,2)
         if message.body.ver < self.version_manager.upgrade_info:
             resp.body.is_upgrade = True
             resp.body.upgrade_url = UPGRADE_URL
@@ -476,13 +477,11 @@ class LoginServer:
 
     # 更新
     def handle_game_res_upgrade(self,message,resp):
-        resp.body.is_upgrade = False
-
         if message.body.ver < self.version_manager.version:
             resp.body.is_upgrade = True
             resp.body.upgrade_url = UPGRADE_URL
-
-        print message.body.ver,self.version_manager.version
+        else:
+            resp.body.is_upgrade = False
         resp.header.result = 0
         return True
 

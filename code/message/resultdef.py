@@ -90,4 +90,6 @@ RESULT_FAILED_BANK_MAX             = -20300       # 超过银行上线
 # 破产补助
 RESULT_FAILED_BROKE_FULL          = -20400        # 领取超过破产补助
 
+# 首冲
+RESULT_FAILED_FIRST_CHARGE       = -20500         # 已经首冲过了
 

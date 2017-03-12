@@ -17,9 +17,8 @@ from sqlalchemy.types import  *
 from sqlalchemy.orm import Mapper
 
 tab_friend = Table("friend", metadata,
-                 Column("id",Integer, primary_key=True),
-                 Column("apply_uid",Integer,nullable =False), # 申请方
-                 Column("to_uid",Integer,nullable =False),    # 答复方
+                 Column("apply_uid",Integer, primary_key=True,nullable =False), # 申请方
+                 Column("to_uid",Integer, primary_key=True,nullable =False),    # 答复方
                  Column("type",Integer,nullable =False),  # type = 0 是系统关系不允许解除,type=1,为普通关系可以解除
                  Column("create_time",DateTime,nullable =False),
                  )

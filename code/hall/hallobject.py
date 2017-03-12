@@ -102,8 +102,7 @@ class UserObject:
 
     # 提醒，新用户注册
     def new_user_broadcast(self, user_info):
-        content = BORADCAST_CONF['reg'] % user_info.nick
-        MessageObject.push_message(self.service,self.service.redis.hkeys('online'),PUSH_TYPE['new_user_register'],{'message':content,'vip_exp':user_info.vip_exp})
+        MessageObject.push_message(self.service,self.service.redis.hkeys('online'),PUSH_TYPE['new_user_register'],{'nick':user_info.nick,'vip_exp':user_info.vip_exp})
 
 class UserGoldFlower:
     def __init__(self, service):
@@ -213,13 +212,14 @@ class FriendObject:
         friend_apply.to_uid = friend_info.id  # to_uid
         friend_apply.type = 0
         friend_apply.create_time = datetime.now()
-        session.add(friend_apply)
+        session.merge(friend_apply)
         friend_other = TFriend()
         friend_other.apply_uid = friend_info.id # to_uid
         friend_other.to_uid = user_info.id # apply_id
         friend_other.type = 0
         friend_other.create_time = datetime.now()
-        session.add(friend_other)
+        session.merge(friend_other)
+
 
     def get_friend_apply(self, session, apply_id):
         return session.query(TFriendApply).filter(and_(TFriendApply.id == apply_id)).first()
@@ -438,7 +438,6 @@ class ShopObject:
         return True
 
     def send_mail(self, session, user_info, shop_item_id):
-        # shop_item = self.get_shop_item(session, shop_item_id)
         item = self.service.item.get_item_by_id(session, self.shop_item.item_id)
 
         if self.shop_item is None:

@@ -18,12 +18,9 @@ from sqlalchemy.ext.declarative import declarative_base
 
 tab_rank_make_money_top = Table("rank_make_money_top", metadata,
                  Column("uid", Integer, primary_key=True),
-                 Column("nick",String(40)),
-                 Column("avatar", String(255)),
                  Column("gold",BigInteger),
                  Column("add_year",Integer, primary_key=True),
                  Column("week_of_year",SMALLINT, primary_key=True),
-                 Column("vip",SMALLINT),
                  )
                  
 

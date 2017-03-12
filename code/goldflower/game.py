@@ -560,8 +560,8 @@ class GoldFlower:
         winner.player.modify_gold(session,win_gold)
 
         DailyTaskManager(self.table.redis).finish_game(winner,[gambler.uid for gambler in self.gamblers.values()])
-        broadcast.send_win_game(self.table.redis,winner.uid,winner.player.nick,self.table.table_type,win_gold - winner.bet_gold)
-        broadcast.send_good_pokers(self.table.redis,winner.uid,winner.player.nick,self.table.table_type,winner.pokers)
+        broadcast.send_win_game(self.table.redis,winner.uid,winner.player.nick,self.table.table_type,win_gold - winner.bet_gold, winner.player.user.vip_exp)
+        broadcast.send_good_pokers(self.table.redis,winner.uid,winner.player.nick,self.table.table_type,winner.pokers, winner.player.user.vip_exp)
 
     def bet(self,uid,action,gold,other):
         if action == GIVE_UP:

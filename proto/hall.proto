@@ -129,9 +129,9 @@ message CreateOrderResp {
     enum DEF {
         ID = 1151;
     }
-    required string order_sn = 1;
-    required int32 money = 2;
-    required string callback = 3;
+    optional string order_sn = 1;
+    optional int32 money = 2;
+    optional string callback = 3;
     optional string name = 4;
 }
 

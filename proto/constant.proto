@@ -90,6 +90,7 @@ enum NotificationType {
 	N_REWARD = 3;
 	N_GIFT_RECEIVED = 4;
 	N_KICK_OFF = 5;//强制下线
+	N_CHARGE = 6; // 充值成功
 }
 
 enum RewardType {

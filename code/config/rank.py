@@ -3,11 +3,17 @@ __author__ = 'Administrator'
 
 RANK_WEALTH_TOP = 20
 RANK_WEALTH_REWARD = 10
+
 RANK_CHARGE_TOP = 20
 RANK_CHARGE_REWARD = 10
+RANK_CHARGE_MAIL = u'恭喜你在充值排行中，获得第%d名的好成绩，获得如下奖励:%d个钻石'
 RANK_MAKE_MONEY_TOP = 20
 RANK_MAKE_MONEY_REWARD = 10
+RANK_MAKE_MONEY_MAIL = u'恭喜你在赚金排行中，获得第%d名的好成绩，获得如下奖励:%d个钻石'
 RANK_FAKE_LEN = 20
+
+# 充值的钱与充值榜的钻石奖励换算关系
+RANK_CHARGE_RATE = 3
 
 RANK_FAKE_CHARGE_ENABLE = True
 RANK_FAKE_CHARGE = [
@@ -37,4 +43,6 @@ RANK_FAKE_MAKE_MONEYD = [
     {'vip_exp': 223,'id':9,'uid':5920,'nick':'haha9','avatar':'http://192.168.2.75:5000/static/upload/10023_867356020226898_tmp_avatar.png','gold':100,'vip':1,'rank_reward':'','charm':0,'money_maked':0},
     {'vip_exp': 226,'id':10,'uid':5020,'nick':'haha10','avatar':'http://192.168.2.75:5000/static/upload/10023_867356020226898_tmp_avatar.png','gold':100,'vip':2,'rank_reward':'','charm':0,'money_maked':0},
 ]
+
+RANK_MAKE_MONEY_REWARD_CONF = (100,150,100,30,25,20,10,10,10,10)
 

@@ -18,7 +18,6 @@ BORADCAST_CONF = {
 
     'make_money_top':u'恭喜玩家%s获赠赢取%d金币，跃升周赚金榜榜第%d名。',
     'charge_top':u'恭喜玩家%s充值%d元，跃升今日充值榜第%d名。',
-    'vip_up':u'玩家%s一掷千金，成功升级为%s，成为人生赢家！(VIP1+)',
 }
 
 PLACES = {
@@ -33,34 +32,39 @@ def send_register(uid,name):
     message = BORADCAST_CONF["reg"] % (name)
     send_broadcast(message)
 
-def send_win_game(redis, uid,name,table_type,gold):
+def send_win_game(redis, uid,name,table_type,gold,vip_exp):
     if gold < 1:#1000000:
         return
 
-    place = PLACES[table_type]
-    gold = gold / 10000
-    message = BORADCAST_CONF["win_game"] % (name,place,gold)
-    send_broadcast(redis, message)
+    # place = PLACES[table_type]
+    #gold = gold / 10000
+    # message = BORADCAST_CONF["win_game"] % (name,place,gold)
+    send_broadcast(redis, var.PUSH_TYPE['table_winner'],{'winner_nick':name,'table_type':table_type,'winner_gold':gold,'vip_exp':vip_exp})
 
-def send_good_pokers(redis, uid,name,table_type,pokers):
-    pokers_str = None
+def send_good_pokers(redis, uid,name,table_type,pokers, vip_exp):
+    pokers_index = None
     if pokers.is_baozi():
-        pokers_str = u"豹子"
+        pokers_index = 2 # u"豹子"
     if pokers.is_tonghuashun():
-        pokers_str = u"顺金"
-    if pokers_str == None:
+        pokers_index = 1 # u"顺金"
+    if pokers_index == None:
         return
 
-    place = PLACES[table_type]
-    message = BORADCAST_CONF["good_pokers"] % (name,place,pokers_str)
-    send_broadcast(redis, message)
+    # place = PLACES[table_type]
+    # message = BORADCAST_CONF["good_pokers"] % (name,place,pokers_str)
+
+    send_broadcast(redis,var.PUSH_TYPE['luck_poker'], {
+        'nick':name,'vip_exp':vip_exp,'table_type':table_type,'luck_type':pokers_index
+    })
 
 
-def send_broadcast(redis, message):
+def send_broadcast(redis,push_type, message):
     # TBD
     users = redis.hkeys('online')
-    p1 = var.PUSH_TYPE['sys_broadcast']
+    p1 = push_type
     p2 = message
-    notifi_type = N_BROADCAST
-    item = {'users':users,'param1':p1,'param2':p2,'notifi_type':notifi_type}
+
+    print '------------------>broadcast',message
+
+    item = {'users':users,'param1':p1,'param2':p2,'notifi_type':N_BROADCAST}
     redis.lpush('notification_queue', json.dumps(item))

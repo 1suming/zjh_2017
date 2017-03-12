@@ -10,6 +10,7 @@ AT_FIRST_LOGIN 		= 8
 AT_BAOZI			= 18
 AT_235_WIN_BAOZI	= 19
 AT_CHANGE_NICK      = 9
+AT_UPLOAD_AVATAR      = 10
 
 AT_EXP_CONFIG = {
 	# id : exp
@@ -181,6 +182,11 @@ class SystemAchievement(BaseAchievement):
 	def finish_first_login(self):
 		if self.is_achievement_finished(AT_FIRST_LOGIN) is False:
 			self.set_achievement_finished(AT_FIRST_LOGIN)
+			self.save()
+
+	def finish_upload_avatar(self):
+		if self.is_achievement_finished(AT_UPLOAD_AVATAR) is False:
+			self.set_achievement_finished(AT_UPLOAD_AVATAR)
 			self.save()
 
 	def finish_change_nick(self):

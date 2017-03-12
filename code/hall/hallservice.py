@@ -283,7 +283,7 @@ class HallService(GameService):
     def handle_get_friends(self,session,req,resp,event):
         page = req.body.page
         page_size = req.body.page_size
-        friends = session.query(TFriend).filter(TFriend.apply_uid == req.header.user).order_by(TFriend.id).offset((int(page) - 1) * page_size).limit(page_size)
+        friends = session.query(TFriend).filter(TFriend.apply_uid == req.header.user).offset((int(page) - 1) * page_size).limit(page_size)
 
         orderby_friends = []
         for friend in friends:
@@ -1205,6 +1205,13 @@ class HallService(GameService):
     # 生成订单
     @USE_TRANSACTION
     def handle_create_order(self,session,req,resp,event):
+        # shop_id = 0 首充，负数代表快充场次，正数代表商品id
+        if req.body.shop_id == 0:
+            is_first_charge = session.query(TUser.is_charge).filter(TUser.id == req.header.user).first()
+            if is_first_charge[0] == 1:
+                resp.header.result = RESULT_FAILED_FIRST_CHARGE
+                return
+
         order_sn = self.get_order_sn(req.header.user)
         order =  session.query(TOrder).filter(TOrder.order_sn == order_sn).first()
         if order != None:

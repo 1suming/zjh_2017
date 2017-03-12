@@ -91,7 +91,7 @@ STATE_NEED_POPUP = 0
 STATE_DISABLED = -1
 STATE_ENABLE = 0
 
-UPGRADE_URL = 'http://121.201.29.89:18000/static/upgrade/'
+
 PAY_RESULT_URL = 'http://121.201.29.89:18000/pay_result'
 CP_KEY = 'bde25760c1556899efc0dff13bf41b4e' # bde25760c1556899efc0dff13bf41b4e
 
@@ -124,13 +124,14 @@ PASS_ENCRY_STR = 'cqkj2017'
 # 首冲
 FRIST_CHARGE = {
     'title':u'首充',
-    'money' : 6100,
+    'money' : 1000,
     'real_money':1,
     'diamond' : 10,
     'gold' : 30, # 单位w
     'hore' : 10,
     'kicking_card':10,
     'vip_card' :1,
+    'items':'1-10,2-10,4-1'
 }
 
 # 系统推送消息类型
@@ -162,3 +163,5 @@ CHARGE_KEY = 'cqkj2017'
 CP_KEY = 'bde25760c1556899efc0dff13bf41b4e'
 # avatar头像上传地址
 UPDATE_AVATAR_URL = 'http://121.201.29.89:18000/avatar'
+# 更新文件上传地址
+UPGRADE_URL = 'http://121.201.29.89:18000/web/static/upgrade/'

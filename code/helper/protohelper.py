@@ -160,6 +160,7 @@ def set_brief_hall(pb, user_info):
     pb.seat = -1
     pb.vip = user_info.vip
     pb.diamond = user_info.diamond
+    pb.sex = user_info.sex
     pb.vip_exp = 0 if user_info.vip_exp == None else user_info.vip_exp
 
 def set_hall(pb, hall):
